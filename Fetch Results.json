@@ -1,0 +1,163 @@
+{
+  "name": "Fetch Results",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fetch-results",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        1536,
+        2032
+      ],
+      "id": "c811fe67-4dbf-4ccd-b458-2d0e858f01f5",
+      "name": "Fetch Results Webhook1",
+      "webhookId": "fetch-results-webhook-id"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate case_id — soft fail so n8n doesn't mark polling as error\nconst item = $input.first().json;\nconst body = item.body || item;\nconst caseId = (body.case_id || '').toString().trim();\n\nif (!caseId) {\n  // Return soft response — dashboard will handle it\n  return [{ json: { found: false, error: 'case_id missing', case_id: null } }];\n}\n\nreturn [{ json: { case_id: caseId } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        2032
+      ],
+      "id": "ae0a0ae6-c8ac-453c-8d40-e794eef4de5f",
+      "name": "Validate Input1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "cases",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "case_id",
+              "keyValue": "={{ $json.case_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        2032
+      ],
+      "id": "b14ed6ad-f9f0-4fda-821b-7eb85535aee7",
+      "name": "Get Case from Supabase1",
+      "retry": {
+        "enabled": true,
+        "maxTries": 3,
+        "waitBetween": 2000
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "YjOL2NYwLrO3tdr0",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format Supabase response for dashboard\n// null lawyer fields are NORMAL during polling — not an error\nconst item = $input.first().json;\n\n// If validate input returned soft error, pass it through\nif (item.error) {\n  return [{ json: { found: false, error: item.error } }];\n}\n\n// Supabase returns array — take first row\nconst row = Array.isArray(item) ? item[0] : item;\n\n// Case not found in Supabase yet — soft response, not an error\nif (!row || !row.case_id) {\n  return [{ json: { found: false, case_id: null } }];\n}\n\n// Safely parse fields that may be stored as JSON strings in Supabase\nfunction safeParse(val) {\n  if (!val) return null;\n  if (typeof val === 'object') return val;\n  try { return JSON.parse(val); } catch(e) { return null; }\n}\n\n// Return full record — null AI fields are fine, dashboard handles them\nreturn [{ json: {\n  found: true,\n\n  // Core\n  case_id:         row.case_id         || '',\n  timestamp:       row.timestamp       || '',\n  submitted_by:    row.submitted_by    || '',\n  pipeline_status: row.pipeline_status || 'INTAKE_COMPLETE',\n\n  // Client\n  user_name:       row.user_name       || '',\n  contact_number:  row.contact_number  || '',\n  date_of_birth:   row.date_of_birth   || '',\n  civil_status:    row.civil_status    || '',\n  address:         row.address         || '',\n  occupation:      row.occupation      || '',\n\n  // Case details\n  legal_topic:     row.legal_topic     || '',\n  legal_issue:     row.legal_issue     || '',\n  incident_date:   row.incident_date   || '',\n  opposing_party:  row.opposing_party  || '',\n  urgency:         row.urgency         || '',\n  legal_narrative: row.legal_narrative || '',\n  clerk_notes:     row.clerk_notes     || '',\n\n  // Documents\n  documents_submitted: safeParse(row.documents_submitted) || [],\n  attachments_meta:    safeParse(row.attachments_meta)    || [],\n  document_urls:       safeParse(row.document_urls)       || [],\n\n  // AI analyses — null is EXPECTED while pipeline is running\n  // Dashboard checks for these and renders panels when they arrive\n  lawyer_a:       safeParse(row.lawyer_a),\n  lawyer_b:       safeParse(row.lawyer_b),\n  senior_partner: safeParse(row.senior_partner),\n}}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2208,
+        2032
+      ],
+      "id": "8630dbf4-0148-4a80-ac0d-a04406ce5631",
+      "name": "Format Response1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2432,
+        2032
+      ],
+      "id": "da26bd50-cb08-4448-b0ae-361af0d79b31",
+      "name": "Respond1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Fetch Results Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Validate Input1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input1": {
+      "main": [
+        [
+          {
+            "node": "Get Case from Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Case from Supabase1": {
+      "main": [
+        [
+          {
+            "node": "Format Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response1": {
+      "main": [
+        [
+          {
+            "node": "Respond1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "29965816-6954-4516-ad0b-b811a27d220e",
+  "meta": {
+    "instanceId": "d15b01065c3cc47a5c693bea54c139dca8f96b46f96de462646844662cd74c5d"
+  },
+  "id": "GcjdXJgqgY2hu70FzCd9T",
+  "tags": [
+    {
+      "updatedAt": "2026-03-13T04:43:07.909Z",
+      "createdAt": "2026-03-13T04:43:07.909Z",
+      "id": "Yh6tLRUzeSibDLyW",
+      "name": "LEX"
+    }
+  ]
+}

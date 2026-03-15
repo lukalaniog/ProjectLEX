@@ -1,0 +1,162 @@
+{
+  "name": "Delete Files From  Supabase",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "delete-case",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        -32
+      ],
+      "id": "8688117e-5275-4260-8f10-1be25457261d",
+      "name": "Delete Case Webhook",
+      "webhookId": "delete-case-webhook-id"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract case_id from payload for validation\nconst item = $input.first().json;\nconst caseId = item.case_id;\n\nif (!caseId) {\n  throw new Error('case_id is required');\n}\n\nreturn [{ json: { ...item, _case_id_valid: true } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        -32
+      ],
+      "id": "1c062d96-1805-447b-a0fb-6bfd7f0ee7de",
+      "name": "Validate Delete Input1"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "cases",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "case_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.case_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        272,
+        -32
+      ],
+      "id": "30463472-a3ee-4c61-a17d-b23c1931f104",
+      "name": "Delete Case from Supabase1",
+      "retry": {
+        "enabled": true,
+        "maxTries": 3,
+        "waitBetween": 2000
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "YjOL2NYwLrO3tdr0",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Delete files from Supabase Storage for a given case_id\nconst item = $input.first().json;\nconst caseId = item.case_id;\n\nconst supabaseUrl = \"https://ncvlpqbevllqwrpdauxi.supabase.co\";\nconst supabaseKey = \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jdmxwcWJldmxscXdycGRhdXhpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjE1NTk2NiwiZXhwIjoyMDg3NzMxOTY2fQ.Cs5k-uKtxyiTejLzsrpJllPg3-cZ6qvFDSjEdEVnBMU\";\nconst BUCKET = 'case_files';\n\nasync function fetchWithRetry(url, options, maxRetries = 3, delayMs = 2000) {\n  for (let attempt = 1; attempt <= maxRetries; attempt++) {\n    try {\n      const res = await fetch(url, options);\n      if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);\n      return res;\n    } catch (err) {\n      if (attempt === maxRetries) throw err;\n      await new Promise(r => setTimeout(r, delayMs * attempt));\n    }\n  }\n}\n\nlet files = [];\ntry {\n  const listRes = await fetch(\n    `${supabaseUrl}/storage/v1/object/list/${BUCKET}`,\n    {\n      method: 'POST',\n      headers: {\n        'Authorization': `Bearer ${supabaseKey}`,\n        'Content-Type': 'application/json'\n      },\n      body: JSON.stringify({ prefix: caseId + '/' })\n    }\n  );\n  if (listRes.ok) { files = await listRes.json(); }\n} catch (e) {\n  return [{ json: { ...item, storage_deleted: false, storage_error: e.message } }];\n}\n\nif (!files || files.length === 0) {\n  return [{ json: { ...item, storage_deleted: true, files_deleted: 0 } }];\n}\n\nconst paths = files.map(f => `${caseId}/${f.name}`);\n\ntry {\n  await fetchWithRetry(\n    `${supabaseUrl}/storage/v1/object/${BUCKET}`,\n    {\n      method: 'DELETE',\n      headers: {\n        'Authorization': `Bearer ${supabaseKey}`,\n        'Content-Type': 'application/json'\n      },\n      body: JSON.stringify({ prefixes: paths })\n    }\n  );\n} catch (err) {\n  return [{ json: { ...item, storage_deleted: false, storage_error: err.message } }];\n}\n\nreturn [{ json: { ...item, storage_deleted: true, files_deleted: paths.length, storage_error: null } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        496,
+        -32
+      ],
+      "id": "232cab12-566a-48e0-91c5-d1efc0e94a1c",
+      "name": "Delete Storage Files1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  status: 'SUCCESS',\n  case_id: $json.case_id,\n  deleted_from_supabase: true,\n  storage_cleanup: $json.storage_deleted || false,\n  files_deleted: $json.files_deleted || 0,\n  message: 'Case deleted successfully'\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        720,
+        -32
+      ],
+      "id": "b59b21d7-ac20-43c5-bda7-8a8a13970a94",
+      "name": "Respond Delete1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Delete Case Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Delete Input1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Delete Input1": {
+      "main": [
+        [
+          {
+            "node": "Delete Case from Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Case from Supabase1": {
+      "main": [
+        [
+          {
+            "node": "Delete Storage Files1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Storage Files1": {
+      "main": [
+        [
+          {
+            "node": "Respond Delete1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "7c5fbe3e-47c4-4c3f-b9b0-7e4e58c87328",
+  "meta": {
+    "instanceId": "d15b01065c3cc47a5c693bea54c139dca8f96b46f96de462646844662cd74c5d"
+  },
+  "id": "0CfSj-Zs9oqvqJF4WY2Dq",
+  "tags": [
+    {
+      "updatedAt": "2026-03-13T04:43:07.909Z",
+      "createdAt": "2026-03-13T04:43:07.909Z",
+      "id": "Yh6tLRUzeSibDLyW",
+      "name": "LEX"
+    }
+  ]
+}

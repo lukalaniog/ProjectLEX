@@ -1,0 +1,314 @@
+{
+  "name": "Case Intake Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// LexFlow — Case Intake Processor\n// Normalizes, validates, and prepares payload for the AI pipeline\n\nconst item = $input.first().json;\nconst body = item.body || item;\n\n// ── INPUT VALIDATION ─────────────────────────────────────────\nif (!body.case_id || typeof body.case_id !== 'string' || body.case_id.trim() === '') {\n  throw new Error('Validation failed: case_id is required and must be a non-empty string');\n}\n\n// Validate file sizes (max 10MB per file)\nconst MAX_FILE_SIZE = 10 * 1024 * 1024;\nconst attachmentsFull = (body.attachments || []).filter(a => a.data);\nfor (const file of attachmentsFull) {\n  if (file.size && file.size > MAX_FILE_SIZE) {\n    throw new Error(`File ${file.name} exceeds 10MB limit (size: ${file.size} bytes)`);\n  }\n}\n\n// ── NORMALIZE legal_topic ──────────────────────────────────────\n// Accept both \"Labor Law\" (from dashboard) and \"Labor\" (short form)\nconst TOPIC_MAP = {\n  'labor law':    'Labor Law',\n  'labor':        'Labor Law',\n  'criminal law': 'Criminal Law',\n  'criminal':     'Criminal Law',\n  'civil law':    'Civil Law',\n  'civil':        'Civil Law',\n  'family law':   'Family Law',\n  'family':       'Family Law',\n  'property law': 'Property Law',\n  'property':     'Property Law',\n  'corporate law':'Corporate Law',\n  'corporate':    'Corporate Law',\n  'tax law':      'Tax Law',\n  'tax':          'Tax Law',\n  'ip':           'IP Law',\n  'ip law':       'IP Law',\n};\nconst rawTopic = (body.legal_topic || '').trim();\nconst normalizedTopic = TOPIC_MAP[rawTopic.toLowerCase()] || rawTopic || 'Other';\n\n// ── NORMALIZE ATTACHMENTS ─────────────────────────────────────\nconst attachmentsMeta = (body.attachments_meta || body.attachments || [])\n  .map(a => ({\n    name: a.name || 'unnamed',\n    type: a.type || 'application/octet-stream',\n    size: a.size || 0,\n    ext:  a.ext  || (a.name ? a.name.split('.').pop() : '')\n  }));\n\n// ── BUILD CLEAN PAYLOAD ───────────────────────────────────────\nconst payload = {\n  case_id:             body.case_id.trim(),\n  timestamp:           body.timestamp || new Date().toISOString(),\n  submitted_by:        body.submitted_by || 'Clerk',\n  pipeline_status:     'INTAKE_COMPLETE',\n\n  user_name:           body.user_name || '',\n  contact_number:      body.contact_number || '',\n  date_of_birth:       body.date_of_birth || '',\n  civil_status:        body.civil_status || '',\n  address:             body.address || '',\n  occupation:          body.occupation || '',\n\n  legal_topic:         normalizedTopic,\n  legal_issue:         body.legal_issue || '',\n  incident_date:       body.incident_date || '',\n  opposing_party:      body.opposing_party || '',\n  urgency:             body.urgency || 'MEDIUM',\n\n  legal_narrative:     body.legal_narrative || '',\n  clerk_notes:         body.clerk_notes || '',\n\n  documents_submitted: body.documents_submitted || [],\n  attachments_meta:    attachmentsMeta,\n  document_urls:       [],\n\n  lawyer_a:            null,\n  lawyer_b:            null,\n  senior_partner:      null\n};\n\nreturn [{ json: { ...payload, _attachments_full: attachmentsFull } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2416,
+        13792
+      ],
+      "id": "d4121860-cfe8-48ae-8783-2a5c22fb5d6b",
+      "name": "Normalize & Validate Intake1"
+    },
+    {
+      "parameters": {
+        "tableId": "cases",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "case_id",
+              "fieldValue": "={{ $json.case_id }}"
+            },
+            {
+              "fieldId": "timestamp",
+              "fieldValue": "={{ $json.timestamp }}"
+            },
+            {
+              "fieldId": "submitted_by",
+              "fieldValue": "={{ $json.submitted_by }}"
+            },
+            {
+              "fieldId": "legal_topic",
+              "fieldValue": "={{ $json.legal_topic }}"
+            },
+            {
+              "fieldId": "legal_issue",
+              "fieldValue": "={{ $json.legal_issue }}"
+            },
+            {
+              "fieldId": "user_name",
+              "fieldValue": "={{ $json.user_name }}"
+            },
+            {
+              "fieldId": "contact_number",
+              "fieldValue": "={{ $json.contact_number }}"
+            },
+            {
+              "fieldId": "date_of_birth",
+              "fieldValue": "={{ $json.date_of_birth }}"
+            },
+            {
+              "fieldId": "civil_status",
+              "fieldValue": "={{ $json.civil_status }}"
+            },
+            {
+              "fieldId": "address",
+              "fieldValue": "={{ $json.address }}"
+            },
+            {
+              "fieldId": "occupation",
+              "fieldValue": "={{ $json.occupation }}"
+            },
+            {
+              "fieldId": "=opposing_party",
+              "fieldValue": "={{ $json.opposing_party }}"
+            },
+            {
+              "fieldId": "urgency",
+              "fieldValue": "={{ $json.urgency }}"
+            },
+            {
+              "fieldId": "legal_narrative",
+              "fieldValue": "={{ $json.legal_narrative }}"
+            },
+            {
+              "fieldId": "clerk_notes",
+              "fieldValue": "={{ $json.clerk_notes }}"
+            },
+            {
+              "fieldId": "documents_submitted",
+              "fieldValue": "={{ $json.documents_submitted }}"
+            },
+            {
+              "fieldId": "attachments_meta",
+              "fieldValue": "={{ $json.attachments_meta }}"
+            },
+            {
+              "fieldId": "lawyer_a",
+              "fieldValue": "={{ $json.lawyer_a }}"
+            },
+            {
+              "fieldId": "lawyer_b",
+              "fieldValue": "={{ $json.lawyer_b }}"
+            },
+            {
+              "fieldId": "senior_partner",
+              "fieldValue": "={{ $json.senior_partner }}"
+            },
+            {
+              "fieldId": "incident_date",
+              "fieldValue": "={{ $json.incident_date }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        13600
+      ],
+      "id": "3ae2fed3-ea3f-45b8-909c-d63bb4228a2f",
+      "name": "Save to Supabase1",
+      "retry": {
+        "enabled": true,
+        "maxTries": 3,
+        "waitBetween": 2000
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "YjOL2NYwLrO3tdr0",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Upload files to Supabase Storage\nconst item = $input.first().json;\nconst caseId = item.case_id;\nconst attachments = item._attachments_full || [];\n\nif (!attachments || attachments.length === 0) {\n  return [{ json: { ...item, document_urls: [], upload_errors: null, _attachments_full: undefined } }];\n}\n\nconst supabaseUrl = \"https://ncvlpqbevllqwrpdauxi.supabase.co\";\nconst supabaseKey = \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jdmxwcWJldmxscXdycGRhdXhpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjE1NTk2NiwiZXhwIjoyMDg3NzMxOTY2fQ.Cs5k-uKtxyiTejLzsrpJllPg3-cZ6qvFDSjEdEVnBMU\";\nconst bucket = \"case_files\";\n\n// Retry wrapper\nasync function fetchWithRetry(url, options, maxRetries = 3, delayMs = 2000) {\n  for (let attempt = 1; attempt <= maxRetries; attempt++) {\n    try {\n      const res = await fetch(url, options);\n      if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);\n      return res;\n    } catch (err) {\n      if (attempt === maxRetries) throw err;\n      await new Promise(r => setTimeout(r, delayMs * attempt));\n    }\n  }\n}\n\nconst MIME_TYPES = {\n  'pdf':  'application/pdf',\n  'jpg':  'image/jpeg',\n  'jpeg': 'image/jpeg',\n  'png':  'image/png',\n  'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',\n  'doc':  'application/msword',\n  'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',\n  'txt':  'text/plain'\n};\n\nconst uploadedUrls = [];\nconst errors = [];\n\nfor (const file of attachments) {\n  const originalName = file.name || 'document';\n  const ext = originalName.split('.').pop().toLowerCase();\n  const mimeType = MIME_TYPES[ext] || 'application/octet-stream';\n  const timestamp = Date.now();\n  const random = Math.random().toString(36).substring(2, 8);\n  const fileName = `${timestamp}_${random}_${originalName}`;\n  const filePath = `${caseId}/${fileName}`;\n\n  try {\n    const binaryStr = atob(file.data);\n    const bytes = new Uint8Array(binaryStr.length);\n    for (let i = 0; i < binaryStr.length; i++) {\n      bytes[i] = binaryStr.charCodeAt(i);\n    }\n\n    await fetchWithRetry(\n      `${supabaseUrl}/storage/v1/object/${bucket}/${filePath}`,\n      {\n        method: 'POST',\n        headers: {\n          'Authorization': `Bearer ${supabaseKey}`,\n          'Content-Type': mimeType,\n          'x-upsert': 'true'\n        },\n        body: bytes\n      }\n    );\n\n    const publicUrl = `${supabaseUrl}/storage/v1/object/public/${bucket}/${filePath}`;\n    uploadedUrls.push({ name: originalName, url: publicUrl, type: mimeType });\n  } catch (error) {\n    console.error(`Upload failed for ${originalName}:`, error.message);\n    errors.push({ name: originalName, error: error.message });\n  }\n}\n\n// Patch cases row with document_urls if any succeeded\nif (uploadedUrls.length > 0) {\n  try {\n    await fetchWithRetry(\n      `${supabaseUrl}/rest/v1/cases?case_id=eq.${caseId}`,\n      {\n        method: 'PATCH',\n        headers: {\n          'Authorization': `Bearer ${supabaseKey}`,\n          'apikey': supabaseKey,\n          'Content-Type': 'application/json',\n          'Prefer': 'return=minimal'\n        },\n        body: JSON.stringify({ document_urls: uploadedUrls })\n      }\n    );\n  } catch (patchError) {\n    console.error('Failed to patch case with document_urls:', patchError.message);\n    errors.push({ name: 'PATCH_CASE', error: patchError.message });\n  }\n}\n\nconst result = {\n  ...item,\n  document_urls: uploadedUrls,\n  upload_errors: errors.length > 0 ? errors : null,\n  _attachments_full: undefined\n};\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        13792
+      ],
+      "id": "cbc78b63-a5f4-4aab-b99a-5eec5848cf94",
+      "name": "Upload Files to Storage1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/advocate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ ({\n  case_id:             $json.case_id,\n  timestamp:           $json.timestamp,\n  submitted_by:        $json.submitted_by,\n  user_name:           $json.user_name,\n  contact_number:      $json.contact_number,\n  date_of_birth:       $json.date_of_birth,\n  civil_status:        $json.civil_status,\n  address:             $json.address,\n  occupation:          $json.occupation,\n  legal_topic:         $json.legal_topic,\n  legal_issue:         $json.legal_issue,\n  incident_date:       $json.incident_date,\n  opposing_party:      $json.opposing_party,\n  urgency:             $json.urgency,\n  legal_narrative:     $json.legal_narrative,\n  clerk_notes:         $json.clerk_notes,\n  documents_submitted: $json.documents_submitted || [],\n  document_urls:       $json.document_urls || []\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 5000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2640,
+        13984
+      ],
+      "id": "aa63ebc6-040f-4b97-9567-647d2f4fc3fd",
+      "name": "Trigger Advocate Workflow1",
+      "retry": {
+        "enabled": true,
+        "maxTries": 3,
+        "waitBetween": 2000
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        2864,
+        13792
+      ],
+      "id": "69d5cf65-cd96-44b3-8800-80e3a2dc735c",
+      "name": "Intake Checkpoint"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        2192,
+        13792
+      ],
+      "id": "5eb956b8-18dd-40fb-92d8-3b6a397486b1",
+      "name": "Intake Webhook (Original)",
+      "webhookId": "a4e0d24c-c946-4122-802c-d5a0e92e232a"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  status:              'INTAKE_COMPLETE',\n  case_id:             $json.case_id,\n  timestamp:           $json.timestamp,\n  submitted_by:        $json.submitted_by,\n  client: {\n    name:              $json.user_name,\n    contact:           $json.contact_number,\n    date_of_birth:     $json.date_of_birth,\n    civil_status:      $json.civil_status,\n    address:           $json.address,\n    occupation:        $json.occupation\n  },\n  case_details: {\n    legal_topic:       $json.legal_topic,\n    legal_issue:       $json.legal_issue,\n    incident_date:     $json.incident_date,\n    opposing_party:    $json.opposing_party,\n    urgency:           $json.urgency\n  },\n  documents_submitted: $json.documents_submitted || [],\n  clerk_notes:         $json.clerk_notes,\n  document_urls:       $json.document_urls || [],\n  upload_errors:       $json.upload_errors || null,\n  message:             'Case received and saved. AI pipeline triggered.',\n  pipeline_status:     'LAWYER_A_TRIGGERED'\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        3088,
+        13792
+      ],
+      "id": "c063b83c-e531-431b-b7b6-4de0983f1820",
+      "name": "Respond to Intake"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Normalize & Validate Intake1": {
+      "main": [
+        [
+          {
+            "node": "Save to Supabase1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload Files to Storage1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Trigger Advocate Workflow1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Supabase1": {
+      "main": [
+        [
+          {
+            "node": "Intake Checkpoint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Files to Storage1": {
+      "main": [
+        [
+          {
+            "node": "Intake Checkpoint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Advocate Workflow1": {
+      "main": [
+        [
+          {
+            "node": "Intake Checkpoint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intake Webhook (Original)": {
+      "main": [
+        [
+          {
+            "node": "Normalize & Validate Intake1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intake Checkpoint": {
+      "main": [
+        [
+          {
+            "node": "Respond to Intake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "57f3432e-5eea-4134-8de5-da7508070902",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d15b01065c3cc47a5c693bea54c139dca8f96b46f96de462646844662cd74c5d"
+  },
+  "id": "2aiiL9TI5-p0v4qtJBYW_",
+  "tags": [
+    {
+      "updatedAt": "2026-03-13T04:43:07.909Z",
+      "createdAt": "2026-03-13T04:43:07.909Z",
+      "id": "Yh6tLRUzeSibDLyW",
+      "name": "LEX"
+    }
+  ]
+}

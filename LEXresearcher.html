@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEX — Philippine Legal Research</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=JetBrains+Mono:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:    #080a0f;
+  --ink2:   #0e1119;
+  --ink3:   #151b27;
+  --panel:  #0a0d15;
+  --border: rgba(255,255,255,.065);
+  --border2:rgba(255,255,255,.11);
+  --gold:   #c8a84b;
+  --gold2:  #e8c96a;
+  --gold3:  #f5dfa0;
+  --gold-d: rgba(200,168,75,.14);
+  --gold-g: rgba(200,168,75,.06);
+  --text:   #e2ddd0;
+  --muted:  #6a6456;
+  --muted2: #9a9080;
+  --red:    #c0392b;
+  --green:  #27ae60;
+  --scan:   rgba(200,168,75,.016);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; background:var(--ink); color:var(--text); font-family:'DM Sans',sans-serif; overflow:hidden; }
+
+/* ── Noise + Scan ── */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:9999; opacity:.4;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+body::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:9998;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, var(--scan) 2px, var(--scan) 4px);
+}
+
+/* ── ENTRANCE OVERLAY ── */
+#curtain {
+  position:fixed; inset:0; z-index:10000;
+  background: var(--ink);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;
+  animation: curtainFade 0.6s ease 2.2s forwards;
+}
+@keyframes curtainFade { to { opacity:0; pointer-events:none; } }
+
+.curtain-logo {
+  animation: curtainScale 0.7s cubic-bezier(.175,.885,.32,1.275) 0.3s both;
+}
+@keyframes curtainScale { from{opacity:0;transform:scale(.6)} to{opacity:1;transform:scale(1)} }
+
+.curtain-word {
+  font-family:'Cinzel',serif; font-size:4.5rem; font-weight:900; color:var(--gold);
+  letter-spacing:.18em; line-height:1;
+  text-shadow: 0 0 60px rgba(200,168,75,.5), 0 0 120px rgba(200,168,75,.2);
+  animation: curtainScale 0.7s cubic-bezier(.175,.885,.32,1.275) 0.55s both;
+}
+.curtain-sub {
+  font-family:'Crimson Pro',serif; font-size:.95rem; font-style:italic;
+  color:rgba(200,168,75,.6); letter-spacing:.35em; text-transform:uppercase;
+  animation: curtainScale 0.6s ease 0.8s both;
+}
+.curtain-line {
+  width:180px; height:1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  animation: curtainLine 0.8s ease 1s both;
+}
+@keyframes curtainLine { from{opacity:0;width:0} to{opacity:1;width:180px} }
+
+/* ── LAYOUT ── */
+.shell { display:grid; grid-template-columns:272px 1fr; height:100vh; overflow:hidden; }
+
+/* ═══════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════ */
+.sidebar {
+  background:var(--panel); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; overflow:hidden;
+  position:relative; z-index:50;
+  animation: slideInLeft .55s cubic-bezier(.22,1,.36,1) 2.6s both;
+}
+@keyframes slideInLeft { from{transform:translateX(-100%);opacity:0} to{transform:translateX(0);opacity:1} }
+
+.sidebar::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.sidebar::after {
+  content:''; position:absolute; top:0; left:0; bottom:0; width:1px;
+  background:linear-gradient(180deg,transparent,rgba(200,168,75,.15),transparent);
+  right:0; left:auto;
+}
+
+/* ── LOGO ── */
+.logo-wrap {
+  padding:20px 16px 16px; border-bottom:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  position:relative;
+}
+.logo-wrap::after {
+  content:''; position:absolute; bottom:0; left:20%; right:20%; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,168,75,.3),transparent);
+}
+
+/* Lady Justice SVG — animation embedded in each SVG's <style> */
+
+.lex-word {
+  font-family:'Cinzel',serif; font-size:1.9rem; font-weight:900; color:var(--gold);
+  letter-spacing:.12em; line-height:1; margin-top:10px;
+  text-shadow: 0 0 30px rgba(200,168,75,.35);
+}
+.lex-tagline {
+  display:flex; align-items:center; gap:8px; margin-top:7px; width:100%;
+}
+.lex-tagline-line { flex:1; height:1px; background:rgba(200,168,75,.28); }
+.lex-tagline-text {
+  font-family:'Crimson Pro',serif; font-size:.6rem; font-style:italic;
+  color:rgba(200,168,75,.6); letter-spacing:.18em; white-space:nowrap; text-transform:uppercase;
+}
+
+/* ── STATUS ── */
+.status-block { padding:10px 14px; border-bottom:1px solid var(--border); display:flex; flex-direction:column; gap:5px; }
+.status-row { display:flex; align-items:center; gap:7px; }
+.pulse-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px rgba(39,174,96,.7); animation:hb 2.4s infinite; flex-shrink:0; }
+@keyframes hb { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.78)} }
+.s-lbl { font-family:'JetBrains Mono',monospace; font-size:.53rem; color:var(--green); letter-spacing:.15em; }
+.model-badge {
+  font-family:'JetBrains Mono',monospace; font-size:.49rem; color:var(--muted);
+  background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:3px;
+  padding:2px 7px; letter-spacing:.07em; width:fit-content;
+}
+
+/* ── NAV ── */
+.nav-sec { padding:12px 8px 6px; flex:1; overflow-y:auto; }
+.nav-grp-lbl { font-family:'JetBrains Mono',monospace; font-size:.44rem; color:var(--muted); letter-spacing:.24em; padding:0 10px; margin-bottom:6px; margin-top:4px; }
+
+.nb {
+  display:flex; align-items:center; gap:9px; width:100%; padding:9px 12px;
+  border-radius:6px; border:none; background:none; cursor:pointer; text-align:left;
+  transition:all .18s; margin-bottom:2px; position:relative; overflow:hidden;
+}
+.nb::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(200,168,75,.08),transparent);
+  opacity:0; transition:opacity .18s;
+}
+.nb:hover::before { opacity:1; }
+.nb:hover { background:rgba(255,255,255,.035); }
+.nb.active { background:var(--gold-d); border:1px solid rgba(200,168,75,.18); }
+.nb.active::after {
+  content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
+  width:2.5px; height:55%; background:var(--gold); border-radius:0 2px 2px 0;
+}
+.ni { font-size:.84rem; width:22px; text-align:center; flex-shrink:0; }
+.nt { font-size:.75rem; color:rgba(255,255,255,.45); }
+.nb.active .nt { color:var(--gold2); font-weight:500; }
+.nb-badge {
+  margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:.43rem;
+  background:rgba(200,168,75,.15); color:var(--gold2); border:1px solid rgba(200,168,75,.25);
+  border-radius:3px; padding:2px 6px; letter-spacing:.06em;
+}
+
+/* ── KB BLOCK ── */
+.kb { padding:10px 13px; margin:0 8px 8px; background:rgba(200,168,75,.035); border:1px solid rgba(200,168,75,.1); border-radius:8px; }
+.kb-t { font-family:'JetBrains Mono',monospace; font-size:.46rem; color:var(--gold); letter-spacing:.18em; margin-bottom:7px; }
+.kb-i { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px solid var(--border); font-size:.64rem; color:var(--muted2); }
+.kb-i:last-child { border-bottom:none; }
+.kb-dot { width:5px; height:5px; border-radius:50%; background:var(--gold); opacity:.5; flex-shrink:0; }
+
+/* ── FOOTER ── */
+.sb-foot { padding:10px 13px; border-top:1px solid var(--border); }
+.wh-lbl { font-family:'JetBrains Mono',monospace; font-size:.45rem; color:var(--muted); letter-spacing:.15em; margin-bottom:4px; display:block; }
+.wh-in {
+  width:100%; background:rgba(255,255,255,.04); border:1px solid var(--border2); border-radius:5px;
+  padding:6px 9px; font-family:'JetBrains Mono',monospace; font-size:.57rem; color:var(--text); outline:none;
+  transition:border-color .15s;
+}
+.wh-in:focus { border-color:var(--gold); background:rgba(200,168,75,.05); }
+.wh-in::placeholder { color:var(--muted); }
+
+/* ═══════════════════════════════════════
+   MAIN PANELS
+═══════════════════════════════════════ */
+.panel { display:none; flex-direction:column; height:100vh; overflow:hidden; }
+.panel.active { display:flex; animation:panelIn .32s ease both; }
+@keyframes panelIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── TOPBAR ── */
+.topbar {
+  padding:13px 28px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(8,10,15,.94); backdrop-filter:blur(12px);
+  flex-shrink:0; position:relative; z-index:10;
+  animation: slideDown .4s cubic-bezier(.22,1,.36,1) 2.6s both;
+}
+@keyframes slideDown { from{transform:translateY(-100%);opacity:0} to{transform:translateY(0);opacity:1} }
+.topbar::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,168,75,.18),transparent);
+}
+.tb-title { font-family:'Cinzel',serif; font-size:.92rem; font-weight:700; color:var(--text); letter-spacing:.04em; }
+.tb-sub   { font-family:'JetBrains Mono',monospace; font-size:.46rem; color:var(--muted); letter-spacing:.12em; margin-top:2px; }
+.tb-r     { display:flex; align-items:center; gap:9px; }
+.timer-wrap {
+  display:flex; align-items:center; gap:7px;
+  background:rgba(255,255,255,.04); border:1px solid var(--border2); border-radius:6px; padding:5px 11px;
+}
+.td { font-family:'JetBrains Mono',monospace; font-size:.74rem; color:var(--gold2); letter-spacing:.06em; min-width:54px; transition:color .3s; }
+.td.run { color:#ffe070; text-shadow:0 0 12px rgba(255,230,80,.5); }
+.tl { font-family:'JetBrains Mono',monospace; font-size:.42rem; color:var(--muted); letter-spacing:.13em; }
+.clr-btn {
+  background:none; border:1px solid var(--border2); border-radius:5px; padding:5px 11px;
+  font-family:'JetBrains Mono',monospace; font-size:.52rem; color:var(--muted); cursor:pointer;
+  letter-spacing:.1em; transition:all .15s;
+}
+.clr-btn:hover { border-color:rgba(200,168,75,.4); color:var(--gold2); }
+
+/* ═══════════════════════════════════════
+   CHAT PANEL
+═══════════════════════════════════════ */
+.chat-body { flex:1; display:flex; flex-direction:column; overflow:hidden; position:relative; }
+
+/* ambient glow */
+.chat-glow {
+  position:absolute; width:700px; height:700px; border-radius:50%;
+  background:radial-gradient(ellipse, rgba(200,168,75,.028) 0%, transparent 70%);
+  bottom:-260px; right:-100px; pointer-events:none; z-index:0;
+}
+
+.msgs-wrap { flex:1; overflow-y:auto; scroll-behavior:smooth; display:flex; flex-direction:column; position:relative; z-index:1; }
+.msgs-wrap::-webkit-scrollbar { width:4px; }
+.msgs-wrap::-webkit-scrollbar-thumb { background:rgba(200,168,75,.14); border-radius:2px; }
+.msgs-inner {
+  width:100%; max-width:780px; margin:0 auto; padding:18px 24px 6px;
+  display:flex; flex-direction:column; flex:1;
+}
+
+/* ── IDLE STATE ── */
+.idle {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:0 24px 50px;
+  animation:idleIn .8s ease .1s both;
+}
+@keyframes idleIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+.idle-scales { filter:drop-shadow(0 0 28px rgba(200,168,75,.26)); animation:idleFloat 3s ease-in-out infinite; }
+@keyframes idleFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+.idle-divider { display:flex; align-items:center; gap:14px; width:100%; max-width:400px; margin:18px 0 12px; }
+.idle-divider-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(200,168,75,.45)); }
+.idle-divider-line.r { background:linear-gradient(270deg,transparent,rgba(200,168,75,.45)); }
+
+.idle-heading {
+  font-family:'Cinzel',serif; font-size:.78rem; font-weight:600; color:rgba(200,168,75,.75);
+  letter-spacing:.28em; text-transform:uppercase;
+}
+.idle-sub { font-family:'Crimson Pro',serif; font-size:.92rem; color:var(--muted2); line-height:1.7; max-width:380px; font-style:italic; margin-bottom:24px; }
+.idle-input-wrap { width:100%; max-width:680px; display:flex; flex-direction:column; gap:6px; }
+
+/* idle prompts removed */
+
+/* ── MESSAGES ── */
+.mg { display:flex; flex-direction:column; gap:2px; margin-bottom:20px; animation:msgIn .26s ease both; }
+@keyframes msgIn { from{opacity:0;transform:translateY(9px)} to{opacity:1;transform:translateY(0)} }
+.mg.user { align-items:flex-end; }
+.mg.lex  { align-items:flex-start; }
+.ms { font-family:'JetBrains Mono',monospace; font-size:.5rem; letter-spacing:.15em; margin-bottom:5px; padding:0 5px; }
+.mg.user .ms { color:var(--muted); }
+.mg.lex  .ms { color:var(--gold); }
+.mb {
+  max-width:85%; padding:14px 17px; border-radius:12px;
+  font-size:.84rem; line-height:1.74; position:relative;
+}
+.mg.user .mb {
+  background:rgba(200,168,75,.1); border:1px solid rgba(200,168,75,.22);
+  border-bottom-right-radius:3px; color:var(--text);
+}
+.mg.lex  .mb {
+  background:var(--ink3); border:1px solid var(--border2);
+  border-bottom-left-radius:3px; color:var(--text);
+}
+.mb strong { color:var(--gold2); font-weight:600; }
+.mb em { color:var(--muted2); font-style:italic; }
+.mb ul { margin:7px 0 7px 18px; }
+.mb li { margin-bottom:4px; color:var(--muted2); }
+.mb p  { margin-bottom:6px; }
+.mb p:last-child { margin-bottom:0; }
+pre  { font-family:'JetBrains Mono',monospace; font-size:.69rem; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:6px; padding:9px 12px; overflow-x:auto; white-space:pre-wrap; word-break:break-word; color:var(--muted2); margin:7px 0; }
+code { font-family:'JetBrains Mono',monospace; font-size:.75em; background:rgba(255,255,255,.06); padding:2px 5px; border-radius:3px; color:var(--gold2); }
+.ma  { display:flex; align-items:center; gap:7px; margin-top:5px; padding:0 5px; }
+.mt  { font-family:'JetBrains Mono',monospace; font-size:.46rem; color:var(--muted); }
+.ml  { font-family:'JetBrains Mono',monospace; font-size:.46rem; color:var(--gold); background:rgba(200,168,75,.09); padding:2px 7px; border-radius:3px; border:1px solid rgba(200,168,75,.17); }
+.cp-btn { background:none; border:1px solid var(--border2); border-radius:4px; padding:3px 8px; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:.46rem; color:var(--muted); letter-spacing:.08em; transition:all .15s; }
+.cp-btn:hover { border-color:rgba(200,168,75,.35); color:var(--gold2); }
+.cp-btn.ok { border-color:rgba(39,174,96,.4); color:var(--green); }
+
+/* thinking */
+.think { display:flex; align-items:center; gap:11px; padding:10px 0; animation:msgIn .28s ease both; }
+.dots span { width:6px; height:6px; border-radius:50%; background:var(--gold); display:inline-block; animation:bl 1.2s infinite; }
+.dots span:nth-child(2){animation-delay:.2s} .dots span:nth-child(3){animation-delay:.4s}
+@keyframes bl { 0%,80%,100%{opacity:.2;transform:scale(.8)} 40%{opacity:1;transform:scale(1.1)} }
+.think-lbl { font-family:'JetBrains Mono',monospace; font-size:.57rem; color:var(--gold); letter-spacing:.1em; }
+
+/* ── INPUT ZONE ── */
+.input-zone { flex-shrink:0; padding:5px 24px 18px; display:none; flex-direction:column; align-items:center; position:relative; z-index:1; }
+.input-zone.visible { display:flex; }
+.input-zone::before {
+  content:''; position:absolute; top:0; left:10%; right:10%; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,168,75,.12),transparent);
+}
+.input-inner { width:100%; max-width:780px; display:flex; flex-direction:column; gap:6px; }
+.input-wrap {
+  display:flex; align-items:flex-end; gap:10px;
+  background:var(--ink2); border:1.5px solid var(--border2); border-radius:14px;
+  padding:11px 12px 11px 18px; transition:border-color .2s, box-shadow .2s;
+}
+.input-wrap:focus-within {
+  border-color:rgba(200,168,75,.48);
+  box-shadow:0 0 0 3px rgba(200,168,75,.07), 0 0 24px rgba(200,168,75,.06);
+}
+.chat-ta {
+  flex:1; background:none; border:none; outline:none; resize:none;
+  font-family:'DM Sans',sans-serif; font-size:.86rem; color:var(--text);
+  line-height:1.6; max-height:140px; overflow-y:auto; min-height:24px;
+}
+.chat-ta::placeholder { color:var(--muted); }
+.input-foot { display:flex; align-items:center; justify-content:space-between; padding:0 3px; }
+.i-hint { font-family:'JetBrains Mono',monospace; font-size:.44rem; color:var(--muted); letter-spacing:.08em; }
+.i-cnt  { font-family:'JetBrains Mono',monospace; font-size:.44rem; color:var(--muted); }
+
+/* ═══════════════════════════════════════
+   GAVEL BUTTON
+═══════════════════════════════════════ */
+.gavel-btn {
+  width:54px; height:54px; border:none; background:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; outline:none; border-radius:8px; overflow:visible; padding:2px;
+}
+.gavel-btn:disabled { opacity:.28; cursor:not-allowed; }
+.gavel-mallet { transform-origin:20px 22px; }
+.gavel-btn.strike .gavel-mallet { animation:gavelStrike .9s ease forwards; }
+@keyframes gavelStrike {
+  0%  {transform:rotate(0deg)}
+  50% {transform:rotate(45deg)}
+  65% {transform:rotate(45deg)}
+  85% {transform:rotate(-30deg)}
+  100%{transform:rotate(0deg)}
+}
+.gavel-btn.strike .g-block-top { animation:blkFlash .9s ease forwards; }
+@keyframes blkFlash { 0%,100%{fill:#b8621a} 85%{fill:#f5c842} 97%{fill:#b8621a} }
+
+/* ═══════════════════════════════════════
+   STATEMENT CLARIFIER
+═══════════════════════════════════════ */
+.panel-scroll { flex:1; overflow-y:auto; padding:24px 28px; display:flex; flex-direction:column; gap:16px; }
+.panel-scroll::-webkit-scrollbar{width:4px}
+.panel-scroll::-webkit-scrollbar-thumb{background:rgba(200,168,75,.14);border-radius:2px}
+.panel-scroll-center { max-width:840px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:16px; }
+.panel-scroll-narrow { max-width:660px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:15px; }
+
+.psec { background:var(--ink2); border:1px solid var(--border2); border-radius:10px; overflow:hidden; }
+.psec-h {
+  padding:9px 16px; background:rgba(255,255,255,.025); border-bottom:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:.49rem; color:var(--gold); letter-spacing:.18em;
+}
+.rp-ta {
+  width:100%; background:none; border:none; outline:none; resize:none;
+  font-family:'DM Sans',sans-serif; font-size:.83rem; color:var(--text);
+  line-height:1.74; padding:14px 16px; min-height:120px;
+}
+.rp-ta::placeholder { color:var(--muted); }
+.rp-out { padding:14px 16px; font-size:.83rem; color:var(--text); line-height:1.76; min-height:80px; }
+.rp-out.empty { color:var(--muted); font-style:italic; }
+.rp-out.load { display:flex; align-items:center; gap:10px; color:var(--muted); }
+.rp-ctrl { display:flex; gap:10px; }
+.rp-btn { flex:1; padding:10px 16px; border-radius:8px; border:none; font-family:'DM Sans',sans-serif; font-size:.79rem; font-weight:600; cursor:pointer; transition:all .18s; }
+.rp-go  { background:var(--gold); color:var(--ink); }
+.rp-go:hover { background:var(--gold2); box-shadow:0 4px 14px rgba(200,168,75,.3); }
+.rp-cp  { background:rgba(255,255,255,.06); color:var(--muted2); border:1px solid var(--border2); }
+.rp-cp:hover { color:var(--text); }
+.rp-cp.ok { background:rgba(39,174,96,.1); color:var(--green); border-color:rgba(39,174,96,.28); }
+
+/* ═══════════════════════════════════════
+   LEX INGEST PANEL
+═══════════════════════════════════════ */
+.ingest-hero {
+  background:linear-gradient(135deg, rgba(200,168,75,.06) 0%, rgba(200,168,75,.02) 100%);
+  border:1px solid rgba(200,168,75,.14); border-radius:12px; padding:18px 20px;
+  display:flex; align-items:flex-start; gap:14px;
+}
+.ingest-hero-icon { font-size:1.8rem; flex-shrink:0; filter:drop-shadow(0 0 10px rgba(200,168,75,.4)); }
+.ingest-hero-title { font-family:'Cinzel',serif; font-size:1rem; font-weight:700; color:var(--gold2); letter-spacing:.04em; margin-bottom:4px; }
+.ingest-hero-sub { font-size:.75rem; color:var(--muted2); line-height:1.65; }
+
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.form-grid.full { grid-template-columns:1fr; }
+.fld { display:flex; flex-direction:column; gap:4px; }
+.fld.span2 { grid-column:1/-1; }
+.fld label { font-size:.7rem; font-weight:500; color:var(--muted2); letter-spacing:.06em; text-transform:uppercase; }
+.fld label .req { color:var(--gold); margin-left:2px; }
+.fld input, .fld select, .fld textarea {
+  background:rgba(255,255,255,.04); border:1.5px solid var(--border2); border-radius:7px;
+  padding:9px 12px; font-family:'DM Sans',sans-serif; font-size:.81rem; color:var(--text);
+  outline:none; transition:border-color .16s, box-shadow .16s; width:100%;
+}
+.fld input:focus, .fld select:focus, .fld textarea:focus {
+  border-color:var(--gold); background:rgba(200,168,75,.04);
+  box-shadow:0 0 0 3px rgba(200,168,75,.08);
+}
+.fld input::placeholder, .fld textarea::placeholder { color:var(--muted); }
+.fld select { color:var(--text); }
+.fld select option { background:var(--ink2); color:var(--text); }
+
+.ingest-btn {
+  width:100%; padding:13px; border-radius:9px; border:none;
+  background:linear-gradient(135deg, var(--gold) 0%, #d4a840 100%);
+  color:var(--ink); font-family:'Cinzel',serif; font-size:.82rem; font-weight:700;
+  letter-spacing:.08em; cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  box-shadow:0 4px 20px rgba(200,168,75,.2);
+}
+.ingest-btn:hover { background:linear-gradient(135deg,var(--gold2),var(--gold)); box-shadow:0 6px 24px rgba(200,168,75,.35); transform:translateY(-1px); }
+.ingest-btn:disabled { background:var(--ink3); color:var(--muted); box-shadow:none; transform:none; cursor:not-allowed; }
+
+.ingest-result {
+  background:var(--ink2); border:1px solid var(--border2); border-radius:10px;
+  padding:16px; font-family:'JetBrains Mono',monospace; font-size:.65rem;
+  color:var(--muted2); line-height:1.75; display:none;
+  animation:msgIn .3s ease both;
+}
+.ingest-result.ok  { border-color:rgba(39,174,96,.3); background:rgba(39,174,96,.06); color:var(--green); }
+.ingest-result.err { border-color:rgba(192,57,43,.3); background:rgba(192,57,43,.06); color:#e88; }
+.ingest-result.warn{ border-color:rgba(200,168,75,.3); background:rgba(200,168,75,.06); color:var(--gold2); }
+
+/* ── DB LOG LIST ── */
+.db-row {
+  display:flex; align-items:center; gap:12px; background:var(--ink2);
+  border:1px solid var(--border2); border-radius:8px; padding:11px 15px;
+}
+.db-icon { font-size:1.1rem; flex-shrink:0; }
+.db-info { flex:1; min-width:0; }
+.db-name { font-size:.78rem; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.db-meta { font-family:'JetBrains Mono',monospace; font-size:.5rem; color:var(--muted); margin-top:2px; }
+.db-status { font-family:'JetBrains Mono',monospace; font-size:.49rem; padding:3px 8px; border-radius:3px; flex-shrink:0; background:rgba(39,174,96,.1); color:var(--green); border:1px solid rgba(39,174,96,.22); }
+
+/* ═══════════════════════════════════════
+   SETTINGS
+═══════════════════════════════════════ */
+.sc { background:var(--ink2); border:1px solid var(--border2); border-radius:10px; overflow:hidden; }
+.sc-h { padding:10px 16px; background:rgba(255,255,255,.025); border-bottom:1px solid var(--border); font-family:'JetBrains Mono',monospace; font-size:.49rem; color:var(--gold); letter-spacing:.18em; }
+.sc-b { padding:15px 16px; display:flex; flex-direction:column; gap:12px; }
+.sf { display:flex; flex-direction:column; gap:4px; }
+.sl { font-size:.72rem; font-weight:500; color:var(--muted2); }
+.si {
+  background:rgba(255,255,255,.04); border:1px solid var(--border2); border-radius:6px;
+  padding:8px 11px; font-family:'JetBrains Mono',monospace; font-size:.69rem; color:var(--text);
+  outline:none; transition:border-color .15s; width:100%;
+}
+.si:focus { border-color:var(--gold); background:rgba(200,168,75,.04); }
+.sh { font-size:.62rem; color:var(--muted); line-height:1.55; }
+.ss-btn {
+  background:var(--gold); color:var(--ink); border:none; border-radius:7px;
+  padding:9px 18px; font-family:'DM Sans',sans-serif; font-size:.8rem; font-weight:700;
+  cursor:pointer; transition:all .15s;
+}
+.ss-btn:hover { background:var(--gold2); box-shadow:0 4px 14px rgba(200,168,75,.3); }
+.sv-t { font-size:.7rem; color:var(--green); margin-top:4px; display:none; }
+
+/* ── PROGRESS SPINNER ── */
+.spinner { width:15px; height:15px; border:2px solid rgba(10,12,18,.3); border-top-color:var(--ink); border-radius:50%; animation:spin .7s linear infinite; flex-shrink:0; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ── MOBILE ── */
+@media(max-width:760px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{display:none;position:fixed;inset:0;z-index:500;width:268px}
+  .sidebar.open{display:flex}
+  .mob-bar{display:flex!important;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0}
+  .mob-logo{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:900;color:var(--gold)}
+  .mob-m{background:none;border:1px solid var(--border2);border-radius:5px;padding:5px 9px;color:var(--muted2);cursor:pointer;font-size:.87rem}
+  .mb{max-width:92%}
+  .msgs-inner{padding:14px 13px 5px}
+  .input-zone{padding:10px 13px 15px}
+}
+.mob-bar{display:none}
+.sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:499}
+.sb-ov.open{display:block}
+</style>
+</head>
+<body>
+
+<!-- ══════════ ENTRANCE CURTAIN ══════════ -->
+<div id="curtain">
+  <div class="curtain-logo">
+    <svg viewBox="0 0 300 340" xmlns="http://www.w3.org/2000/svg" width="100" height="113" overflow="visible">
+<defs><style>
+  .lj  { stroke:#c8a84b; stroke-width:2.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .ljf { stroke:#c8a84b; stroke-width:2.2; fill:rgba(200,168,75,0.09); stroke-linecap:round; stroke-linejoin:round; }
+  .ljb { stroke:#c8a84b; stroke-width:3.4; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .ljB { stroke:#c8a84b; stroke-width:2.8; fill:rgba(200,168,75,0.22); stroke-linecap:round; stroke-linejoin:round; }
+      .lj-L{} .lj-R{}
+</style></defs>
+
+<!-- ══ PEDESTAL ══ -->
+<rect class="lj"  x="108" y="298" width="84"  height="10" rx="2"/>
+<rect class="ljf" x="88"  y="308" width="124" height="13" rx="3"/>
+<line class="ljb" x1="76" y1="321" x2="224" y2="321"/>
+
+<!-- ══ LEFT LAUREL ══ -->
+<path class="lj" d="M 106,296 Q 90,280 75,262 Q 59,243 49,221 Q 43,205 47,190"/>
+<path class="lj" d="M 95,285 Q 78,277 72,262 Q 84,259 92,273 Z"/>
+<path class="lj" d="M 82,268 Q 65,261 60,246 Q 72,243 79,257 Z"/>
+<path class="lj" d="M 70,249 Q 54,241 51,226 Q 63,225 68,239 Z"/>
+<path class="lj" d="M 60,228 Q 47,219 48,204 Q 59,206 60,220 Z"/>
+<path class="lj" d="M 90,279 Q 84,262 93,251 Q 99,259 94,273 Z"/>
+<path class="lj" d="M 77,261 Q 72,244 82,233 Q 87,242 82,256 Z"/>
+<path class="lj" d="M 65,241 Q 62,224 73,214 Q 78,222 72,236 Z"/>
+<path class="lj" d="M 55,220 Q 54,203 66,195 Q 70,204 63,217 Z"/>
+
+<!-- ══ RIGHT LAUREL ══ -->
+<path class="lj" d="M 194,296 Q 210,280 225,262 Q 241,243 251,221 Q 257,205 253,190"/>
+<path class="lj" d="M 205,285 Q 222,277 228,262 Q 216,259 208,273 Z"/>
+<path class="lj" d="M 218,268 Q 235,261 240,246 Q 228,243 221,257 Z"/>
+<path class="lj" d="M 230,249 Q 246,241 249,226 Q 237,225 232,239 Z"/>
+<path class="lj" d="M 240,228 Q 253,219 252,204 Q 241,206 240,220 Z"/>
+<path class="lj" d="M 210,279 Q 216,262 207,251 Q 201,259 206,273 Z"/>
+<path class="lj" d="M 223,261 Q 228,244 218,233 Q 213,242 218,256 Z"/>
+<path class="lj" d="M 235,241 Q 238,224 227,214 Q 222,222 228,236 Z"/>
+<path class="lj" d="M 245,220 Q 246,203 234,195 Q 230,204 237,217 Z"/>
+
+<!-- ══ ROBE + HIPS (lady silhouette) ══
+     waist  128–172 (44px)  at y=188
+     hips   108–192 (84px)  at y=248
+     hem    116–184 (68px)  at y=298  -->
+<path class="ljf" d="
+  M 128,188
+  Q 116,198 112,216
+  Q 108,232 108,250
+  Q 108,270 112,284
+  Q 118,300 134,304
+  L 166,304
+  Q 182,300 188,284
+  Q 192,270 192,250
+  Q 192,232 188,216
+  Q 184,198 172,188
+  Z"/>
+<!-- waist-to-hip curve accent -->
+<path class="lj" d="M 116,208 Q 124,220 128,240 Q 129,256 126,272"/>
+<path class="lj" d="M 184,208 Q 176,220 172,240 Q 171,256 174,272"/>
+<!-- centre robe folds -->
+<path class="lj" d="M 138,192 Q 134,224 133,256 Q 133,276 135,300"/>
+<path class="lj" d="M 150,192 Q 150,226 150,258 Q 150,278 150,302"/>
+<path class="lj" d="M 162,192 Q 166,224 167,256 Q 167,276 165,300"/>
+<path class="lj" d="M 128,194 Q 122,228 121,260 Q 121,280 124,300"/>
+<path class="lj" d="M 172,194 Q 178,228 179,260 Q 179,280 176,300"/>
+<!-- draped overlay -->
+<path class="lj" d="M 158,200 Q 166,226 170,254 Q 174,272 172,292 Q 170,302 163,305"/>
+<!-- hem gather -->
+<path class="lj" d="M 115,294 Q 132,290 150,291 Q 168,290 185,294"/>
+
+<!-- ══ BELT ══ -->
+<rect class="ljB" x="126" y="179" width="48" height="12" rx="3"/>
+<line class="lj"  x1="130" y1="183" x2="170" y2="183"/>
+<line class="lj"  x1="130" y1="187" x2="170" y2="187"/>
+
+<!-- ══ TORSO (hourglass: wide bust, narrow waist) ══ -->
+<path class="ljf" d="
+  M 126,122
+  Q 112,130 110,146
+  Q 108,160 112,178
+  L 188,178
+  Q 192,160 190,146
+  Q 188,130 174,122
+  Z"/>
+<!-- bust curve left -->
+<path class="lj" d="M 116,142 Q 130,154 148,151"/>
+<!-- bust curve right -->
+<path class="lj" d="M 184,142 Q 170,154 152,151"/>
+<!-- centre drape -->
+<path class="lj" d="M 150,128 Q 150,148 150,172"/>
+<!-- neckline V -->
+<path class="lj" d="M 134,122 Q 141,136 150,140 Q 159,136 166,122"/>
+<!-- off-shoulder drape L -->
+<path class="lj" d="M 110,134 Q 101,130 95,134 Q 104,141 112,139"/>
+<!-- off-shoulder drape R -->
+<path class="lj" d="M 190,134 Q 199,130 205,134 Q 196,141 188,139"/>
+<!-- fabric folds -->
+<path class="lj" d="M 128,130 Q 136,150 137,172"/>
+<path class="lj" d="M 172,130 Q 164,150 163,172"/>
+<path class="lj" d="M 140,124 Q 143,146 144,170"/>
+<path class="lj" d="M 160,124 Q 157,146 156,170"/>
+
+<!-- ══ NECK ══ -->
+<path class="ljf" d="M 143,104 L 143,122 L 157,122 L 157,104 Z"/>
+
+<!-- ══ HEAD + HAIR ══ -->
+<!-- face — elegant oval -->
+<ellipse class="ljf" cx="150" cy="82" rx="16" ry="20"/>
+<!-- hair top -->
+<path class="lj" d="M 136,68 Q 143,60 150,58 Q 157,60 164,68"/>
+<!-- hair left flowing wave -->
+<path class="lj" d="M 135,70 Q 129,84 130,100 Q 132,114 140,122"/>
+<path class="lj" d="M 133,78 Q 128,94 131,110"/>
+<!-- hair right flowing wave -->
+<path class="lj" d="M 165,70 Q 171,84 170,100 Q 168,114 160,122"/>
+<path class="lj" d="M 167,78 Q 172,94 169,110"/>
+<!-- soft chin -->
+<path class="lj" d="M 141,98 Q 150,104 159,98"/>
+
+<!-- ══ BLINDFOLD ══ -->
+<!-- main band across eyes -->
+<path class="ljB" d="M 132,79 Q 141,76 150,76 Q 159,76 168,79 Q 170,82 168,87 Q 159,90 150,90 Q 141,90 132,87 Q 130,84 132,79 Z"/>
+<!-- fold crease across band -->
+<line class="lj" x1="135" y1="83" x2="165" y2="83"/>
+<!-- knot tails on right side, flowing back into hair -->
+<path class="lj" d="M 166,82 Q 174,78 180,82 Q 176,88 168,87"/>
+<path class="lj" d="M 166,84 Q 172,90 175,97"/>
+
+<!-- ══════════════════════════════════
+     ANIMATED LEFT GROUP
+     pivot: left shoulder (122, 128)
+     arm stretches to hand ~(62,96)
+     ══════════════════════════════════ -->
+<g class="lj-L">
+  <!-- arm sleeve (two edge lines + fill) -->
+  <path class="ljf" d="M 122,124 Q 104,116 84,108 Q 72,102 62,96 L 62,106 Q 72,112 84,118 Q 104,126 120,134 Z"/>
+  <path class="lj"  d="M 122,124 Q 104,116 84,108 Q 72,102 62,96"/>
+  <path class="lj"  d="M 120,134 Q 104,126 84,118 Q 72,112 62,106"/>
+
+  <!-- orb + ring at hand tip -->
+  <circle class="lj"  cx="62" cy="92"  r="7"/>
+  <circle class="lj"  cx="62" cy="106" r="5"/>
+  <!-- candle rod above -->
+  <line   class="lj"  x1="62" y1="85" x2="62" y2="70"/>
+  <!-- flame -->
+  <path   class="ljf" d="M 59,70 Q 62,60 65,70 Q 62,67 59,70 Z"/>
+
+  <!-- chains from lower ring to pan bar -->
+  <line class="lj" x1="54"  y1="111" x2="32"  y2="178"/>
+  <line class="lj" x1="62"  y1="111" x2="62"  y2="178"/>
+  <line class="lj" x1="70"  y1="111" x2="92"  y2="178"/>
+  <!-- pan bar -->
+  <line class="ljb" x1="30"  y1="178" x2="94"  y2="178"/>
+  <!-- pan bowl -->
+  <path class="ljf" d="M 32,178 Q 28,194 30,208 Q 38,226 62,229 Q 86,226 94,208 Q 96,194 92,178 Z"/>
+  <!-- rim highlight -->
+  <path class="lj"  d="M 35,184 Q 62,190 89,184"/>
+</g>
+
+<!-- ══════════════════════════════════
+     ANIMATED RIGHT GROUP
+     pivot: right shoulder (178, 128)
+     arm stretches to hand ~(238,96)
+     ══════════════════════════════════ -->
+<g class="lj-R">
+  <!-- arm sleeve -->
+  <path class="ljf" d="M 178,124 Q 196,116 216,108 Q 228,102 238,96 L 238,106 Q 228,112 216,118 Q 196,126 180,134 Z"/>
+  <path class="lj"  d="M 178,124 Q 196,116 216,108 Q 228,102 238,96"/>
+  <path class="lj"  d="M 180,134 Q 196,126 216,118 Q 228,112 238,106"/>
+
+  <!-- orb + ring -->
+  <circle class="lj"  cx="238" cy="92"  r="7"/>
+  <circle class="lj"  cx="238" cy="106" r="5"/>
+  <!-- candle rod -->
+  <line   class="lj"  x1="238" y1="85" x2="238" y2="70"/>
+  <!-- flame -->
+  <path   class="ljf" d="M 235,70 Q 238,60 241,70 Q 238,67 235,70 Z"/>
+
+  <!-- chains -->
+  <line class="lj" x1="230" y1="111" x2="208" y2="178"/>
+  <line class="lj" x1="238" y1="111" x2="238" y2="178"/>
+  <line class="lj" x1="246" y1="111" x2="268" y2="178"/>
+  <!-- pan bar -->
+  <line class="ljb" x1="206" y1="178" x2="270" y2="178"/>
+  <!-- pan bowl -->
+  <path class="ljf" d="M 208,178 Q 204,194 206,208 Q 214,226 238,229 Q 262,226 270,208 Q 272,194 268,178 Z"/>
+  <!-- rim -->
+  <path class="lj"  d="M 211,184 Q 238,190 265,184"/>
+</g>
+
+</svg>
+  </div>
+  <div class="curtain-word">LEX</div>
+  <div class="curtain-line"></div>
+  <div class="curtain-sub">Philippine Legal Research Assistant</div>
+</div>
+
+<div class="sb-ov" id="sb-ov" onclick="closeSB()"></div>
+<div class="mob-bar" id="mob-bar">
+  <div class="mob-logo">LEX</div>
+  <button class="mob-m" onclick="openSB()">☰</button>
+</div>
+
+<div class="shell">
+
+<!-- ══════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════ -->
+<div class="sidebar" id="sidebar">
+
+  <div class="logo-wrap">
+    <svg viewBox="0 0 300 340" xmlns="http://www.w3.org/2000/svg" width="80" height="91" overflow="visible">
+<defs><style>
+  .lj  { stroke:#c8a84b; stroke-width:2.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .ljf { stroke:#c8a84b; stroke-width:2.2; fill:rgba(200,168,75,0.09); stroke-linecap:round; stroke-linejoin:round; }
+  .ljb { stroke:#c8a84b; stroke-width:3.4; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .ljB { stroke:#c8a84b; stroke-width:2.8; fill:rgba(200,168,75,0.22); stroke-linecap:round; stroke-linejoin:round; }
+  
+    .lj-L { transform-origin: 122px 128px; animation: balL 7s ease-in-out infinite; }
+    .lj-R { transform-origin: 178px 128px; animation: balR 7s ease-in-out infinite; }
+    @keyframes balL {
+      0%,100% { transform: rotate(0deg);  }
+      50%     { transform: rotate(-7deg); }
+    }
+    @keyframes balR {
+      0%,100% { transform: rotate(0deg); }
+      50%     { transform: rotate(7deg); }
+    }
+
+</style></defs>
+
+<!-- ══ PEDESTAL ══ -->
+<rect class="lj"  x="108" y="298" width="84"  height="10" rx="2"/>
+<rect class="ljf" x="88"  y="308" width="124" height="13" rx="3"/>
+<line class="ljb" x1="76" y1="321" x2="224" y2="321"/>
+
+<!-- ══ LEFT LAUREL ══ -->
+<path class="lj" d="M 106,296 Q 90,280 75,262 Q 59,243 49,221 Q 43,205 47,190"/>
+<path class="lj" d="M 95,285 Q 78,277 72,262 Q 84,259 92,273 Z"/>
+<path class="lj" d="M 82,268 Q 65,261 60,246 Q 72,243 79,257 Z"/>
+<path class="lj" d="M 70,249 Q 54,241 51,226 Q 63,225 68,239 Z"/>
+<path class="lj" d="M 60,228 Q 47,219 48,204 Q 59,206 60,220 Z"/>
+<path class="lj" d="M 90,279 Q 84,262 93,251 Q 99,259 94,273 Z"/>
+<path class="lj" d="M 77,261 Q 72,244 82,233 Q 87,242 82,256 Z"/>
+<path class="lj" d="M 65,241 Q 62,224 73,214 Q 78,222 72,236 Z"/>
+<path class="lj" d="M 55,220 Q 54,203 66,195 Q 70,204 63,217 Z"/>
+
+<!-- ══ RIGHT LAUREL ══ -->
+<path class="lj" d="M 194,296 Q 210,280 225,262 Q 241,243 251,221 Q 257,205 253,190"/>
+<path class="lj" d="M 205,285 Q 222,277 228,262 Q 216,259 208,273 Z"/>
+<path class="lj" d="M 218,268 Q 235,261 240,246 Q 228,243 221,257 Z"/>
+<path class="lj" d="M 230,249 Q 246,241 249,226 Q 237,225 232,239 Z"/>
+<path class="lj" d="M 240,228 Q 253,219 252,204 Q 241,206 240,220 Z"/>
+<path class="lj" d="M 210,279 Q 216,262 207,251 Q 201,259 206,273 Z"/>
+<path class="lj" d="M 223,261 Q 228,244 218,233 Q 213,242 218,256 Z"/>
+<path class="lj" d="M 235,241 Q 238,224 227,214 Q 222,222 228,236 Z"/>
+<path class="lj" d="M 245,220 Q 246,203 234,195 Q 230,204 237,217 Z"/>
+
+<!-- ══ ROBE + HIPS (lady silhouette) ══
+     waist  128–172 (44px)  at y=188
+     hips   108–192 (84px)  at y=248
+     hem    116–184 (68px)  at y=298  -->
+<path class="ljf" d="
+  M 128,188
+  Q 116,198 112,216
+  Q 108,232 108,250
+  Q 108,270 112,284
+  Q 118,300 134,304
+  L 166,304
+  Q 182,300 188,284
+  Q 192,270 192,250
+  Q 192,232 188,216
+  Q 184,198 172,188
+  Z"/>
+<!-- waist-to-hip curve accent -->
+<path class="lj" d="M 116,208 Q 124,220 128,240 Q 129,256 126,272"/>
+<path class="lj" d="M 184,208 Q 176,220 172,240 Q 171,256 174,272"/>
+<!-- centre robe folds -->
+<path class="lj" d="M 138,192 Q 134,224 133,256 Q 133,276 135,300"/>
+<path class="lj" d="M 150,192 Q 150,226 150,258 Q 150,278 150,302"/>
+<path class="lj" d="M 162,192 Q 166,224 167,256 Q 167,276 165,300"/>
+<path class="lj" d="M 128,194 Q 122,228 121,260 Q 121,280 124,300"/>
+<path class="lj" d="M 172,194 Q 178,228 179,260 Q 179,280 176,300"/>
+<!-- draped overlay -->
+<path class="lj" d="M 158,200 Q 166,226 170,254 Q 174,272 172,292 Q 170,302 163,305"/>
+<!-- hem gather -->
+<path class="lj" d="M 115,294 Q 132,290 150,291 Q 168,290 185,294"/>
+
+<!-- ══ BELT ══ -->
+<rect class="ljB" x="126" y="179" width="48" height="12" rx="3"/>
+<line class="lj"  x1="130" y1="183" x2="170" y2="183"/>
+<line class="lj"  x1="130" y1="187" x2="170" y2="187"/>
+
+<!-- ══ TORSO (hourglass: wide bust, narrow waist) ══ -->
+<path class="ljf" d="
+  M 126,122
+  Q 112,130 110,146
+  Q 108,160 112,178
+  L 188,178
+  Q 192,160 190,146
+  Q 188,130 174,122
+  Z"/>
+<!-- bust curve left -->
+<path class="lj" d="M 116,142 Q 130,154 148,151"/>
+<!-- bust curve right -->
+<path class="lj" d="M 184,142 Q 170,154 152,151"/>
+<!-- centre drape -->
+<path class="lj" d="M 150,128 Q 150,148 150,172"/>
+<!-- neckline V -->
+<path class="lj" d="M 134,122 Q 141,136 150,140 Q 159,136 166,122"/>
+<!-- off-shoulder drape L -->
+<path class="lj" d="M 110,134 Q 101,130 95,134 Q 104,141 112,139"/>
+<!-- off-shoulder drape R -->
+<path class="lj" d="M 190,134 Q 199,130 205,134 Q 196,141 188,139"/>
+<!-- fabric folds -->
+<path class="lj" d="M 128,130 Q 136,150 137,172"/>
+<path class="lj" d="M 172,130 Q 164,150 163,172"/>
+<path class="lj" d="M 140,124 Q 143,146 144,170"/>
+<path class="lj" d="M 160,124 Q 157,146 156,170"/>
+
+<!-- ══ NECK ══ -->
+<path class="ljf" d="M 143,104 L 143,122 L 157,122 L 157,104 Z"/>
+
+<!-- ══ HEAD + HAIR ══ -->
+<!-- face — elegant oval -->
+<ellipse class="ljf" cx="150" cy="82" rx="16" ry="20"/>
+<!-- hair top -->
+<path class="lj" d="M 136,68 Q 143,60 150,58 Q 157,60 164,68"/>
+<!-- hair left flowing wave -->
+<path class="lj" d="M 135,70 Q 129,84 130,100 Q 132,114 140,122"/>
+<path class="lj" d="M 133,78 Q 128,94 131,110"/>
+<!-- hair right flowing wave -->
+<path class="lj" d="M 165,70 Q 171,84 170,100 Q 168,114 160,122"/>
+<path class="lj" d="M 167,78 Q 172,94 169,110"/>
+<!-- soft chin -->
+<path class="lj" d="M 141,98 Q 150,104 159,98"/>
+
+<!-- ══ BLINDFOLD ══ -->
+<!-- main band across eyes -->
+<path class="ljB" d="M 132,79 Q 141,76 150,76 Q 159,76 168,79 Q 170,82 168,87 Q 159,90 150,90 Q 141,90 132,87 Q 130,84 132,79 Z"/>
+<!-- fold crease across band -->
+<line class="lj" x1="135" y1="83" x2="165" y2="83"/>
+<!-- knot tails on right side, flowing back into hair -->
+<path class="lj" d="M 166,82 Q 174,78 180,82 Q 176,88 168,87"/>
+<path class="lj" d="M 166,84 Q 172,90 175,97"/>
+
+<!-- ══════════════════════════════════
+     ANIMATED LEFT GROUP
+     pivot: left shoulder (122, 128)
+     arm stretches to hand ~(62,96)
+     ══════════════════════════════════ -->
+<g class="lj-L">
+  <!-- arm sleeve (two edge lines + fill) -->
+  <path class="ljf" d="M 122,124 Q 104,116 84,108 Q 72,102 62,96 L 62,106 Q 72,112 84,118 Q 104,126 120,134 Z"/>
+  <path class="lj"  d="M 122,124 Q 104,116 84,108 Q 72,102 62,96"/>
+  <path class="lj"  d="M 120,134 Q 104,126 84,118 Q 72,112 62,106"/>
+
+  <!-- orb + ring at hand tip -->
+  <circle class="lj"  cx="62" cy="92"  r="7"/>
+  <circle class="lj"  cx="62" cy="106" r="5"/>
+  <!-- candle rod above -->
+  <line   class="lj"  x1="62" y1="85" x2="62" y2="70"/>
+  <!-- flame -->
+  <path   class="ljf" d="M 59,70 Q 62,60 65,70 Q 62,67 59,70 Z"/>
+
+  <!-- chains from lower ring to pan bar -->
+  <line class="lj" x1="54"  y1="111" x2="32"  y2="178"/>
+  <line class="lj" x1="62"  y1="111" x2="62"  y2="178"/>
+  <line class="lj" x1="70"  y1="111" x2="92"  y2="178"/>
+  <!-- pan bar -->
+  <line class="ljb" x1="30"  y1="178" x2="94"  y2="178"/>
+  <!-- pan bowl -->
+  <path class="ljf" d="M 32,178 Q 28,194 30,208 Q 38,226 62,229 Q 86,226 94,208 Q 96,194 92,178 Z"/>
+  <!-- rim highlight -->
+  <path class="lj"  d="M 35,184 Q 62,190 89,184"/>
+</g>
+
+<!-- ══════════════════════════════════
+     ANIMATED RIGHT GROUP
+     pivot: right shoulder (178, 128)
+     arm stretches to hand ~(238,96)
+     ══════════════════════════════════ -->
+<g class="lj-R">
+  <!-- arm sleeve -->
+  <path class="ljf" d="M 178,124 Q 196,116 216,108 Q 228,102 238,96 L 238,106 Q 228,112 216,118 Q 196,126 180,134 Z"/>
+  <path class="lj"  d="M 178,124 Q 196,116 216,108 Q 228,102 238,96"/>
+  <path class="lj"  d="M 180,134 Q 196,126 216,118 Q 228,112 238,106"/>
+
+  <!-- orb + ring -->
+  <circle class="lj"  cx="238" cy="92"  r="7"/>
+  <circle class="lj"  cx="238" cy="106" r="5"/>
+  <!-- candle rod -->
+  <line   class="lj"  x1="238" y1="85" x2="238" y2="70"/>
+  <!-- flame -->
+  <path   class="ljf" d="M 235,70 Q 238,60 241,70 Q 238,67 235,70 Z"/>
+
+  <!-- chains -->
+  <line class="lj" x1="230" y1="111" x2="208" y2="178"/>
+  <line class="lj" x1="238" y1="111" x2="238" y2="178"/>
+  <line class="lj" x1="246" y1="111" x2="268" y2="178"/>
+  <!-- pan bar -->
+  <line class="ljb" x1="206" y1="178" x2="270" y2="178"/>
+  <!-- pan bowl -->
+  <path class="ljf" d="M 208,178 Q 204,194 206,208 Q 214,226 238,229 Q 262,226 270,208 Q 272,194 268,178 Z"/>
+  <!-- rim -->
+  <path class="lj"  d="M 211,184 Q 238,190 265,184"/>
+</g>
+
+</svg>
+    <div class="lex-word">LEX</div>
+    <div class="lex-tagline">
+      <div class="lex-tagline-line"></div>
+      <div class="lex-tagline-text">Legal Research AI</div>
+      <div class="lex-tagline-line r"></div>
+    </div>
+  </div>
+
+  <div class="status-block">
+    <div class="status-row">
+      <div class="pulse-dot"></div>
+      <span class="s-lbl">PIPELINE ACTIVE</span>
+    </div>
+    <div class="model-badge">llama-3.3-70b-versatile · Groq</div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-grp-lbl">// WORKSPACE</div>
+    <button class="nb active" onclick="sp('chat',this)">
+      <div class="ni">⚖️</div><span class="nt">Legal Research Chat</span>
+    </button>
+    <button class="nb" onclick="sp('clarifier',this)">
+      <div class="ni">✍️</div><span class="nt">Statement Clarifier</span>
+    </button>
+    <button class="nb" onclick="sp('ingest',this)">
+      <div class="ni">📥</div><span class="nt">LEX Ingest</span>
+      <span class="nb-badge">NEW</span>
+    </button>
+    <button class="nb" onclick="sp('settings',this)">
+      <div class="ni">⚙️</div><span class="nt">Configuration</span>
+    </button>
+
+    <div class="nav-grp-lbl" style="margin-top:12px">// KNOWLEDGE BASE</div>
+  </div>
+
+  <div class="kb">
+    <div class="kb-t">// LOADED DOCUMENTS</div>
+    <div class="kb-i"><div class="kb-dot"></div>1987 Philippine Constitution</div>
+    <div class="kb-i"><div class="kb-dot"></div>Labor Code of the Philippines</div>
+    <div class="kb-i"><div class="kb-dot"></div>Revised Penal Code</div>
+    <div class="kb-i"><div class="kb-dot"></div>Local Government Code Bk. 3</div>
+    <div class="kb-i" style="color:var(--muted);font-style:italic;font-size:.61rem;border:none;padding-top:5px">+ more in database</div>
+  </div>
+
+  <div class="sb-foot">
+    <span class="wh-lbl">// ACTIVE WEBHOOK</span>
+    <input type="text" class="wh-in" id="sb-wh" placeholder="https://n8n…/webhook/paralegal">
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     CHAT PANEL
+══════════════════════════════════════ -->
+<div class="panel active" id="panel-chat">
+  <div class="topbar">
+    <div>
+      <div class="tb-title">Legal Research Chat</div>
+      <div class="tb-sub">PHILIPPINE LAW DATABASE · CASE RESEARCH · LEGAL CITATIONS</div>
+    </div>
+    <div class="tb-r">
+      <div class="timer-wrap">
+        <span style="font-size:.65rem">⏱</span>
+        <div>
+          <div class="td" id="td">0.000s</div>
+          <div class="tl">RESPONSE TIME</div>
+        </div>
+      </div>
+      <button class="clr-btn" onclick="clrChat()">CLEAR</button>
+    </div>
+  </div>
+
+  <div class="chat-body">
+    <div class="chat-glow"></div>
+    <div class="msgs-wrap" id="msgs-wrap">
+      <div class="msgs-inner" id="msgs-inner">
+        <div class="idle" id="idle">
+          <div class="idle-scales">
+            <svg viewBox="0 0 300 340" xmlns="http://www.w3.org/2000/svg" width="150" height="170" overflow="visible">
+<defs><style>
+  .lj  { stroke:#c8a84b; stroke-width:2.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .ljf { stroke:#c8a84b; stroke-width:2.2; fill:rgba(200,168,75,0.09); stroke-linecap:round; stroke-linejoin:round; }
+  .ljb { stroke:#c8a84b; stroke-width:3.4; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .ljB { stroke:#c8a84b; stroke-width:2.8; fill:rgba(200,168,75,0.22); stroke-linecap:round; stroke-linejoin:round; }
+  
+    .lj-L { transform-origin: 122px 128px; animation: balL 7s ease-in-out infinite; }
+    .lj-R { transform-origin: 178px 128px; animation: balR 7s ease-in-out infinite; }
+    @keyframes balL {
+      0%,100% { transform: rotate(0deg);  }
+      50%     { transform: rotate(-7deg); }
+    }
+    @keyframes balR {
+      0%,100% { transform: rotate(0deg); }
+      50%     { transform: rotate(7deg); }
+    }
+
+</style></defs>
+
+<!-- ══ PEDESTAL ══ -->
+<rect class="lj"  x="108" y="298" width="84"  height="10" rx="2"/>
+<rect class="ljf" x="88"  y="308" width="124" height="13" rx="3"/>
+<line class="ljb" x1="76" y1="321" x2="224" y2="321"/>
+
+<!-- ══ LEFT LAUREL ══ -->
+<path class="lj" d="M 106,296 Q 90,280 75,262 Q 59,243 49,221 Q 43,205 47,190"/>
+<path class="lj" d="M 95,285 Q 78,277 72,262 Q 84,259 92,273 Z"/>
+<path class="lj" d="M 82,268 Q 65,261 60,246 Q 72,243 79,257 Z"/>
+<path class="lj" d="M 70,249 Q 54,241 51,226 Q 63,225 68,239 Z"/>
+<path class="lj" d="M 60,228 Q 47,219 48,204 Q 59,206 60,220 Z"/>
+<path class="lj" d="M 90,279 Q 84,262 93,251 Q 99,259 94,273 Z"/>
+<path class="lj" d="M 77,261 Q 72,244 82,233 Q 87,242 82,256 Z"/>
+<path class="lj" d="M 65,241 Q 62,224 73,214 Q 78,222 72,236 Z"/>
+<path class="lj" d="M 55,220 Q 54,203 66,195 Q 70,204 63,217 Z"/>
+
+<!-- ══ RIGHT LAUREL ══ -->
+<path class="lj" d="M 194,296 Q 210,280 225,262 Q 241,243 251,221 Q 257,205 253,190"/>
+<path class="lj" d="M 205,285 Q 222,277 228,262 Q 216,259 208,273 Z"/>
+<path class="lj" d="M 218,268 Q 235,261 240,246 Q 228,243 221,257 Z"/>
+<path class="lj" d="M 230,249 Q 246,241 249,226 Q 237,225 232,239 Z"/>
+<path class="lj" d="M 240,228 Q 253,219 252,204 Q 241,206 240,220 Z"/>
+<path class="lj" d="M 210,279 Q 216,262 207,251 Q 201,259 206,273 Z"/>
+<path class="lj" d="M 223,261 Q 228,244 218,233 Q 213,242 218,256 Z"/>
+<path class="lj" d="M 235,241 Q 238,224 227,214 Q 222,222 228,236 Z"/>
+<path class="lj" d="M 245,220 Q 246,203 234,195 Q 230,204 237,217 Z"/>
+
+<!-- ══ ROBE + HIPS (lady silhouette) ══
+     waist  128–172 (44px)  at y=188
+     hips   108–192 (84px)  at y=248
+     hem    116–184 (68px)  at y=298  -->
+<path class="ljf" d="
+  M 128,188
+  Q 116,198 112,216
+  Q 108,232 108,250
+  Q 108,270 112,284
+  Q 118,300 134,304
+  L 166,304
+  Q 182,300 188,284
+  Q 192,270 192,250
+  Q 192,232 188,216
+  Q 184,198 172,188
+  Z"/>
+<!-- waist-to-hip curve accent -->
+<path class="lj" d="M 116,208 Q 124,220 128,240 Q 129,256 126,272"/>
+<path class="lj" d="M 184,208 Q 176,220 172,240 Q 171,256 174,272"/>
+<!-- centre robe folds -->
+<path class="lj" d="M 138,192 Q 134,224 133,256 Q 133,276 135,300"/>
+<path class="lj" d="M 150,192 Q 150,226 150,258 Q 150,278 150,302"/>
+<path class="lj" d="M 162,192 Q 166,224 167,256 Q 167,276 165,300"/>
+<path class="lj" d="M 128,194 Q 122,228 121,260 Q 121,280 124,300"/>
+<path class="lj" d="M 172,194 Q 178,228 179,260 Q 179,280 176,300"/>
+<!-- draped overlay -->
+<path class="lj" d="M 158,200 Q 166,226 170,254 Q 174,272 172,292 Q 170,302 163,305"/>
+<!-- hem gather -->
+<path class="lj" d="M 115,294 Q 132,290 150,291 Q 168,290 185,294"/>
+
+<!-- ══ BELT ══ -->
+<rect class="ljB" x="126" y="179" width="48" height="12" rx="3"/>
+<line class="lj"  x1="130" y1="183" x2="170" y2="183"/>
+<line class="lj"  x1="130" y1="187" x2="170" y2="187"/>
+
+<!-- ══ TORSO (hourglass: wide bust, narrow waist) ══ -->
+<path class="ljf" d="
+  M 126,122
+  Q 112,130 110,146
+  Q 108,160 112,178
+  L 188,178
+  Q 192,160 190,146
+  Q 188,130 174,122
+  Z"/>
+<!-- bust curve left -->
+<path class="lj" d="M 116,142 Q 130,154 148,151"/>
+<!-- bust curve right -->
+<path class="lj" d="M 184,142 Q 170,154 152,151"/>
+<!-- centre drape -->
+<path class="lj" d="M 150,128 Q 150,148 150,172"/>
+<!-- neckline V -->
+<path class="lj" d="M 134,122 Q 141,136 150,140 Q 159,136 166,122"/>
+<!-- off-shoulder drape L -->
+<path class="lj" d="M 110,134 Q 101,130 95,134 Q 104,141 112,139"/>
+<!-- off-shoulder drape R -->
+<path class="lj" d="M 190,134 Q 199,130 205,134 Q 196,141 188,139"/>
+<!-- fabric folds -->
+<path class="lj" d="M 128,130 Q 136,150 137,172"/>
+<path class="lj" d="M 172,130 Q 164,150 163,172"/>
+<path class="lj" d="M 140,124 Q 143,146 144,170"/>
+<path class="lj" d="M 160,124 Q 157,146 156,170"/>
+
+<!-- ══ NECK ══ -->
+<path class="ljf" d="M 143,104 L 143,122 L 157,122 L 157,104 Z"/>
+
+<!-- ══ HEAD + HAIR ══ -->
+<!-- face — elegant oval -->
+<ellipse class="ljf" cx="150" cy="82" rx="16" ry="20"/>
+<!-- hair top -->
+<path class="lj" d="M 136,68 Q 143,60 150,58 Q 157,60 164,68"/>
+<!-- hair left flowing wave -->
+<path class="lj" d="M 135,70 Q 129,84 130,100 Q 132,114 140,122"/>
+<path class="lj" d="M 133,78 Q 128,94 131,110"/>
+<!-- hair right flowing wave -->
+<path class="lj" d="M 165,70 Q 171,84 170,100 Q 168,114 160,122"/>
+<path class="lj" d="M 167,78 Q 172,94 169,110"/>
+<!-- soft chin -->
+<path class="lj" d="M 141,98 Q 150,104 159,98"/>
+
+<!-- ══ BLINDFOLD ══ -->
+<!-- main band across eyes -->
+<path class="ljB" d="M 132,79 Q 141,76 150,76 Q 159,76 168,79 Q 170,82 168,87 Q 159,90 150,90 Q 141,90 132,87 Q 130,84 132,79 Z"/>
+<!-- fold crease across band -->
+<line class="lj" x1="135" y1="83" x2="165" y2="83"/>
+<!-- knot tails on right side, flowing back into hair -->
+<path class="lj" d="M 166,82 Q 174,78 180,82 Q 176,88 168,87"/>
+<path class="lj" d="M 166,84 Q 172,90 175,97"/>
+
+<!-- ══════════════════════════════════
+     ANIMATED LEFT GROUP
+     pivot: left shoulder (122, 128)
+     arm stretches to hand ~(62,96)
+     ══════════════════════════════════ -->
+<g class="lj-L">
+  <!-- arm sleeve (two edge lines + fill) -->
+  <path class="ljf" d="M 122,124 Q 104,116 84,108 Q 72,102 62,96 L 62,106 Q 72,112 84,118 Q 104,126 120,134 Z"/>
+  <path class="lj"  d="M 122,124 Q 104,116 84,108 Q 72,102 62,96"/>
+  <path class="lj"  d="M 120,134 Q 104,126 84,118 Q 72,112 62,106"/>
+
+  <!-- orb + ring at hand tip -->
+  <circle class="lj"  cx="62" cy="92"  r="7"/>
+  <circle class="lj"  cx="62" cy="106" r="5"/>
+  <!-- candle rod above -->
+  <line   class="lj"  x1="62" y1="85" x2="62" y2="70"/>
+  <!-- flame -->
+  <path   class="ljf" d="M 59,70 Q 62,60 65,70 Q 62,67 59,70 Z"/>
+
+  <!-- chains from lower ring to pan bar -->
+  <line class="lj" x1="54"  y1="111" x2="32"  y2="178"/>
+  <line class="lj" x1="62"  y1="111" x2="62"  y2="178"/>
+  <line class="lj" x1="70"  y1="111" x2="92"  y2="178"/>
+  <!-- pan bar -->
+  <line class="ljb" x1="30"  y1="178" x2="94"  y2="178"/>
+  <!-- pan bowl -->
+  <path class="ljf" d="M 32,178 Q 28,194 30,208 Q 38,226 62,229 Q 86,226 94,208 Q 96,194 92,178 Z"/>
+  <!-- rim highlight -->
+  <path class="lj"  d="M 35,184 Q 62,190 89,184"/>
+</g>
+
+<!-- ══════════════════════════════════
+     ANIMATED RIGHT GROUP
+     pivot: right shoulder (178, 128)
+     arm stretches to hand ~(238,96)
+     ══════════════════════════════════ -->
+<g class="lj-R">
+  <!-- arm sleeve -->
+  <path class="ljf" d="M 178,124 Q 196,116 216,108 Q 228,102 238,96 L 238,106 Q 228,112 216,118 Q 196,126 180,134 Z"/>
+  <path class="lj"  d="M 178,124 Q 196,116 216,108 Q 228,102 238,96"/>
+  <path class="lj"  d="M 180,134 Q 196,126 216,118 Q 228,112 238,106"/>
+
+  <!-- orb + ring -->
+  <circle class="lj"  cx="238" cy="92"  r="7"/>
+  <circle class="lj"  cx="238" cy="106" r="5"/>
+  <!-- candle rod -->
+  <line   class="lj"  x1="238" y1="85" x2="238" y2="70"/>
+  <!-- flame -->
+  <path   class="ljf" d="M 235,70 Q 238,60 241,70 Q 238,67 235,70 Z"/>
+
+  <!-- chains -->
+  <line class="lj" x1="230" y1="111" x2="208" y2="178"/>
+  <line class="lj" x1="238" y1="111" x2="238" y2="178"/>
+  <line class="lj" x1="246" y1="111" x2="268" y2="178"/>
+  <!-- pan bar -->
+  <line class="ljb" x1="206" y1="178" x2="270" y2="178"/>
+  <!-- pan bowl -->
+  <path class="ljf" d="M 208,178 Q 204,194 206,208 Q 214,226 238,229 Q 262,226 270,208 Q 272,194 268,178 Z"/>
+  <!-- rim -->
+  <path class="lj"  d="M 211,184 Q 238,190 265,184"/>
+</g>
+
+</svg>
+          </div>
+          <div class="idle-divider">
+            <div class="idle-divider-line"></div>
+            <div class="idle-heading">Philippine Legal Research Assistant</div>
+            <div class="idle-divider-line r"></div>
+          </div>
+          <div class="idle-sub">Ask about any Philippine law, legal concept, case precedent,<br>or statutory provision in plain language.</div>
+          <div class="idle-input-wrap">
+            <div class="input-wrap" id="input-wrap">
+              <textarea class="chat-ta" id="chat-ta"
+                placeholder="Ask LEX a legal question… (Enter to send · Shift+Enter for new line)"
+                rows="1"
+                oninput="aResize(this);uCC()"
+                onkeydown="hKey(event)"
+                maxlength="2000"></textarea>
+              <button class="gavel-btn" id="gbtn" onclick="gClick()" title="Submit (Enter)">
+                <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" width="54" height="54">
+                  <rect class="g-block-top" x="2"  y="43" width="22" height="6"  rx="2" fill="#b8621a"/>
+                  <rect                     x="-1" y="49" width="28" height="8"  rx="2" fill="#9a4e10"/>
+                  <rect class="g-block-top" x="2"  y="43" width="22" height="2"  rx="2" fill="rgba(255,210,80,.25)"/>
+                  <g class="gavel-mallet" transform="rotate(-10, 20, 22)">
+                    <rect x="2"  y="8"  width="24" height="28" rx="5" fill="#b8621a"/>
+                    <rect x="2"  y="16" width="24" height="12" rx="3" fill="#f0b429"/>
+                    <rect x="3"  y="16" width="22" height="4"  rx="2" fill="rgba(255,245,150,.35)"/>
+                    <rect x="2"  y="8"  width="24" height="9"  rx="5" fill="#b8621a"/>
+                    <rect x="2"  y="27" width="24" height="9"  rx="5" fill="#b8621a"/>
+                    <rect x="24" y="19" width="34" height="7" rx="3.5" fill="#b8621a"/>
+                    <rect x="25" y="19" width="32" height="2.5" rx="1.5" fill="rgba(255,180,60,.2)"/>
+                  </g>
+                </svg>
+              </button>
+            </div>
+            <div class="input-foot">
+              <span class="i-hint">ENTER → SUBMIT &nbsp;·&nbsp; SHIFT+ENTER → NEW LINE</span>
+              <span class="i-cnt" id="icc">0 / 2000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="input-zone" id="bottom-input-zone">
+    <div class="input-inner">
+      <div class="input-wrap" id="input-wrap-bottom">
+        <textarea class="chat-ta" id="chat-ta-bottom"
+          placeholder="Ask LEX a legal question…"
+          rows="1"
+          oninput="aResizeB(this);uCC()"
+          onkeydown="hKeyB(event)"
+          maxlength="2000"></textarea>
+        <button class="gavel-btn" id="gbtn-bottom" onclick="gClickB()" title="Submit (Enter)">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" width="54" height="54">
+            <rect class="g-block-top" x="2"  y="43" width="22" height="6"  rx="2" fill="#b8621a"/>
+            <rect                     x="-1" y="49" width="28" height="8"  rx="2" fill="#9a4e10"/>
+            <rect class="g-block-top" x="2"  y="43" width="22" height="2"  rx="2" fill="rgba(255,210,80,.25)"/>
+            <g class="gavel-mallet" transform="rotate(-10, 20, 22)">
+              <rect x="2"  y="8"  width="24" height="28" rx="5" fill="#b8621a"/>
+              <rect x="2"  y="16" width="24" height="12" rx="3" fill="#f0b429"/>
+              <rect x="3"  y="16" width="22" height="4"  rx="2" fill="rgba(255,245,150,.35)"/>
+              <rect x="2"  y="8"  width="24" height="9"  rx="5" fill="#b8621a"/>
+              <rect x="2"  y="27" width="24" height="9"  rx="5" fill="#b8621a"/>
+              <rect x="24" y="19" width="34" height="7" rx="3.5" fill="#b8621a"/>
+              <rect x="25" y="19" width="32" height="2.5" rx="1.5" fill="rgba(255,180,60,.2)"/>
+            </g>
+          </svg>
+        </button>
+      </div>
+      <div class="input-foot">
+        <span class="i-hint">ENTER → SUBMIT &nbsp;·&nbsp; SHIFT+ENTER → NEW LINE</span>
+        <span class="i-cnt" id="icc-bottom">0 / 2000</span>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     STATEMENT CLARIFIER
+══════════════════════════════════════ -->
+<div class="panel" id="panel-clarifier">
+  <div class="topbar">
+    <div>
+      <div class="tb-title">Statement Clarifier</div>
+      <div class="tb-sub">TRANSFORMS CLIENT NARRATIVE INTO A PRECISE LEGAL SUMMARY</div>
+    </div>
+    <div class="tb-r">
+      <div class="timer-wrap">
+        <span style="font-size:.65rem">⏱</span>
+        <div><div class="td" id="rp-td">0.000s</div><div class="tl">RESPONSE TIME</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel-scroll">
+    <div class="panel-scroll-center">
+      <div style="font-size:.77rem;color:var(--muted2);line-height:1.68;background:var(--ink2);border:1px solid var(--border2);border-radius:9px;padding:14px 17px;">
+        Paste or type what the client said in their own words — raw, informal, sometimes rambling. LEX will convert it into a <strong style="color:var(--gold2)">clear, concise, and precise summary</strong> ready to paste directly into the Case Intake form.
+      </div>
+      <div class="psec">
+        <div class="psec-h">// CLIENT'S OWN WORDS — RAW STATEMENT</div>
+        <textarea class="rp-ta" id="rp-in" rows="6"
+          placeholder='e.g. "My boss told me to go to another branch far away and I said no because it&apos;s too far and I can&apos;t afford the commute and then they said my position is being removed…"'></textarea>
+      </div>
+      <div class="rp-ctrl">
+        <button class="rp-btn rp-go" onclick="doRP()">⚖️ &nbsp;Clarify &amp; Summarize</button>
+      </div>
+      <div class="psec">
+        <div class="psec-h">// CLARIFIED SUMMARY — READY FOR CASE INTAKE FORM</div>
+        <div class="rp-out empty" id="rp-out">Clarified summary will appear here…</div>
+      </div>
+      <div class="rp-ctrl">
+        <button class="rp-btn rp-cp" id="rp-cp-btn" onclick="cpRP()">⎘ &nbsp;Copy to Clipboard</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     LEX INGEST PANEL
+══════════════════════════════════════ -->
+<div class="panel" id="panel-ingest">
+  <div class="topbar">
+    <div>
+      <div class="tb-title">LEX Ingest</div>
+      <div class="tb-sub">ADD LEGAL DOCUMENTS TO THE KNOWLEDGE BASE</div>
+    </div>
+  </div>
+  <div class="panel-scroll">
+    <div class="panel-scroll-center">
+
+      <div class="ingest-hero">
+        <div class="ingest-hero-icon">📥</div>
+        <div>
+          <div class="ingest-hero-title">Ingest a Legal Document</div>
+          <div class="ingest-hero-sub">
+            Provide the Google Drive file ID and metadata for any Philippine legal document —
+            Constitution, Labor Code, Civil Code, Revised Penal Code, and more.
+            LEX will download, clean, chunk, embed, and store it in the Supabase vector database.
+          </div>
+        </div>
+      </div>
+
+      <div class="psec">
+        <div class="psec-h">// DOCUMENT DETAILS</div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:13px;">
+          <div class="form-grid">
+            <div class="fld span2">
+              <label>Google Drive File ID <span class="req">*</span></label>
+              <input type="text" id="ing-fileid" placeholder="e.g. 18-5GDJ1LZiMh_lZU7OPh384TDMxSKDBv">
+              <div style="font-size:.62rem;color:var(--muted);margin-top:3px">Found in the Google Drive share URL after /d/</div>
+            </div>
+            <div class="fld span2">
+              <label>Law Title <span class="req">*</span></label>
+              <input type="text" id="ing-title" placeholder="e.g. 1987 Philippine Constitution">
+            </div>
+            <div class="fld">
+              <label>Source</label>
+              <input type="text" id="ing-source" placeholder="e.g. Official Gazette" value="Official Gazette">
+            </div>
+            <div class="fld">
+              <label>Year</label>
+              <input type="text" id="ing-year" placeholder="e.g. 1987">
+            </div>
+            <div class="fld span2">
+              <label>Category</label>
+              <select id="ing-category">
+                <option value="Constitutional Law">Constitutional Law</option>
+                <option value="Labor Law">Labor Law</option>
+                <option value="Criminal Law">Criminal Law</option>
+                <option value="Civil Law">Civil Law</option>
+                <option value="Family Law">Family Law</option>
+                <option value="Property Law">Property Law</option>
+                <option value="Corporate Law">Corporate Law</option>
+                <option value="Administrative Law">Administrative Law</option>
+                <option value="Local Government">Local Government</option>
+                <option value="General">General</option>
+              </select>
+            </div>
+            <div class="fld span2">
+              <label>Notes <span style="font-weight:300;color:var(--muted);font-size:.65rem">(optional)</span></label>
+              <textarea id="ing-notes" rows="2" placeholder="e.g. As amended by RA 10364 (2012)"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="ingest-btn" id="ingest-btn" onclick="doIngest()">
+        <span id="ingest-btn-icon">📥</span>
+        <span id="ingest-btn-lbl">Ingest Document into LEX Database</span>
+      </button>
+
+      <div class="ingest-result" id="ingest-result"></div>
+
+      <!-- Current KB -->
+      <div class="psec">
+        <div class="psec-h">// DOCUMENTS CURRENTLY IN LEX DATABASE</div>
+        <div style="padding:13px;display:flex;flex-direction:column;gap:8px;">
+          <div class="db-row">
+            <span class="db-icon">📕</span>
+            <div class="db-info">
+              <div class="db-name">1987 Philippine Constitution</div>
+              <div class="db-meta">Constitutional Law · Official Gazette · 1987</div>
+            </div>
+            <span class="db-status">INGESTED</span>
+          </div>
+          <div class="db-row">
+            <span class="db-icon">📘</span>
+            <div class="db-info">
+              <div class="db-name">Labor Code of the Philippines (PD 442)</div>
+              <div class="db-meta">Labor Law · DOLE · 1974 as amended</div>
+            </div>
+            <span class="db-status">INGESTED</span>
+          </div>
+          <div class="db-row">
+            <span class="db-icon">📙</span>
+            <div class="db-info">
+              <div class="db-name">Revised Penal Code (Act No. 3815)</div>
+              <div class="db-meta">Criminal Law · As Amended</div>
+            </div>
+            <span class="db-status">INGESTED</span>
+          </div>
+          <div class="db-row">
+            <span class="db-icon">📗</span>
+            <div class="db-info">
+              <div class="db-name">Local Government Code — Book 3 (RA 7160)</div>
+              <div class="db-meta">Local Government · DILG · 1991</div>
+            </div>
+            <span class="db-status">INGESTED</span>
+          </div>
+          <div id="ingested-list"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     SETTINGS PANEL
+══════════════════════════════════════ -->
+<div class="panel" id="panel-settings">
+  <div class="topbar">
+    <div>
+      <div class="tb-title">Configuration</div>
+      <div class="tb-sub">WEBHOOK · SESSION · PREFERENCES</div>
+    </div>
+  </div>
+  <div class="panel-scroll">
+    <div class="panel-scroll-narrow">
+
+      <div class="sc">
+        <div class="sc-h">// n8n WEBHOOK CONFIGURATION</div>
+        <div class="sc-b">
+          <div class="sf">
+            <label class="sl">Research Webhook URL (Live)</label>
+            <input type="text" class="si" id="cfg-live" placeholder="https://your-n8n.app.n8n.cloud/webhook/paralegal">
+            <div class="sh">Use when your n8n workflow is Activated (toggle ON).</div>
+          </div>
+          <div class="sf">
+            <label class="sl">Research Webhook URL (Test)</label>
+            <input type="text" class="si" id="cfg-test" placeholder="https://your-n8n.app.n8n.cloud/webhook-test/paralegal">
+            <div class="sh">Use while building — n8n must be in Test Workflow mode.</div>
+          </div>
+          <div class="sf">
+            <label class="sl" style="color:var(--gold)">Active Research URL ← fires on every query</label>
+            <input type="text" class="si" id="cfg-active" placeholder="Paste the URL active right now">
+          </div>
+          <div class="sf">
+            <label class="sl">LEX Ingest Webhook URL</label>
+            <input type="text" class="si" id="cfg-ingest" placeholder="https://…/webhook/lex-ingest">
+            <div class="sh">Receives ingestion requests from the LEX Ingest panel (your LEX Ingestion workflow).</div>
+          </div>
+          <button class="ss-btn" onclick="saveS()">Save Configuration</button>
+          <div class="sv-t" id="sv-t">✓ Configuration saved.</div>
+        </div>
+      </div>
+
+      <div class="sc">
+        <div class="sc-h">// SESSION SETTINGS</div>
+        <div class="sc-b">
+          <div class="sf">
+            <label class="sl">Session Key</label>
+            <input type="text" class="si" id="cfg-sess" value="paralegal-session-1">
+            <div class="sh">Must match the sessionKey in your n8n Postgres Chat Memory node.</div>
+          </div>
+          <div class="sf">
+            <label class="sl">Display Name</label>
+            <input type="text" class="si" id="cfg-name" value="JL Laniog Law Firm">
+          </div>
+          <button class="ss-btn" onclick="saveS()">Save Session</button>
+        </div>
+      </div>
+
+      <div class="sc">
+        <div class="sc-h">// CURRENT ACTIVE WEBHOOK</div>
+        <div class="sc-b">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted2);background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px;padding:9px 12px;word-break:break-all;line-height:1.65;min-height:38px" id="cfg-disp">— not set yet —</div>
+          <div class="sh">All LEX chat queries are sent to this URL.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</div><!-- end shell -->
+
+<script>
+// ═══════════════════════════════════ STATE ═══════════════════════════════════
+let wh='', ingestWh='';
+let tiRef=null, t0=null, busy=false;
+
+// ═══════════════════════════════════ INIT ════════════════════════════════════
+(function(){
+  try {
+    wh       = localStorage.getItem('lex_wh')||'';
+    ingestWh = localStorage.getItem('lex_ingest')||'';
+    const live = localStorage.getItem('lex_live')||'';
+    const test = localStorage.getItem('lex_test')||'';
+    const sess = localStorage.getItem('lex_sess')||'paralegal-session-1';
+    const name = localStorage.getItem('lex_name')||'JL Laniog Law Firm';
+    if(live) document.getElementById('cfg-live').value=live;
+    if(test) document.getElementById('cfg-test').value=test;
+    if(wh){ document.getElementById('cfg-active').value=wh; document.getElementById('sb-wh').value=wh; document.getElementById('cfg-disp').textContent=wh; }
+    if(ingestWh) document.getElementById('cfg-ingest').value=ingestWh;
+    document.getElementById('cfg-sess').value=sess;
+    document.getElementById('cfg-name').value=name;
+  } catch(e){}
+
+  document.getElementById('sb-wh').addEventListener('input', function(){
+    wh=this.value.trim();
+    document.getElementById('cfg-active').value=wh;
+    document.getElementById('cfg-disp').textContent=wh||'— not set yet —';
+    try{localStorage.setItem('lex_wh',wh);}catch(e){}
+  });
+
+  function cm(){ const m=window.innerWidth<=760; document.getElementById('mob-bar').style.display=m?'flex':'none'; }
+  cm(); window.addEventListener('resize',cm);
+})();
+
+// ═══════════════════════════════════ SIDEBAR ══════════════════════════════════
+function openSB(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('sb-ov').classList.add('open'); }
+function closeSB(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sb-ov').classList.remove('open'); }
+function sp(id, btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  closeSB();
+}
+
+// ═══════════════════════════════════ TIMER ════════════════════════════════════
+function stTimer(id){ t0=performance.now(); const el=document.getElementById(id); el.classList.add('run'); clearInterval(tiRef); tiRef=setInterval(()=>{ el.textContent=((performance.now()-t0)/1000).toFixed(3)+'s'; },50); }
+function spTimer(id){ clearInterval(tiRef); const el=document.getElementById(id); el.classList.remove('run'); if(!t0)return 0; const e=(performance.now()-t0)/1000; el.textContent=e.toFixed(3)+'s'; return e; }
+
+// ═══════════════════════════════════ GAVEL ════════════════════════════════════
+function gClick(){
+  const btn=document.getElementById('gbtn');
+  if(!btn||btn.disabled) return;
+  btn.classList.remove('strike'); void btn.offsetWidth; btn.classList.add('strike');
+  setTimeout(()=>btn.classList.remove('strike'),920);
+  sendMsg();
+}
+function hKey(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); gClick(); } }
+function aResize(ta){ ta.style.height='auto'; ta.style.height=Math.min(ta.scrollHeight,140)+'px'; }
+function uCC(){
+  const el=document.getElementById('icc');
+  const ta=document.getElementById('chat-ta');
+  if(el&&ta) el.textContent=ta.value.length+' / 2000';
+}
+
+// ═══════════════════════════════════ CLEAR CHAT ═══════════════════════════════
+function clrChat(){
+  busy=false;
+  document.getElementById('gbtn').disabled=false;
+  document.getElementById('gbtn-bottom').disabled=false;
+  document.getElementById('td').textContent='0.000s';
+  document.getElementById('msgs-inner').innerHTML=idleHTML();
+  // Hide bottom input, show idle input
+  document.getElementById('bottom-input-zone').classList.remove('visible');
+  // Reset bottom textarea
+  const btm=document.getElementById('chat-ta-bottom');
+  if(btm){btm.value='';btm.style.height='auto';}
+  document.getElementById('icc-bottom').textContent='0 / 2000';
+  setTimeout(()=>{ const ta=document.getElementById('chat-ta'); if(ta)ta.focus(); },100);
+}
+
+function idleHTML(){
+  return `<div class="idle" id="idle">
+    <div class="idle-scales">
+      <svg viewBox="0 0 300 340" xmlns="http://www.w3.org/2000/svg" width="150" height="170" overflow="visible">
+<defs><style>
+  .lj  { stroke:#c8a84b; stroke-width:2.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .ljf { stroke:#c8a84b; stroke-width:2.2; fill:rgba(200,168,75,0.09); stroke-linecap:round; stroke-linejoin:round; }
+  .ljb { stroke:#c8a84b; stroke-width:3.4; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .ljB { stroke:#c8a84b; stroke-width:2.8; fill:rgba(200,168,75,0.22); stroke-linecap:round; stroke-linejoin:round; }
+  
+    .lj-L { transform-origin: 122px 128px; animation: balL 7s ease-in-out infinite; }
+    .lj-R { transform-origin: 178px 128px; animation: balR 7s ease-in-out infinite; }
+    @keyframes balL {
+      0%,100% { transform: rotate(0deg);  }
+      50%     { transform: rotate(-7deg); }
+    }
+    @keyframes balR {
+      0%,100% { transform: rotate(0deg); }
+      50%     { transform: rotate(7deg); }
+    }
+
+</style></defs>
+
+<!-- ══ PEDESTAL ══ -->
+<rect class="lj"  x="108" y="298" width="84"  height="10" rx="2"/>
+<rect class="ljf" x="88"  y="308" width="124" height="13" rx="3"/>
+<line class="ljb" x1="76" y1="321" x2="224" y2="321"/>
+
+<!-- ══ LEFT LAUREL ══ -->
+<path class="lj" d="M 106,296 Q 90,280 75,262 Q 59,243 49,221 Q 43,205 47,190"/>
+<path class="lj" d="M 95,285 Q 78,277 72,262 Q 84,259 92,273 Z"/>
+<path class="lj" d="M 82,268 Q 65,261 60,246 Q 72,243 79,257 Z"/>
+<path class="lj" d="M 70,249 Q 54,241 51,226 Q 63,225 68,239 Z"/>
+<path class="lj" d="M 60,228 Q 47,219 48,204 Q 59,206 60,220 Z"/>
+<path class="lj" d="M 90,279 Q 84,262 93,251 Q 99,259 94,273 Z"/>
+<path class="lj" d="M 77,261 Q 72,244 82,233 Q 87,242 82,256 Z"/>
+<path class="lj" d="M 65,241 Q 62,224 73,214 Q 78,222 72,236 Z"/>
+<path class="lj" d="M 55,220 Q 54,203 66,195 Q 70,204 63,217 Z"/>
+
+<!-- ══ RIGHT LAUREL ══ -->
+<path class="lj" d="M 194,296 Q 210,280 225,262 Q 241,243 251,221 Q 257,205 253,190"/>
+<path class="lj" d="M 205,285 Q 222,277 228,262 Q 216,259 208,273 Z"/>
+<path class="lj" d="M 218,268 Q 235,261 240,246 Q 228,243 221,257 Z"/>
+<path class="lj" d="M 230,249 Q 246,241 249,226 Q 237,225 232,239 Z"/>
+<path class="lj" d="M 240,228 Q 253,219 252,204 Q 241,206 240,220 Z"/>
+<path class="lj" d="M 210,279 Q 216,262 207,251 Q 201,259 206,273 Z"/>
+<path class="lj" d="M 223,261 Q 228,244 218,233 Q 213,242 218,256 Z"/>
+<path class="lj" d="M 235,241 Q 238,224 227,214 Q 222,222 228,236 Z"/>
+<path class="lj" d="M 245,220 Q 246,203 234,195 Q 230,204 237,217 Z"/>
+
+<!-- ══ ROBE + HIPS (lady silhouette) ══
+     waist  128–172 (44px)  at y=188
+     hips   108–192 (84px)  at y=248
+     hem    116–184 (68px)  at y=298  -->
+<path class="ljf" d="
+  M 128,188
+  Q 116,198 112,216
+  Q 108,232 108,250
+  Q 108,270 112,284
+  Q 118,300 134,304
+  L 166,304
+  Q 182,300 188,284
+  Q 192,270 192,250
+  Q 192,232 188,216
+  Q 184,198 172,188
+  Z"/>
+<!-- waist-to-hip curve accent -->
+<path class="lj" d="M 116,208 Q 124,220 128,240 Q 129,256 126,272"/>
+<path class="lj" d="M 184,208 Q 176,220 172,240 Q 171,256 174,272"/>
+<!-- centre robe folds -->
+<path class="lj" d="M 138,192 Q 134,224 133,256 Q 133,276 135,300"/>
+<path class="lj" d="M 150,192 Q 150,226 150,258 Q 150,278 150,302"/>
+<path class="lj" d="M 162,192 Q 166,224 167,256 Q 167,276 165,300"/>
+<path class="lj" d="M 128,194 Q 122,228 121,260 Q 121,280 124,300"/>
+<path class="lj" d="M 172,194 Q 178,228 179,260 Q 179,280 176,300"/>
+<!-- draped overlay -->
+<path class="lj" d="M 158,200 Q 166,226 170,254 Q 174,272 172,292 Q 170,302 163,305"/>
+<!-- hem gather -->
+<path class="lj" d="M 115,294 Q 132,290 150,291 Q 168,290 185,294"/>
+
+<!-- ══ BELT ══ -->
+<rect class="ljB" x="126" y="179" width="48" height="12" rx="3"/>
+<line class="lj"  x1="130" y1="183" x2="170" y2="183"/>
+<line class="lj"  x1="130" y1="187" x2="170" y2="187"/>
+
+<!-- ══ TORSO (hourglass: wide bust, narrow waist) ══ -->
+<path class="ljf" d="
+  M 126,122
+  Q 112,130 110,146
+  Q 108,160 112,178
+  L 188,178
+  Q 192,160 190,146
+  Q 188,130 174,122
+  Z"/>
+<!-- bust curve left -->
+<path class="lj" d="M 116,142 Q 130,154 148,151"/>
+<!-- bust curve right -->
+<path class="lj" d="M 184,142 Q 170,154 152,151"/>
+<!-- centre drape -->
+<path class="lj" d="M 150,128 Q 150,148 150,172"/>
+<!-- neckline V -->
+<path class="lj" d="M 134,122 Q 141,136 150,140 Q 159,136 166,122"/>
+<!-- off-shoulder drape L -->
+<path class="lj" d="M 110,134 Q 101,130 95,134 Q 104,141 112,139"/>
+<!-- off-shoulder drape R -->
+<path class="lj" d="M 190,134 Q 199,130 205,134 Q 196,141 188,139"/>
+<!-- fabric folds -->
+<path class="lj" d="M 128,130 Q 136,150 137,172"/>
+<path class="lj" d="M 172,130 Q 164,150 163,172"/>
+<path class="lj" d="M 140,124 Q 143,146 144,170"/>
+<path class="lj" d="M 160,124 Q 157,146 156,170"/>
+
+<!-- ══ NECK ══ -->
+<path class="ljf" d="M 143,104 L 143,122 L 157,122 L 157,104 Z"/>
+
+<!-- ══ HEAD + HAIR ══ -->
+<!-- face — elegant oval -->
+<ellipse class="ljf" cx="150" cy="82" rx="16" ry="20"/>
+<!-- hair top -->
+<path class="lj" d="M 136,68 Q 143,60 150,58 Q 157,60 164,68"/>
+<!-- hair left flowing wave -->
+<path class="lj" d="M 135,70 Q 129,84 130,100 Q 132,114 140,122"/>
+<path class="lj" d="M 133,78 Q 128,94 131,110"/>
+<!-- hair right flowing wave -->
+<path class="lj" d="M 165,70 Q 171,84 170,100 Q 168,114 160,122"/>
+<path class="lj" d="M 167,78 Q 172,94 169,110"/>
+<!-- soft chin -->
+<path class="lj" d="M 141,98 Q 150,104 159,98"/>
+
+<!-- ══ BLINDFOLD ══ -->
+<!-- main band across eyes -->
+<path class="ljB" d="M 132,79 Q 141,76 150,76 Q 159,76 168,79 Q 170,82 168,87 Q 159,90 150,90 Q 141,90 132,87 Q 130,84 132,79 Z"/>
+<!-- fold crease across band -->
+<line class="lj" x1="135" y1="83" x2="165" y2="83"/>
+<!-- knot tails on right side, flowing back into hair -->
+<path class="lj" d="M 166,82 Q 174,78 180,82 Q 176,88 168,87"/>
+<path class="lj" d="M 166,84 Q 172,90 175,97"/>
+
+<!-- ══════════════════════════════════
+     ANIMATED LEFT GROUP
+     pivot: left shoulder (122, 128)
+     arm stretches to hand ~(62,96)
+     ══════════════════════════════════ -->
+<g class="lj-L">
+  <!-- arm sleeve (two edge lines + fill) -->
+  <path class="ljf" d="M 122,124 Q 104,116 84,108 Q 72,102 62,96 L 62,106 Q 72,112 84,118 Q 104,126 120,134 Z"/>
+  <path class="lj"  d="M 122,124 Q 104,116 84,108 Q 72,102 62,96"/>
+  <path class="lj"  d="M 120,134 Q 104,126 84,118 Q 72,112 62,106"/>
+
+  <!-- orb + ring at hand tip -->
+  <circle class="lj"  cx="62" cy="92"  r="7"/>
+  <circle class="lj"  cx="62" cy="106" r="5"/>
+  <!-- candle rod above -->
+  <line   class="lj"  x1="62" y1="85" x2="62" y2="70"/>
+  <!-- flame -->
+  <path   class="ljf" d="M 59,70 Q 62,60 65,70 Q 62,67 59,70 Z"/>
+
+  <!-- chains from lower ring to pan bar -->
+  <line class="lj" x1="54"  y1="111" x2="32"  y2="178"/>
+  <line class="lj" x1="62"  y1="111" x2="62"  y2="178"/>
+  <line class="lj" x1="70"  y1="111" x2="92"  y2="178"/>
+  <!-- pan bar -->
+  <line class="ljb" x1="30"  y1="178" x2="94"  y2="178"/>
+  <!-- pan bowl -->
+  <path class="ljf" d="M 32,178 Q 28,194 30,208 Q 38,226 62,229 Q 86,226 94,208 Q 96,194 92,178 Z"/>
+  <!-- rim highlight -->
+  <path class="lj"  d="M 35,184 Q 62,190 89,184"/>
+</g>
+
+<!-- ══════════════════════════════════
+     ANIMATED RIGHT GROUP
+     pivot: right shoulder (178, 128)
+     arm stretches to hand ~(238,96)
+     ══════════════════════════════════ -->
+<g class="lj-R">
+  <!-- arm sleeve -->
+  <path class="ljf" d="M 178,124 Q 196,116 216,108 Q 228,102 238,96 L 238,106 Q 228,112 216,118 Q 196,126 180,134 Z"/>
+  <path class="lj"  d="M 178,124 Q 196,116 216,108 Q 228,102 238,96"/>
+  <path class="lj"  d="M 180,134 Q 196,126 216,118 Q 228,112 238,106"/>
+
+  <!-- orb + ring -->
+  <circle class="lj"  cx="238" cy="92"  r="7"/>
+  <circle class="lj"  cx="238" cy="106" r="5"/>
+  <!-- candle rod -->
+  <line   class="lj"  x1="238" y1="85" x2="238" y2="70"/>
+  <!-- flame -->
+  <path   class="ljf" d="M 235,70 Q 238,60 241,70 Q 238,67 235,70 Z"/>
+
+  <!-- chains -->
+  <line class="lj" x1="230" y1="111" x2="208" y2="178"/>
+  <line class="lj" x1="238" y1="111" x2="238" y2="178"/>
+  <line class="lj" x1="246" y1="111" x2="268" y2="178"/>
+  <!-- pan bar -->
+  <line class="ljb" x1="206" y1="178" x2="270" y2="178"/>
+  <!-- pan bowl -->
+  <path class="ljf" d="M 208,178 Q 204,194 206,208 Q 214,226 238,229 Q 262,226 270,208 Q 272,194 268,178 Z"/>
+  <!-- rim -->
+  <path class="lj"  d="M 211,184 Q 238,190 265,184"/>
+</g>
+
+</svg>
+    </div>
+    <div class="idle-divider">
+      <div class="idle-divider-line"></div>
+      <div class="idle-heading">Philippine Legal Research Assistant</div>
+      <div class="idle-divider-line r"></div>
+    </div>
+    <div class="idle-sub">Ask about any Philippine law, legal concept, case precedent,<br>or statutory provision in plain language.</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════ SEND ═════════════════════════════════════
+async function sendMsg(q_override){
+  // Get input from whichever box is active
+  const idleEl = document.getElementById('idle');
+  const taId = idleEl ? 'chat-ta' : 'chat-ta-bottom';
+  const btnId = idleEl ? 'gbtn' : 'gbtn-bottom';
+  const ta = document.getElementById(taId);
+  const q = q_override || ta.value.trim();
+  if(!q||busy) return;
+  if(!wh){ toast('No webhook URL. Go to Configuration.','err'); sp('settings',document.querySelectorAll('.nb')[3]); return; }
+  // Switch from idle input to bottom input on first send
+  if(idleEl){
+    idleEl.remove();
+    document.getElementById('bottom-input-zone').classList.add('visible');
+    setTimeout(()=>document.getElementById('chat-ta-bottom').focus(),50);
+  }
+  busy=true;
+  document.getElementById('gbtn').disabled=true;
+  document.getElementById('gbtn-bottom').disabled=true;
+  addMsg('user',q);
+  ta.value=''; ta.style.height='auto'; uCC(); uCCB();
+  const thEl=addThink();
+  stTimer('td');
+  let out='', lat=0;
+  try {
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),45000);
+    const res=await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chatInput:q,sessionId:getSess()}),signal:ctrl.signal});
+    clearTimeout(tid); lat=spTimer('td');
+    if(res.ok){
+      const d=await res.json();
+      if(Array.isArray(d)) out=d[0]?.output||d[0]?.text||JSON.stringify(d[0]);
+      else if(typeof d==='object') out=d.output||d.text||d.response||JSON.stringify(d);
+      else out=String(d);
+    } else { out=`⚠️ Webhook returned HTTP ${res.status}.`; lat=spTimer('td'); }
+  } catch(e){
+    lat=spTimer('td');
+    out=e.name==='AbortError'?'⏱️ Request timed out (45s).':`✗ Could not reach webhook.\n\n*${e.message}*`;
+  }
+  thEl.remove(); addMsg('lex',out,lat);
+  busy=false;
+  document.getElementById('gbtn').disabled=false;
+  document.getElementById('gbtn-bottom').disabled=false;
+  const activeTA=document.getElementById('chat-ta-bottom')||document.getElementById('chat-ta');
+  if(activeTA)activeTA.focus();
+  sBot();
+}
+
+function addMsg(role,text,lat){
+  const inn=document.getElementById('msgs-inner');
+  const g=document.createElement('div'); g.className='mg '+role;
+  const ts=getTS();
+  if(role==='user'){
+    g.innerHTML=`<div class="ms">YOU</div><div class="mb">${esc(text)}</div><div class="ma"><span class="mt">${ts}</span></div>`;
+  } else {
+    const rd=rMd(text); const lid='lm'+Date.now();
+    g.innerHTML=`<div class="ms">⚖️ LEX</div><div class="mb" id="${lid}">${rd}</div><div class="ma"><span class="mt">${ts}</span>${lat>0?`<span class="ml">⏱ ${lat.toFixed(3)}s</span>`:''}<button class="cp-btn" onclick="cpMsg('${lid}',this)">⎘ COPY</button></div>`;
+  }
+  inn.appendChild(g); sBot();
+}
+
+function addThink(){
+  const inn=document.getElementById('msgs-inner');
+  const el=document.createElement('div'); el.className='think';
+  el.innerHTML=`<div class="dots"><span></span><span></span><span></span></div><span class="think-lbl">LEX IS RESEARCHING</span>`;
+  inn.appendChild(el); sBot(); return el;
+}
+
+function cpMsg(id,btn){
+  const el=document.getElementById(id); if(!el) return;
+  const t=el.innerText;
+  (navigator.clipboard?.writeText(t)||Promise.reject())
+    .then(()=>{ btn.textContent='✓ COPIED'; btn.classList.add('ok'); setTimeout(()=>{ btn.textContent='⎘ COPY'; btn.classList.remove('ok'); },2000); })
+    .catch(()=>{ const ta=document.createElement('textarea'); ta.value=t; ta.style.cssText='position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); btn.textContent='✓ COPIED'; btn.classList.add('ok'); setTimeout(()=>{ btn.textContent='⎘ COPY'; btn.classList.remove('ok'); },2000); });
+}
+
+// ═══════════════════════════════════ CLARIFIER ═════════════════════════════════
+async function doRP(){
+  const inp=document.getElementById('rp-in').value.trim();
+  if(!inp){ toast('Paste the client statement first.','err'); return; }
+  if(!wh){ toast('No webhook URL. Go to Configuration.','err'); return; }
+  const out=document.getElementById('rp-out');
+  out.className='rp-out load';
+  out.innerHTML='<div class="dots"><span></span><span></span><span></span></div><span style="font-size:.77rem;color:var(--muted);margin-left:7px">Clarifying…</span>';
+  out._t=''; stTimer('rp-td');
+  const prompt=`You are LEX, a Philippine legal assistant. A client has given a raw, informal account of their situation. Rewrite it as a clear, concise, factual, and well-structured summary suitable for a legal intake form. Use third-person formal language. Remove filler words, repetition, and confusion. Keep it to 3-5 sentences. Do not add legal citations or conclusions.\n\nClient statement:\n"${inp}"\n\nClarified summary:`;
+  try {
+    const res=await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chatInput:prompt,sessionId:getSess()})});
+    spTimer('rp-td');
+    if(res.ok){ const d=await res.json(); let t=Array.isArray(d)?(d[0]?.output||d[0]?.text||''):(d.output||d.text||''); out.className='rp-out'; out.innerHTML=rMd(t); out._t=t; }
+    else { out.className='rp-out'; out.innerHTML=`<span style="color:var(--red)">Error: HTTP ${res.status}</span>`; }
+  } catch(e){ spTimer('rp-td'); out.className='rp-out'; out.innerHTML=`<span style="color:var(--red)">✗ ${e.message}</span>`; }
+}
+
+function cpRP(){
+  const out=document.getElementById('rp-out'); const t=out._t||out.innerText;
+  if(!t||out.classList.contains('empty')) return;
+  const btn=document.getElementById('rp-cp-btn');
+  (navigator.clipboard?.writeText(t)||Promise.reject())
+    .then(()=>{ btn.textContent='✓ Copied!'; btn.classList.add('ok'); setTimeout(()=>{ btn.textContent='⎘ Copy to Clipboard'; btn.classList.remove('ok'); },2000); })
+    .catch(()=>{});
+}
+
+// ═══════════════════════════════════ LEX INGEST ══════════════════════════════
+async function doIngest(){
+  const fileId   = document.getElementById('ing-fileid').value.trim();
+  const lawTitle = document.getElementById('ing-title').value.trim();
+  const source   = document.getElementById('ing-source').value.trim() || 'Official Gazette';
+  const year     = document.getElementById('ing-year').value.trim();
+  const category = document.getElementById('ing-category').value;
+  const notes    = document.getElementById('ing-notes').value.trim();
+
+  if(!fileId){ toast('Google Drive File ID is required.','err'); return; }
+  if(!lawTitle){ toast('Law title is required.','err'); return; }
+
+  const target = ingestWh || localStorage.getItem('lex_ingest') || '';
+  if(!target){ toast('No Ingest Webhook URL configured. Set it in Configuration.','err'); sp('settings',document.querySelectorAll('.nb')[3]); return; }
+
+  const btn = document.getElementById('ingest-btn');
+  document.getElementById('ingest-btn-icon').innerHTML='<div class="spinner"></div>';
+  document.getElementById('ingest-btn-lbl').textContent='Sending to LEX Pipeline…';
+  btn.disabled=true;
+
+  const result = document.getElementById('ingest-result');
+  result.style.display='none';
+
+  const payload = { file_id:fileId, law_title:lawTitle, source, year, category, notes };
+
+  try {
+    const ctrl=new AbortController();
+    setTimeout(()=>ctrl.abort(), 60000);
+    const res=await fetch(target,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload),
+      signal:ctrl.signal
+    });
+
+    let data={};
+    try{ data=await res.json(); }catch(e){ data={}; }
+
+    if(res.ok || res.status===200){
+      if(data.status==='SKIPPED'){
+        result.className='ingest-result warn';
+        result.innerHTML=`⚠ SKIPPED — "${lawTitle}" is already in the LEX database.<br>Delete existing embeddings first if you want to re-ingest.`;
+      } else {
+        result.className='ingest-result ok';
+        result.innerHTML=`✓ SUCCESS — "${lawTitle}" has been ingested into the LEX database.\nCategory: ${category} · Year: ${year||'—'}\n${data.message||''}`;
+        addIngestedRow(lawTitle, category, year, source);
+        // reset form
+        document.getElementById('ing-fileid').value='';
+        document.getElementById('ing-title').value='';
+        document.getElementById('ing-year').value='';
+        document.getElementById('ing-notes').value='';
+      }
+    } else {
+      result.className='ingest-result err';
+      result.innerHTML=`✗ HTTP ${res.status} — ${data.message||'Check your webhook URL and workflow status.'}`;
+    }
+  } catch(e){
+    result.className='ingest-result err';
+    result.innerHTML=e.name==='AbortError'
+      ? '⏱ Request timed out (60s) — PDF ingestion can take up to a minute for large files. Check n8n execution logs.'
+      : `✗ ${e.message}`;
+  }
+
+  result.style.display='block';
+  document.getElementById('ingest-btn-icon').textContent='📥';
+  document.getElementById('ingest-btn-lbl').textContent='Ingest Document into LEX Database';
+  btn.disabled=false;
+}
+
+function addIngestedRow(title, category, year, source){
+  const list=document.getElementById('ingested-list');
+  const row=document.createElement('div'); row.className='db-row'; row.style.animation='msgIn .3s ease both';
+  row.innerHTML=`<span class="db-icon">📄</span><div class="db-info"><div class="db-name">${esc(title)}</div><div class="db-meta">${esc(category)} · ${esc(source)} · ${esc(year||'—')}</div></div><span class="db-status">INGESTED</span>`;
+  list.appendChild(row);
+}
+
+// ═══════════════════════════════════ SETTINGS ═════════════════════════════════
+function saveS(){
+  const live   = document.getElementById('cfg-live').value.trim();
+  const test   = document.getElementById('cfg-test').value.trim();
+  const active = document.getElementById('cfg-active').value.trim();
+  const ingest = document.getElementById('cfg-ingest').value.trim();
+  const sess   = document.getElementById('cfg-sess').value.trim();
+  const name   = document.getElementById('cfg-name').value.trim();
+  try {
+    if(live)   localStorage.setItem('lex_live',live);
+    if(test)   localStorage.setItem('lex_test',test);
+    if(active){ wh=active; localStorage.setItem('lex_wh',active); document.getElementById('sb-wh').value=active; document.getElementById('cfg-disp').textContent=active; }
+    if(ingest){ ingestWh=ingest; localStorage.setItem('lex_ingest',ingest); }
+    if(sess)   localStorage.setItem('lex_sess',sess);
+    if(name)   localStorage.setItem('lex_name',name);
+  } catch(e){}
+  const t=document.getElementById('sv-t'); t.style.display='block'; setTimeout(()=>t.style.display='none',2500);
+  toast('Configuration saved.','ok');
+}
+
+// ═══════════════════════════════════ HELPERS ══════════════════════════════════
+// Bottom input helpers
+function aResizeB(ta){ ta.style.height='auto'; ta.style.height=Math.min(ta.scrollHeight,140)+'px'; }
+function uCCB(){ const el=document.getElementById('icc-bottom'); if(el)el.textContent=(document.getElementById('chat-ta-bottom')?.value.length||0)+' / 2000'; }
+function gClickB(){
+  const btn=document.getElementById('gbtn-bottom');
+  if(btn.disabled)return;
+  btn.classList.remove('strike'); void btn.offsetWidth; btn.classList.add('strike');
+  setTimeout(()=>btn.classList.remove('strike'),920);
+  sendMsg();
+}
+function hKeyB(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); gClickB(); } }
+
+function getSess(){ try{ return localStorage.getItem('lex_sess')||'paralegal-session-1'; }catch(e){ return 'paralegal-session-1'; } }
+function getTS(){ return new Date().toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+function sBot(){ const w=document.getElementById('msgs-wrap'); w.scrollTop=w.scrollHeight; }
+function esc(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function rMd(t){
+  if(!t) return '';
+  t=t.replace(/\\n/g,'\n').replace(/\\\\n/g,'\n');
+  t=t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  t=t.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  t=t.replace(/`([^`]+)`/g,'<code>$1</code>');
+  const ls=t.split('\n'); let h='', inL=false;
+  for(const r of ls){
+    const l=r.trim();
+    if(!l){ if(inL){ h+='</ul>'; inL=false; } h+='<br>'; continue; }
+    if(/^[-•*]\s+/.test(l)){ if(!inL){ h+='<ul>'; inL=true; } h+='<li>'+l.replace(/^[-•*]\s+/,'')+'</li>'; }
+    else if(/^\d+\.\s+/.test(l)){ if(!inL){ h+='<ul>'; inL=true; } h+='<li>'+l.replace(/^\d+\.\s+/,'')+'</li>'; }
+    else { if(inL){ h+='</ul>'; inL=false; } h+='<p>'+l+'</p>'; }
+  }
+  if(inL) h+='</ul>';
+  return h;
+}
+
+function toast(msg,type){
+  const el=document.createElement('div');
+  el.style.cssText=`position:fixed;bottom:22px;right:22px;padding:11px 17px;border-radius:8px;font-size:.78rem;font-weight:600;z-index:9997;font-family:'DM Sans',sans-serif;box-shadow:0 5px 20px rgba(0,0,0,.45);animation:msgIn .24s ease;`;
+  el.style.background=type==='err'?'rgba(192,57,43,.95)':type==='ok'?'rgba(39,174,96,.9)':'rgba(200,168,75,.9)';
+  el.style.color=type==='err'?'#fff':type==='ok'?'#fff':'#0a0d15';
+  el.textContent=msg; document.body.appendChild(el);
+  setTimeout(()=>el.remove(),3200);
+}
+</script>
+</body>
+</html>

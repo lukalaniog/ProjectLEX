@@ -1,0 +1,354 @@
+{
+  "name": "Advocate (Corrected)",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "cases",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "case_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.case_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "pipeline_status",
+              "fieldValue": "={{ $json.pipeline_status }}"
+            },
+            {
+              "fieldId": "lawyer_a",
+              "fieldValue": "={{ $json.lawyer_a }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -3536,
+        4576
+      ],
+      "id": "58feada0-1a5b-4978-b471-7c03a9783ca9",
+      "name": "Save lawyer_a to Supabase",
+      "retry": {
+        "enabled": true,
+        "maxTries": 3,
+        "waitBetween": 2000
+      },
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "YjOL2NYwLrO3tdr0",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -4416,
+        4896
+      ],
+      "id": "0d91dfbc-a167-470f-8043-15d50f6d3d98",
+      "name": "Groq Chat Model1",
+      "retry": {
+        "enabled": true,
+        "maxTries": 3,
+        "waitBetween": 2000
+      },
+      "credentials": {
+        "groqApi": {
+          "id": "FkDos5q0GPg7lU1d",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "advocate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -4832,
+        4672
+      ],
+      "id": "c552c29a-1f83-4ca0-8d3e-1b32f6fba0af",
+      "name": "Advocate Webhook1",
+      "webhookId": "advocate-webhook-id"
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        -4048,
+        5104
+      ],
+      "id": "fbea8c7c-6992-4252-936b-819952c5d982",
+      "name": "Ollama Embeddings1",
+      "retry": {
+        "enabled": true,
+        "maxTries": 3,
+        "waitBetween": 2000
+      },
+      "credentials": {
+        "ollamaApi": {
+          "id": "d9xNUlM4jtWN158d",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search the JL Laniog Law Firm legal database for relevant Philippine laws, statutes, rules, and jurisprudence.\n\nUse this tool BEFORE writing legal arguments. Call it with a specific legal query related to the case.\n\nExample queries:\n- \"constructive dismissal labor code security of tenure\"\n- \"VAWC Republic Act 9262 protection order\"\n- \"estafa elements Revised Penal Code Article 315\"\n- \"unlawful detainer ejectment Rules of Court\"\n- \"breach of contract Civil Code Article 1170\"\n\nAlways search at least once before building your legal arguments. Use the retrieved text as the basis for your citations.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -4128,
+        4896
+      ],
+      "id": "b0ae3450-3158-4022-ae06-555e5b6b6a0c",
+      "name": "Legal DB (Supabase)1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "YjOL2NYwLrO3tdr0",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=CASE FOR LEGAL ANALYSIS — ARGUE FOR THE CLIENT\n\nCase ID: {{ $json.case_id }}\nSubmitted by Clerk: {{ $json.submitted_by || \"Unknown\" }}\nTimestamp: {{ $json.timestamp }}\n\nCLIENT PROFILE:\nName: {{ $json.user_name }}\nContact: {{ $json.contact_number || \"Not provided\" }}\nDate of Birth: {{ $json.date_of_birth || \"Not provided\" }}\nCivil Status: {{ $json.civil_status || \"Not provided\" }}\nAddress: {{ $json.address || \"Not provided\" }}\nOccupation: {{ $json.occupation || \"Not provided\" }}\n\nCASE CLASSIFICATION (from Intake Agent):\nLegal Topic: {{ $json.legal_topic || \"Unclassified\" }}\nSpecific Legal Issue: {{ $json.legal_issue || \"Not specified\" }}\nIncident Date: {{ $json.incident_date || \"Not provided\" }}\nOpposing Party: {{ $json.opposing_party || \"Not identified\" }}\nUrgency: {{ $json.urgency || \"MEDIUM\" }}\n\nAI SUMMARY (from Intake Agent):\n{{ $json.ai_summary || \"No summary available.\" }}\n\nCASE THEORY (from Intake Agent):\n{{ $json.case_theory || \"Not yet determined.\" }}\n\nRAW CLIENT NARRATIVE (original clerk notes — treat this as primary source):\n{{ $json.legal_narrative || \"No narrative provided.\" }}\n\nDOCUMENTS ALREADY IN HAND:\n{{ $json.documents_submitted && $json.documents_submitted.length > 0 ? $json.documents_submitted.join(\", \") : \"None submitted yet\" }}\n\nDOCUMENTS STILL NEEDED (flagged by Intake Agent):\n{{ $json.documents_needed && $json.documents_needed.length > 0 ? $json.documents_needed.join(\", \") : \"None flagged\" }}\n\nCLERK NOTES:\n{{ $json.clerk_notes || \"None.\" }}\n\nAnalyze this case. Build the strongest possible legal argument for the client. Return ONLY valid JSON.",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are Lawyer A — the Advocate — of JL Laniog Law Firm, a Philippine law firm.\n\nYour role: receive a structured case intake and produce a comprehensive legal analysis that argues FOR THE CLIENT. You are the client's champion.\n\nLEX SEARCH PROTOCOL — MANDATORY:\nBefore writing your legal arguments, you MUST call the lex_legal_search tool at least once.\n- Search using terms specific to the legal issue (e.g., \"constructive dismissal security of tenure labor code\")\n- Use the retrieved law text as the basis for your legal arguments\n- If the search returns relevant results, cite the specific provisions in your arguments\n- You may search up to 3 times if the first query is insufficient\n- Only skip the search if the tool returns an error — in that case, proceed with your training knowledge\n\nYOUR ANALYSIS MUST CONTAIN ALL 7 SECTIONS BELOW:\n\n1. CASE_ASSESSMENT — 2-3 sentences. Summarize the legal situation from the client's perspective. State what happened, who is responsible, and what rights were violated.\n\n2. LEGAL_ARGUMENTS — Array of 3-5 strong legal arguments in the client's favor. Each argument must:\n   - Name the specific law or doctrine retrieved from LEX (e.g., \"Article 294, Labor Code\", \"RA 9262 Section 5\", \"Article 1170, Civil Code\")\n   - Explain how it applies to this specific case\n   - Be written as a complete argument, not just a citation\n   - Prefer laws retrieved from the database over general knowledge\n\n3. RECOMMENDED_STRATEGY — Choose ONE primary strategy:\n   \"SETTLE\" — if facts suggest negotiation is faster, cheaper, and likely to succeed\n   \"TRIAL\" — if facts demand full litigation and client has strong evidence\n   \"DEMAND_LETTER\" — if a formal demand letter may compel the other party to comply without filing\n   \"MEDIATION\" — if court-annexed or voluntary mediation is appropriate\n   \"ADMINISTRATIVE_COMPLAINT\" — if a government agency (NLRC, SEC, NBI, DSWD, etc.) is the right first step\n   \"URGENT_PROTECTION_ORDER\" — if client faces immediate safety risk\n\n4. STRATEGY_REASONING — 2-3 sentences explaining WHY you chose that strategy over the alternatives.\n\n5. SETTLEMENT_VIABILITY — Rate as \"HIGH\", \"MEDIUM\", or \"LOW\". Explain in 1-2 sentences what a fair settlement would look like and whether the other party is likely to agree.\n\n6. EVIDENCE_GAPS — Array of 2-4 things the client needs to prove their case that they may not have yet. Be specific — not generic advice like \"gather documents.\"\n\n7. WIN_PROBABILITY — Your honest assessment: \"STRONG\", \"MODERATE\", or \"WEAK\". Explain briefly why.\n\nCRITICAL RULES:\n- Return ONLY a raw JSON object. No markdown. No backticks. No preamble.\n- Your entire response must start with { and end with }\n- Base your analysis ONLY on the facts in the intake. Do not invent facts.\n- Always argue FOR the client — you are their lawyer, not a neutral judge.\n- Apply Philippine law specifically. Cite actual Philippine statutes retrieved from LEX where possible.\n- If urgency is HIGH, reflect that urgency in your strategy recommendation.\n\nRESPONSE FORMAT (exact keys, no additions):\n{\n  \"case_assessment\": \"...\",\n  \"legal_arguments\": [\"...\", \"...\", \"...\"],\n  \"recommended_strategy\": \"SETTLE|TRIAL|DEMAND_LETTER|MEDIATION|ADMINISTRATIVE_COMPLAINT|URGENT_PROTECTION_ORDER\",\n  \"strategy_reasoning\": \"...\",\n  \"settlement_viability\": \"HIGH|MEDIUM|LOW\",\n  \"settlement_notes\": \"...\",\n  \"evidence_gaps\": [\"...\", \"...\"],\n  \"win_probability\": \"STRONG|MODERATE|WEAK\",\n  \"win_probability_notes\": \"...\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -4336,
+        4672
+      ],
+      "id": "c640d03e-7301-40f5-8149-e2d99fdee22b",
+      "name": "AI Agent (Advocate)1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// LexFlow — Lawyer A Parser (CORRECTED)\n// Preserves all fields needed by dashboard\n\nconst item = $input.first().json;\nconst intake = $('Advocate Webhook1').item.json.body || $('Advocate Webhook1').item.json;\nconst raw = (item.output || item.text || item.response || \"\").toString().trim();\n\nif (!raw) {\n  return [{\n    json: {\n      ...intake,\n      lawyer_a: {\n        case_assessment: \"AI analysis unavailable. Check Ollama is running.\",\n        legal_arguments: [],\n        recommended_strategy: \"PENDING\",\n        strategy_reasoning: \"\",\n        settlement_viability: \"UNKNOWN\",\n        settlement_notes: \"\",\n        evidence_gaps: [],\n        win_probability: \"UNKNOWN\",\n        win_probability_notes: \"\"\n      },\n      lawyer_a_processed: false,\n      lawyer_a_error: \"Empty response from model\",\n      lawyer_a_raw: \"\",\n      pipeline_status: 'ADVOCATE_FAILED'\n    }\n  }];\n}\n\nlet cleaned = raw\n  .replace(/```json\\s*/gi, \"\")\n  .replace(/```\\s*/gi, \"\")\n  .trim();\n\nconst jsonMatch = cleaned.match(/\\{[\\s\\S]*\\}/);\nif (jsonMatch) cleaned = jsonMatch[0];\n\nlet ai;\ntry {\n  ai = JSON.parse(cleaned);\n} catch (e) {\n  return [{\n    json: {\n      ...intake,\n      lawyer_a: {\n        case_assessment: \"JSON parse failed. See lawyer_a_raw.\",\n        legal_arguments: [],\n        recommended_strategy: \"PARSE_ERROR\",\n        strategy_reasoning: \"\",\n        settlement_viability: \"UNKNOWN\",\n        settlement_notes: \"\",\n        evidence_gaps: [],\n        win_probability: \"UNKNOWN\",\n        win_probability_notes: \"\"\n      },\n      lawyer_a_processed: false,\n      lawyer_a_error: \"JSON.parse failed: \" + e.message,\n      lawyer_a_raw: raw,\n      pipeline_status: 'ADVOCATE_FAILED'\n    }\n  }];\n}\n\n// Ensure required strategy values\nconst validStrategies = ['SETTLE', 'TRIAL', 'DEMAND_LETTER', 'MEDIATION', 'ADMINISTRATIVE_COMPLAINT', 'URGENT_PROTECTION_ORDER'];\nconst strategy = validStrategies.includes(ai.recommended_strategy) ? ai.recommended_strategy : 'PENDING';\n\nreturn [{\n  json: {\n    // Preserve all original intake fields (critical for downstream)\n    case_id:             intake.case_id,\n    timestamp:           intake.timestamp,\n    submitted_by:        intake.submitted_by,\n    user_name:           intake.user_name,\n    contact_number:      intake.contact_number   || \"\",\n    date_of_birth:       intake.date_of_birth    || \"\",\n    civil_status:        intake.civil_status     || \"\",\n    address:             intake.address          || \"\",\n    occupation:          intake.occupation       || \"\",\n    legal_topic:         intake.legal_topic      || \"\",\n    legal_issue:         intake.legal_issue      || \"\",\n    incident_date:       intake.incident_date    || \"\",\n    opposing_party:      intake.opposing_party   || \"\",\n    urgency:             intake.urgency          || \"MEDIUM\",\n    legal_narrative:     intake.legal_narrative  || \"\",\n    clerk_notes:         intake.clerk_notes      || \"\",\n    ai_summary:          intake.ai_summary       || \"\",\n    case_theory:         intake.case_theory      || \"\",\n    documents_submitted: intake.documents_submitted || [],\n    documents_needed:    intake.documents_needed    || [],\n    attachments_meta:    intake.attachments_meta   || [],\n    document_urls:       intake.document_urls      || [],\n\n    // Lawyer A analysis\n    lawyer_a: {\n      case_assessment:       ai.case_assessment       || \"\",\n      legal_arguments:       ai.legal_arguments       || [],\n      recommended_strategy:  strategy,\n      strategy_reasoning:    ai.strategy_reasoning    || \"\",\n      settlement_viability:  ai.settlement_viability  || \"UNKNOWN\",\n      settlement_notes:      ai.settlement_notes      || \"\",\n      evidence_gaps:         ai.evidence_gaps         || [],\n      win_probability:       ai.win_probability       || \"UNKNOWN\",\n      win_probability_notes: ai.win_probability_notes || \"\"\n    },\n\n    lawyer_a_processed: true,\n    lawyer_a_error:     null,\n    lawyer_a_raw:       raw,\n    pipeline_status:    'ADVOCATE_COMPLETE'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3760,
+        4672
+      ],
+      "id": "f35c2aeb-3fe2-4cc3-b6ef-a58f550125a3",
+      "name": "Parse & Format Output1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/devil",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ ({\n  case_id:             $json.case_id,\n  timestamp:           $json.timestamp,\n  submitted_by:        $json.submitted_by,\n  user_name:           $json.user_name,\n  contact_number:      $json.contact_number,\n  date_of_birth:       $json.date_of_birth,\n  civil_status:        $json.civil_status,\n  address:             $json.address,\n  occupation:          $json.occupation,\n  legal_topic:         $json.legal_topic,\n  legal_issue:         $json.legal_issue,\n  incident_date:       $json.incident_date,\n  opposing_party:      $json.opposing_party,\n  urgency:             $json.urgency,\n  legal_narrative:     $json.legal_narrative,\n  clerk_notes:         $json.clerk_notes,\n  documents_submitted: $json.documents_submitted || [],\n  attachments_meta:    $json.attachments_meta    || [],\n  document_urls:       $json.document_urls       || [],\n  lawyer_a:            $json.lawyer_a\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 5000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -3536,
+        4768
+      ],
+      "id": "64f48c02-6e99-4c14-8456-021e749c4ea7",
+      "name": "Trigger Devil Workflow1",
+      "retry": {
+        "enabled": true,
+        "maxTries": 3,
+        "waitBetween": 2000
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama3.1:8b-instruct-q4_K_M",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -4256,
+        4896
+      ],
+      "id": "01c33908-ea4d-4f8e-9f65-c3064cd7cb56",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "d9xNUlM4jtWN158d",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 62
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -4608,
+        4672
+      ],
+      "id": "5338990c-5403-4ff9-a44e-fad9b1703301",
+      "name": "Wait 1 min (Groq Rate Limit)",
+      "webhookId": "wait-resume-advocate"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent (Advocate)1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Advocate Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Wait 1 min (Groq Rate Limit)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Embeddings1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Legal DB (Supabase)1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Legal DB (Supabase)1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent (Advocate)1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent (Advocate)1": {
+      "main": [
+        [
+          {
+            "node": "Parse & Format Output1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Format Output1": {
+      "main": [
+        [
+          {
+            "node": "Save lawyer_a to Supabase",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Trigger Devil Workflow1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent (Advocate)1",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Wait 1 min (Groq Rate Limit)": {
+      "main": [
+        [
+          {
+            "node": "AI Agent (Advocate)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "a4feee91-7613-474e-b786-790c61876f59",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d15b01065c3cc47a5c693bea54c139dca8f96b46f96de462646844662cd74c5d"
+  },
+  "id": "bTIQsyS8e7SEIU9xQUMEP",
+  "tags": [
+    {
+      "updatedAt": "2026-03-13T04:43:07.909Z",
+      "createdAt": "2026-03-13T04:43:07.909Z",
+      "id": "Yh6tLRUzeSibDLyW",
+      "name": "LEX"
+    }
+  ]
+}

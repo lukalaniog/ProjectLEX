@@ -1,0 +1,303 @@
+{
+  "name": "Legal Analyst (Strategist)",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        784,
+        2736
+      ],
+      "id": "cf43c880-a006-4c59-b4d3-172343fa70dc",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "FkDos5q0GPg7lU1d",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=FINAL LEGAL STRATEGY REVIEW — SENIOR PARTNER ANALYSIS\n\nCase ID: {{ $json.case_id }}\nTimestamp: {{ $json.timestamp }}\n\nCLIENT:\n{{ $json.user_name }}\n\nLEGAL ISSUE:\n{{ $json.legal_topic }} — {{ $json.legal_issue }}\nUrgency: {{ $json.urgency }}\n\nRAW NARRATIVE:\n{{ $json.legal_narrative || \"No narrative\" }}\n\n--- LAWYER A (ADVOCATE) RECOMMENDATION ---\nStrategy: {{ $json.lawyer_a.recommended_strategy || 'N/A' }}\nCase Assessment: {{ $json.lawyer_a.case_assessment || 'N/A' }}\nLegal Arguments:\n{{ $json.lawyer_a.legal_arguments && $json.lawyer_a.legal_arguments.length ? $json.lawyer_a.legal_arguments.join('\\n') : 'None' }}\nEvidence Gaps:\n{{ $json.lawyer_a.evidence_gaps && $json.lawyer_a.evidence_gaps.length ? $json.lawyer_a.evidence_gaps.join('\\n') : 'None' }}\nWin Probability (A's view): {{ $json.lawyer_a.win_probability || 'N/A' }}\n\n--- LAWYER B (DEVIL'S ADVOCATE) CRITIQUE ---\nCase Assessment: {{ $json.lawyer_b.case_assessment || 'N/A' }}\nCounterarguments:\n{{ $json.lawyer_b.legal_arguments && $json.lawyer_b.legal_arguments.length ? $json.lawyer_b.legal_arguments.join('\\n') : 'None' }}\nEvidence Attacks:\n{{ $json.lawyer_b.evidence_attacks && $json.lawyer_b.evidence_attacks.length ? $json.lawyer_b.evidence_attacks.join('\\n') : 'None' }}\nProcedural Hazards:\n{{ $json.lawyer_b.procedural_hazards && $json.lawyer_b.procedural_hazards.length ? $json.lawyer_b.procedural_hazards.join('\\n') : 'None' }}\nWin Probability (B's view): {{ $json.lawyer_b.win_probability || 'N/A' }} (client's chance of losing)\n\nYOUR TASK AS SENIOR PARTNER:\nReview both analyses. Weigh the arguments. Make the FINAL call on how to proceed.\n\nConsider:\n- Where do Lawyer A and B agree?\n- Where do they conflict? Who makes more sense?\n- Are Lawyer B's procedural hazards legitimate deal-breakers?\n- Is the evidence gap fatal or manageable?\n- What does Philippine law and precedent actually say about this type of case?\n\nYou MUST call the legal_db_search tool at least once to validate your recommendation with actual law and jurisprudence.\n\nReturn ONLY valid JSON with these exact fields:\n{\n  \"final_recommendation\": \"SETTLE|TRIAL|DEMAND_LETTER|MEDIATION|ADMINISTRATIVE_COMPLAINT|URGENT_PROTECTION_ORDER|DROP_CASE\",\n  \"approved_strategy\": \"<detailed plan of action>\",\n  \"win_probability\": \"STRONG|MODERATE|WEAK\",\n  \"priority\": \"HIGH|MEDIUM|LOW\",\n  \"notes\": \"<explanation of your decision, addressing key points from both lawyers>\"\n}\n\nGuidelines:\n- If Lawyer B's procedural hazards are severe and likely fatal, consider \"DROP_CASE\"\n- If settlement offers are reasonable and risks high, prefer \"SETTLE\"\n- If client's case is strong and adversary is bluffing, \"TRIAL\" may be appropriate\n- If quick resolution without litigation is possible, \"DEMAND_LETTER\" or \"MEDIATION\"\n- If urgency is HIGH and safety at risk, \"URGENT_PROTECTION_ORDER\"\n- If government agency has exclusive jurisdiction, \"ADMINISTRATIVE_COMPLAINT\"\n- Base your win_probability on the weakest points identified by Lawyer B\n- Priority should reflect urgency plus legal importance",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are the Senior Partner — the final decision-maker at JL Laniog Law Firm. You review the analyses of your junior lawyers (Advocate and Devil's Advocate) and issue the final strategic directive.\n\nYour role:\n1. Weigh both sides impartially\n2. Resolve conflicts between their recommendations\n3. Determine the actual best course of action\n4. Consider practical constraints (time, cost, client's risk tolerance)\n5. Issue a clear, actionable final recommendation\n\nYou MUST:\n- Search the legal database at least once to ground your decision in Philippine law\n- Consider both lawyers' arguments seriously\n- Not automatically pick one side — synthesize a third way if needed\n- Be realistic about win probability ( Lawyer B's critique matters)\n- Set priority based on urgency and complexity\n- Write notes that explain your reasoning to the client\n\nRemember: This is the final analysis that goes to the client. It must be legally sound, practical, and clearly reasoned."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        848,
+        2512
+      ],
+      "id": "d0b9ea19-c816-4126-bf08-67272782a54d",
+      "name": "AI Agent (Analyst)"
+    },
+    {
+      "parameters": {
+        "amount": 62
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        2512
+      ],
+      "id": "7c65dc57-2677-4ef3-9ff4-68e705bd14e6",
+      "name": "Wait 45s (Groq Rate Limit)",
+      "webhookId": "wait-resume-analyst"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "analyst",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        336,
+        2512
+      ],
+      "id": "ca01ce55-d92e-47fa-88af-39659a77bcea",
+      "name": "Analyst Webhook1",
+      "webhookId": "analyst-webhook-id"
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        2944
+      ],
+      "id": "f35c7b86-95b0-4258-939c-9ecf046d2567",
+      "name": "Ollama Embeddings1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "d9xNUlM4jtWN158d",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search the JL Laniog Law Firm legal database for Philippine laws, jurisprudence, and legal principles relevant to evaluating legal strategies and making final recommendations.\n\nUse this to verify:\n- Which strategies are most effective for the specific legal issue\n- What courts have ruled in similar cases\n- Procedural requirements for different legal remedies\n- Relevant factors in determining win probability\n- Standards for settlement vs trial\n\nExample queries:\n- \"settlement vs trial advantages labor cases\"\n- \"win probability factors estafa cases\"\n- \"demand letter requirements before filing\"\n- \"mediation success rate family law\"\n- \"administrative complaint procedure SEC\"\n\nAlways search before making your final recommendation.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        1040,
+        2736
+      ],
+      "id": "a63e3a5c-7e71-4412-8952-b8f464a664bd",
+      "name": "Legal DB (Supabase)1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "6UpV0Jy3kBDpbC6M",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Senior Partner Parser (Strategist)\n// Preserves all data for dashboard\n\nconst item = $input.first().json;\nconst intake = $('Analyst Webhook1').item.json.body || $('Analyst Webhook1').item.json;\nconst raw = (item.output || item.text || item.response || \"\").toString().trim();\n\nif (!raw) {\n  return [{\n    json: {\n      ...intake,\n      senior_partner: {\n        final_recommendation: \"ANALYST_UNAVAILABLE\",\n        approved_strategy: \"\",\n        win_probability: \"UNKNOWN\",\n        priority: \"UNKNOWN\",\n        notes: \"Senior Partner analysis failed to produce response.\"\n      },\n      pipeline_status: 'ANALYST_FAILED'\n    }\n  }];\n}\n\nlet cleaned = raw\n  .replace(/```json\\s*/gi, \"\")\n  .replace(/```\\s*/gi, \"\")\n  .trim();\n\nconst jsonMatch = cleaned.match(/\\{[\\s\\S]*\\}/);\nif (jsonMatch) cleaned = jsonMatch[0];\n\nlet ai;\ntry {\n  ai = JSON.parse(cleaned);\n} catch (e) {\n  return [{\n    json: {\n      ...intake,\n      senior_partner: {\n        final_recommendation: \"PARSE_ERROR\",\n        approved_strategy: \"\",\n        win_probability: \"UNKNOWN\",\n        priority: \"UNKNOWN\",\n        notes: `JSON parse failed: ${e.message}`\n      },\n      pipeline_status: 'ANALYST_FAILED'\n    }\n  }];\n}\n\n// Validate final_recommendation\nconst VALID_RECOMMENDATIONS = ['SETTLE', 'TRIAL', 'DEMAND_LETTER', 'MEDIATION', 'ADMINISTRATIVE_COMPLAINT', 'URGENT_PROTECTION_ORDER', 'DROP_CASE'];\nconst recommendation = VALID_RECOMMENDATIONS.includes(ai.final_recommendation) ? ai.final_recommendation : 'PENDING';\n\n// Validate priority\nconst VALID_PRIORITIES = ['HIGH', 'MEDIUM', 'LOW'];\nconst priority = VALID_PRIORITIES.includes(ai.priority) ? ai.priority : 'MEDIUM';\n\nreturn [{\n  json: {\n    // Preserve all fields\n    case_id:             intake.case_id,\n    timestamp:           intake.timestamp,\n    submitted_by:        intake.submitted_by,\n    user_name:           intake.user_name,\n    contact_number:      intake.contact_number   || \"\",\n    date_of_birth:       intake.date_of_birth    || \"\",\n    civil_status:        intake.civil_status     || \"\",\n    address:             intake.address          || \"\",\n    occupation:          intake.occupation       || \"\",\n    legal_topic:         intake.legal_topic      || \"\",\n    legal_issue:         intake.legal_issue      || \"\",\n    incident_date:       intake.incident_date    || \"\",\n    opposing_party:      intake.opposing_party   || \"\",\n    urgency:             intake.urgency          || \"MEDIUM\",\n    legal_narrative:     intake.legal_narrative  || \"\",\n    clerk_notes:         intake.clerk_notes      || \"\",\n    ai_summary:          intake.ai_summary       || \"\",\n    case_theory:         intake.case_theory      || \"\",\n    documents_submitted: intake.documents_submitted || [],\n    documents_needed:    intake.documents_needed    || [],\n    attachments_meta:    intake.attachments_meta   || [],\n    document_urls:       intake.document_urls      || [],\n    lawyer_a:            intake.lawyer_a         || null,\n    lawyer_b:            intake.lawyer_b         || null,\n\n    // Senior Partner final analysis\n    senior_partner: {\n      final_recommendation: recommendation,\n      approved_strategy:   ai.approved_strategy   || \"\",\n      win_probability:     ai.win_probability     || \"UNKNOWN\",\n      priority:            priority,\n      notes:               ai.notes               || \"\"\n    },\n\n    pipeline_status: 'COMPLETE'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        2512
+      ],
+      "id": "fd461776-b650-4528-bed5-e851059cb792",
+      "name": "Parse & Format Output1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "cases",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "case_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.case_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "pipeline_status",
+              "fieldValue": "={{ $json.pipeline_status }}"
+            },
+            {
+              "fieldId": "senior_partner",
+              "fieldValue": "={{ $json.senior_partner }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        2512
+      ],
+      "id": "ed603d0d-624c-481a-aebd-873e2b3d914e",
+      "name": "Save senior_partner to Supabase1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "YjOL2NYwLrO3tdr0",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama3.1:8b-instruct-q4_K_M",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        912,
+        2736
+      ],
+      "id": "3a1deffa-6eea-4408-8bbc-0c3c50581c5f",
+      "name": "Ollama Chat Model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "d9xNUlM4jtWN158d",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent (Analyst)": {
+      "main": [
+        [
+          {
+            "node": "Parse & Format Output1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent (Analyst)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 45s (Groq Rate Limit)": {
+      "main": [
+        [
+          {
+            "node": "AI Agent (Analyst)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyst Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Wait 45s (Groq Rate Limit)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Embeddings1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Legal DB (Supabase)1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Legal DB (Supabase)1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent (Analyst)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Format Output1": {
+      "main": [
+        [
+          {
+            "node": "Save senior_partner to Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent (Analyst)",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "2fbc1ffe-8fba-45c7-86d3-3f2cf472528b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d15b01065c3cc47a5c693bea54c139dca8f96b46f96de462646844662cd74c5d"
+  },
+  "id": "eqbXr-BFyRfS3CmQxt6em",
+  "tags": [
+    {
+      "updatedAt": "2026-03-13T04:43:07.909Z",
+      "createdAt": "2026-03-13T04:43:07.909Z",
+      "id": "Yh6tLRUzeSibDLyW",
+      "name": "LEX"
+    }
+  ]
+}

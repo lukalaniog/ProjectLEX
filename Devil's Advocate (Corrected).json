@@ -1,0 +1,399 @@
+{
+  "name": "Devil's Advocate (Corrected)",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "cases",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "case_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.case_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "pipeline_status",
+              "fieldValue": "={{ $json.pipeline_status }}"
+            },
+            {
+              "fieldId": "lawyer_b",
+              "fieldValue": "={{ $json.lawyer_b }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -3264,
+        5984
+      ],
+      "id": "d3b801df-2951-4fa8-ab44-a470cfcc5b18",
+      "name": "Save lawyer_b to Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "YjOL2NYwLrO3tdr0",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -4112,
+        6304
+      ],
+      "id": "58f498b5-6c2e-40e0-b84d-4330192717bb",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "FkDos5q0GPg7lU1d",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 62
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -4336,
+        6080
+      ],
+      "id": "704a1e2e-f6d7-431d-9854-da401f25c7c2",
+      "name": "Wait 45s (Groq Rate Limit)",
+      "webhookId": "wait-resume-devil"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "devil",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -4560,
+        6080
+      ],
+      "id": "99109264-08cf-42ac-b89e-98bf3b9f3b4c",
+      "name": "Devil Webhook1",
+      "webhookId": "devil-webhook-id"
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        -3776,
+        6512
+      ],
+      "id": "ee361427-50bb-42df-aca0-2b864438c09e",
+      "name": "Ollama Embeddings1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "d9xNUlM4jtWN158d",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search the JL Laniog Law Firm legal database for laws, statutes, and jurisprudence that can be used to CHALLENGE the client's case. Find defenses, exceptions, technicalities, and weaknesses.\n\nWhen building counterarguments, search for:\n- Exceptions to the rule the client is invoking\n- Procedural requirements the client failed to meet\n- Statutes of limitations\n- Jurisdictional issues\n- Defenses available to the opposing party\n- Case law that contradicts the client's position\n- Technical legal requirements that create hurdles\n\nExample queries:\n- \"constructive dismissal exceptions security of tenure\"\n- \"VAWC dismissal grounds lack of evidence\"\n- \"estafa defenses trustworthiness element\"\n- \"evidence rules hearsay Philippine\"\n- \"prescription periods civil code\"\n\nAlways search at least once before writing your counterarguments.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -3856,
+        6304
+      ],
+      "id": "bb3e68ab-64e7-4a2f-8a55-b5af0e773b55",
+      "name": "Legal DB (Supabase)1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "6UpV0Jy3kBDpbC6M",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=CASE FOR LEGAL ANALYSIS — DEVIL'S ADVOCATE (ARGUE AGAINST THE CLIENT)\n\nCase ID: {{ $json.case_id }}\nSubmitted by Clerk: {{ $json.submitted_by || \"Unknown\" }}\nTimestamp: {{ $json.timestamp }}\n\nCLIENT PROFILE:\nName: {{ $json.user_name }}\nContact: {{ $json.contact_number || \"Not provided\" }}\nDate of Birth: {{ $json.date_of_birth || \"Not provided\" }}\nCivil Status: {{ $json.civil_status || \"Not provided\" }}\nAddress: {{ $json.address || \"Not provided\" }}\nOccupation: {{ $json.occupation || \"Not provided\" }}\n\nCASE CLASSIFICATION:\nLegal Topic: {{ $json.legal_topic || \"Unclassified\" }}\nSpecific Legal Issue: {{ $json.legal_issue || \"Not specified\" }}\nIncident Date: {{ $json.incident_date || \"Not provided\" }}\nOpposing Party: {{ $json.opposing_party || \"Not identified\" }}\nUrgency: {{ $json.urgency || \"MEDIUM\" }}\n\nAI SUMMARY (from Intake Agent):\n{{ $json.ai_summary || \"No summary available.\" }}\n\nCASE THEORY (from Intake Agent):\n{{ $json.case_theory || \"Not yet determined.\" }}\n\nRAW CLIENT NARRATIVE (original clerk notes — treat this as primary source):\n{{ $json.legal_narrative || \"No narrative provided.\" }}\n\nDOCUMENTS SUBMITTED:\n{{ $json.documents_submitted && $json.documents_submitted.length > 0 ? $json.documents_submitted.join(\", \") : \"None submitted yet\" }}\n\nDOCUMENTS STILL NEEDED:\n{{ $json.documents_needed && $json.documents_needed.length > 0 ? $json.documents_needed.join(\", \") : \"None flagged\" }}\n\nCLERK NOTES:\n{{ $json.clerk_notes || \"None.\" }}\n\nPREVIOUS ANALYSIS (Lawyer A's arguments — your job is to CHALLENGE these):\n{{ $json.lawyer_a ? \"Lawyer A Assessment: \" + ($json.lawyer_a.case_assessment || \"\") + \"\\nLawyer A Strategy: \" + ($json.lawyer_a.recommended_strategy || \"\") + \"\\nLawyer A Arguments: \" + ($json.lawyer_a.legal_arguments || []).join(\"\\n\") + \"\\nLawyer A Evidence Gaps: \" + ($json.lawyer_a.evidence_gaps || []).join(\"\\n\") : \"No previous analysis provided. Critique general vulnerabilities.\" }}\n\nYOUR MISSION:\nYou are Lawyer B — the Devil's Advocate. Your sole purpose is to attack the client's case from the opposing side's perspective. Find every weakness, inconsistency, legal flaw, and missing element.\n\n{% else %}\nNo previous analysis provided. Provide a general critique of the case's vulnerabilities.\n{% endif %}\n\nAnalyze this case and build the strongest possible OPPOSING argument. Return ONLY valid JSON.",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are Lawyer B — the Devil's Advocate — of JL Laniog Law Firm, a Philippine law firm.\n\nYour role: receive a structured case intake (and optionally Lawyer A's analysis) and produce a comprehensive adversarial analysis that argues AGAINST the client. You are the client's worst nightmare.\n\nLEX SEARCH PROTOCOL — MANDATORY:\nBefore writing your counterarguments, you MUST call the lex_legal_search tool at least once.\n- Search for legal provisions that WEAKEN the client's position\n- Look for exceptions, limitations, defenses, and procedural hurdles\n- Search for case law that favors the opposing party\n- Use retrieved law text to build your counterarguments\n- You may search up to 3 times if needed\n- Only skip if the tool errors out\n\nYOUR ANALYSIS MUST CONTAIN ALL 6 SECTIONS BELOW:\n\n1. CASE_ASSESSMENT — 2-3 sentences. Summarize why this case is flawed, risky, or likely to fail. Focus on legal deficiencies, weak facts, or procedural problems.\n\n2. LEGAL_ARGUMENTS — Array of 3-5 COUNTERARGUMENTS that the opposing party would make. Each must:\n   - Name specific laws or doctrines from LEX search results\n   - Explain how the law defeats or weakens the client's position\n   - Point out missing elements, improper procedure, or legal technicalities\n   - Be written as a complete counterargument, not just a citation\n\n3. STRATEGY_REASONING — 2-3 sentences explaining the OPPOSING PARTY's best strategic approach and why it would likely succeed.\n\n4. EVIDENCE_ATTACKS — Array of 2-4 specific problems with the client's evidence:\n   - What's missing? (documents, witnesses, dates)\n   - What's unreliable? (hearsay, lack of foundation, authentication issues)\n   - What contradicts the client's story?\n   - What legal requirements for evidence are not met?\n\n5. PROCEDURAL_HAZARDS — Array of 2-4 procedural or timing risks:\n   - Statutes of limitations\n   - Jurisdictional issues\n   - Improper venue\n   - Missing jurisdictional facts\n   - Alternative remedies that should be exhausted first\n   - Any \"gotcha\" procedural traps\n\n6. WIN_PROBABILITY — Your honest assessment: \"STRONG\", \"MODERATE\", or \"WEAK\" — representing the likelihood that the CLIENT WILL LOSE. Explain why.\n\nCRITICAL RULES:\n- Return ONLY a raw JSON object. No markdown. No backticks. No preamble.\n- Your entire response must start with { and end with }\n- Base your critique ONLY on the facts in the intake. Do not invent facts.\n- Always argue AGAINST the client — you are the opposition's lawyer.\n- Apply Philippine law specifically. Cite actual statutes from LEX where possible.\n- If Lawyer A's analysis is provided, directly rebut their arguments point-by-point.\n- If urgency is HIGH, note whether that urgency is legitimate or manufactured.\n\nRESPONSE FORMAT (exact keys, no additions):\n{\n  \"case_assessment\": \"...\",\n  \"legal_arguments\": [\"...\", \"...\", \"...\"],\n  \"strategy_reasoning\": \"...\",\n  \"evidence_attacks\": [\"...\", \"...\"],\n  \"procedural_hazards\": [\"...\", \"...\"],\n  \"win_probability\": \"STRONG|MODERATE|WEAK\",\n  \"win_probability_notes\": \"...\"\n}\n\nIMPORTANT: Your win_probability indicates the CLIENT'S chance of LOSING. \"STRONG\" means they will almost certainly lose. \"WEAK\" means they might win."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -4064,
+        6080
+      ],
+      "id": "974f5d6f-7852-45d7-bb9a-6044690a4654",
+      "name": "AI Agent (Devil)1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// LexFlow — Devil's Advocate Parser (CORRECTED)\n// Preserves all fields needed by dashboard\n\nconst item = $input.first().json;\nconst intake = $('Devil Webhook1').item.json.body || $('Devil Webhook1').item.json;\nconst raw = (item.output || item.text || item.response || \"\").toString().trim();\n\nif (!raw) {\n  return [{\n    json: {\n      ...intake,\n      lawyer_b: {\n        case_assessment: \"Devil's Advocate unavailable. Check systems.\",\n        legal_arguments: [],\n        strategy_reasoning: \"\",\n        evidence_attacks: [],\n        procedural_hazards: [],\n        win_probability: \"UNKNOWN\",\n        win_probability_notes: \"\"\n      },\n      lawyer_b_processed: false,\n      lawyer_b_error: \"Empty response from model\",\n      lawyer_b_raw: \"\",\n      pipeline_status: 'DEVIL_FAILED'\n    }\n  }];\n}\n\nlet cleaned = raw\n  .replace(/```json\\s*/gi, \"\")\n  .replace(/```\\s*/gi, \"\")\n  .trim();\n\nconst jsonMatch = cleaned.match(/\\{[\\s\\S]*\\}/);\nif (jsonMatch) cleaned = jsonMatch[0];\n\nlet ai;\ntry {\n  ai = JSON.parse(cleaned);\n} catch (e) {\n  return [{\n    json: {\n      ...intake,\n      lawyer_b: {\n        case_assessment: \"JSON parse failed. See lawyer_b_raw.\",\n        legal_arguments: [],\n        strategy_reasoning: \"\",\n        evidence_attacks: [],\n        procedural_hazards: [],\n        win_probability: \"UNKNOWN\",\n        win_probability_notes: \"\"\n      },\n      lawyer_b_processed: false,\n      lawyer_b_error: \"JSON.parse failed: \" + e.message,\n      lawyer_b_raw: raw,\n      pipeline_status: 'DEVIL_FAILED'\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    // Preserve all original intake fields (critical for downstream)\n    case_id:             intake.case_id,\n    timestamp:           intake.timestamp,\n    submitted_by:        intake.submitted_by,\n    user_name:           intake.user_name,\n    contact_number:      intake.contact_number   || \"\",\n    date_of_birth:       intake.date_of_birth    || \"\",\n    civil_status:        intake.civil_status     || \"\",\n    address:             intake.address          || \"\",\n    occupation:          intake.occupation       || \"\",\n    legal_topic:         intake.legal_topic      || \"\",\n    legal_issue:         intake.legal_issue      || \"\",\n    incident_date:       intake.incident_date    || \"\",\n    opposing_party:      intake.opposing_party   || \"\",\n    urgency:             intake.urgency          || \"MEDIUM\",\n    legal_narrative:     intake.legal_narrative  || \"\",\n    clerk_notes:         intake.clerk_notes      || \"\",\n    ai_summary:          intake.ai_summary       || \"\",\n    case_theory:         intake.case_theory      || \"\",\n    documents_submitted: intake.documents_submitted || [],\n    documents_needed:    intake.documents_needed    || [],\n    attachments_meta:    intake.attachments_meta   || [],\n    document_urls:       intake.document_urls      || [],\n    lawyer_a:            intake.lawyer_a         || null,\n\n    // Devil's Advocate analysis\n    lawyer_b: {\n      case_assessment:       ai.case_assessment       || \"\",\n      legal_arguments:       ai.legal_arguments       || [],\n      strategy_reasoning:    ai.strategy_reasoning    || \"\",\n      evidence_attacks:      ai.evidence_attacks      || [],\n      procedural_hazards:    ai.procedural_hazards    || [],\n      win_probability:       ai.win_probability       || \"UNKNOWN\",\n      win_probability_notes: ai.win_probability_notes || \"\"\n    },\n\n    lawyer_b_processed: true,\n    lawyer_b_error:     null,\n    lawyer_b_raw:       raw,\n    pipeline_status:    'DEVIL_COMPLETE'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3488,
+        6080
+      ],
+      "id": "846c7273-e411-45a0-889c-9dcf1700ec4f",
+      "name": "Parse & Format Output1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/analyst",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ ({\n  case_id:             $json.case_id,\n  timestamp:           $json.timestamp,\n  submitted_by:        $json.submitted_by,\n  user_name:           $json.user_name,\n  contact_number:      $json.contact_number,\n  date_of_birth:       $json.date_of_birth,\n  civil_status:        $json.civil_status,\n  address:             $json.address,\n  occupation:          $json.occupation,\n  legal_topic:         $json.legal_topic,\n  legal_issue:         $json.legal_issue,\n  incident_date:       $json.incident_date,\n  opposing_party:      $json.opposing_party,\n  urgency:             $json.urgency,\n  legal_narrative:     $json.legal_narrative,\n  clerk_notes:         $json.clerk_notes,\n  documents_submitted: $json.documents_submitted || [],\n  attachments_meta:    $json.attachments_meta    || [],\n  document_urls:       $json.document_urls       || [],\n  lawyer_a:            $json.lawyer_a,\n  lawyer_b:            $json.lawyer_b\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 5000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -3264,
+        6176
+      ],
+      "id": "a94b2128-8fa2-40a2-b807-a4ce2de53370",
+      "name": "Trigger Analyst Workflow1"
+    },
+    {
+      "parameters": {
+        "model": "llama3.1:8b-instruct-q4_K_M",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -3984,
+        6304
+      ],
+      "id": "490abf2a-6a19-417e-b953-6ed329d6e9ce",
+      "name": "Ollama Chat Model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "d9xNUlM4jtWN158d",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Devil Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, */*;q=0.1",
+            "content-type": "application/json",
+            "user-agent": "axios/1.12.0",
+            "content-length": "5177",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "host": "localhost:5678",
+            "connection": "close"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "case_id": "2026-0315-5712",
+            "timestamp": "2026-03-15T05:44:09.149Z",
+            "submitted_by": "John Lennon",
+            "user_name": "Juan De La Cruz",
+            "contact_number": "09123456789",
+            "date_of_birth": "1985-08-25",
+            "civil_status": "Married",
+            "address": "Barangay San Miguel, Majayjay, Laguna",
+            "occupation": "Businessman",
+            "legal_topic": "Criminal Law",
+            "legal_issue": "Theft / Robbery",
+            "incident_date": "2026-03-05",
+            "opposing_party": "Pedro  Santos",
+            "urgency": "LOW",
+            "legal_narrative": "On March 5, 2026 at approximately 8:30 PM, the complainant, Juan Dela Cruz, was attending to customers inside his convenience store located in Barangay San Miguel, Majayjay, Laguna when the respondent, Pedro Santos, entered the premises.\n\nWhile the complainant was assisting another customer, his Samsung Galaxy A52 mobile phone, which had been placed on the counter, went missing. Upon reviewing the store’s CCTV footage, the complainant observed the respondent allegedly taking the mobile phone and placing it inside his jacket before leaving the establishment.\n\nThe complainant confronted the respondent on March 6, 2026, but the respondent denied the allegation and did not return the phone.\n\nDue to the loss of the mobile phone and the respondent’s refusal to return it, the complainant decided to file a formal complaint.",
+            "clerk_notes": "The complainant appeared at the office at approximately 10:15 AM to execute the affidavit. The complainant was calm but visibly concerned about the incident. He maintained a cooperative demeanor throughout the interview and was able to narrate the events in a clear and chronological manner.\n\nThe complainant brought with him a copy of the CCTV recording stored on a USB drive, which allegedly shows the respondent taking the mobile phone from the counter area. He stated that he personally knows the respondent and expressed confidence in identifying him in the video footage.\n\nNo signs of intoxication, coercion, or confusion were observed during the intake process. The complainant appeared lucid, responsive to questions, and consistent in his narration.",
+            "documents_submitted": [
+              "Sworn Complaint Affidavit",
+              "Photos / Physical Evidence"
+            ],
+            "attachments_meta": [],
+            "document_urls": [],
+            "lawyer_a": {
+              "case_assessment": "The client's case lacks specific details, making it challenging to assess the legal situation. However, it appears that the client is seeking legal assistance for an unspecified issue. The opposing party and incident date are unknown, and there is no clear indication of what rights were violated. The medium urgency level suggests that the client needs assistance, but the specifics are unclear.",
+              "legal_arguments": [
+                "Without specific details, it is difficult to provide strong legal arguments. However, if we assume that the client is seeking protection under a general provision such as the Civil Code, Article 19, which states that 'every person must, in the exercise of their rights and in the performance of their duties, act with justice, give everyone his due, and observe honesty and good faith.' This provision could potentially apply to the client's situation, depending on the specifics of the case.",
+                "Another possible argument could be based on the principle of 'damnum absque injuria,' which is a Latin phrase meaning 'damage without injury.' If the client has suffered damage but not injury, they may still have a claim under this principle. However, without more information, it is impossible to determine the applicability of this principle to the client's case.",
+                "The client may also be able to argue that they are entitled to relief under the principle of 'ubi jus ibi remedium,' which is a Latin phrase meaning 'where there is a right, there is a remedy.' If the client can establish that they have a right that has been violated, they may be able to seek relief under this principle."
+              ],
+              "recommended_strategy": "DEMAND_LETTER",
+              "strategy_reasoning": "Given the medium urgency level and the lack of specific details, a demand letter may be the most appropriate initial strategy. This approach allows the client to formally assert their claims and potentially resolve the issue without resorting to more formal legal action. It also provides an opportunity for the opposing party to respond and potentially settle the matter amicably.",
+              "settlement_viability": "LOW",
+              "settlement_notes": "A fair settlement would depend on the specifics of the case, which are currently unknown. However, given the lack of information, it is unlikely that the opposing party would agree to a settlement without more details.",
+              "evidence_gaps": [
+                "Specific details about the incident, including the date, time, and location",
+                "Information about the opposing party, including their identity and any relevant relationships or interactions with the client",
+                "Documentation or evidence supporting the client's claims, such as witness statements, photographs, or video recordings"
+              ],
+              "win_probability": "WEAK",
+              "win_probability_notes": "The lack of specific details and evidence makes it challenging to assess the client's chances of success. However, without more information, it is difficult to build a strong legal argument, and the client's chances of winning are likely weak."
+            }
+          },
+          "webhookUrl": "http://localhost:5678/webhook/devil",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent (Devil)1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 45s (Groq Rate Limit)": {
+      "main": [
+        [
+          {
+            "node": "AI Agent (Devil)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Devil Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Wait 45s (Groq Rate Limit)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Embeddings1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Legal DB (Supabase)1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Legal DB (Supabase)1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent (Devil)1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent (Devil)1": {
+      "main": [
+        [
+          {
+            "node": "Parse & Format Output1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Format Output1": {
+      "main": [
+        [
+          {
+            "node": "Save lawyer_b to Supabase",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Trigger Analyst Workflow1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent (Devil)1",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "22f691f0-e163-4f32-b79e-c2a2ae8e8806",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d15b01065c3cc47a5c693bea54c139dca8f96b46f96de462646844662cd74c5d"
+  },
+  "id": "9ay5wFdBCmAowe7DOj9sQ",
+  "tags": [
+    {
+      "updatedAt": "2026-03-13T04:43:07.909Z",
+      "createdAt": "2026-03-13T04:43:07.909Z",
+      "id": "Yh6tLRUzeSibDLyW",
+      "name": "LEX"
+    }
+  ]
+}

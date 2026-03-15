@@ -1,0 +1,2240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LexFlow — JL Laniog Law Firm</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0e0f14;--surface:#151720;--surface2:#1c1f2e;--surface3:#222538;
+  --border:#2a2d3e;--border2:#353850;
+  --gold:#c9a84c;--gold2:#e8c56a;--gold-dim:#3a2e10;--gold-glow:rgba(201,168,76,0.15);
+  --text:#e8e6e0;--muted:#7a7890;--muted2:#5a5870;
+  --red:#c0392b;--red-dim:#2a1010;--red-bright:#e74c3c;
+  --green:#27ae60;--green-dim:#0f2a1a;--green-bright:#2ecc71;
+  --blue:#2980b9;--blue-dim:#0f1e2a;
+  --purple:#8e44ad;--purple-dim:#1e1030;
+  --advocate:#c9a84c;--devil:#c0392b;--strategist:#8e44ad;
+  --white:#f5f3ee;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;min-height:100vh;display:flex;overflow-x:hidden;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:252px;min-height:100vh;background:var(--surface);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;border-right:1px solid var(--border);}
+
+.logo-block{padding:22px 18px 18px;border-bottom:1px solid var(--border);}
+.logo-row{display:flex;align-items:center;gap:12px;margin-bottom:2px;}
+.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#8b6914);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;color:#fff;letter-spacing:-0.02em;flex-shrink:0;box-shadow:0 4px 12px rgba(201,168,76,0.3);}
+.firm-name{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:700;color:var(--white);line-height:1.2;}
+.firm-tagline{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--gold);letter-spacing:0.2em;margin-top:6px;opacity:0.8;}
+
+.nav-section{padding:12px 10px 4px;}
+.nav-section-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:var(--muted2);letter-spacing:0.22em;padding:0 8px;margin-bottom:5px;}
+.nav-btn{display:flex;align-items:center;gap:9px;width:100%;padding:8px 10px;border-radius:6px;border:none;background:none;cursor:pointer;text-align:left;transition:all 0.15s;margin-bottom:1px;position:relative;}
+.nav-btn:hover{background:rgba(255,255,255,0.04);}
+.nav-btn.active{background:var(--gold-dim);}
+.nav-btn.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:60%;background:var(--gold);border-radius:0 2px 2px 0;}
+.ni{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:0.82rem;flex-shrink:0;}
+.nt{font-size:0.76rem;color:var(--muted);font-weight:400;}
+.nav-btn.active .nt{color:var(--gold2);font-weight:500;}
+.nav-badge{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:0.52rem;padding:2px 6px;border-radius:10px;background:var(--red-dim);color:var(--red-bright);}
+.nav-badge.green{background:var(--green-dim);color:var(--green-bright);}
+
+/* Pipeline status indicators in nav */
+.pipeline-nav-item{display:flex;align-items:center;gap:9px;width:100%;padding:7px 10px;border-radius:6px;border:none;background:none;cursor:pointer;text-align:left;margin-bottom:1px;transition:all 0.15s;}
+.pipeline-nav-item:hover{background:rgba(255,255,255,0.04);}
+.pipeline-nav-item.active{background:rgba(201,168,76,0.08);}
+.pipeline-nav-item.active .nt{color:var(--gold2);font-weight:500;}
+.pni-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-left:8px;}
+.dot-advocate{background:var(--advocate);}
+.dot-devil{background:var(--devil);}
+.dot-strategist{background:var(--strategist);}
+
+.sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid var(--border);}
+.clerk-card{background:var(--surface2);border-radius:8px;padding:10px 12px;}
+.clerk-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.clerk-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#5a3d0a);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:0.9rem;color:#fff;font-weight:700;flex-shrink:0;}
+.clerk-name{font-size:0.75rem;color:var(--text);font-weight:500;}
+.clerk-role{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:var(--muted);letter-spacing:0.1em;}
+.clerk-select{width:100%;background:var(--surface3);border:1px solid var(--border2);border-radius:5px;color:var(--muted);font-family:'IBM Plex Sans',sans-serif;font-size:0.7rem;padding:5px 8px;outline:none;cursor:pointer;transition:all 0.15s;}
+.clerk-select:hover,.clerk-select:focus{border-color:var(--gold);color:var(--text);}
+.clerk-select option{background:#1c1f2e;}
+
+/* ══ MAIN ══ */
+.main{margin-left:252px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{padding:14px 28px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-left h2{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--white);}
+.topbar-left p{font-size:0.7rem;color:var(--muted);margin-top:1px;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.t-pill{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:0.56rem;padding:4px 10px;border-radius:20px;letter-spacing:0.08em;}
+.t-pill.green{color:var(--green-bright);background:var(--green-dim);border:1px solid rgba(39,174,96,0.2);}
+.t-pill.date{color:var(--muted);background:var(--surface2);border:1px solid var(--border);}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--green-bright);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* PAGE */
+.page{padding:24px 28px 60px;flex:1;}
+.view{display:none;animation:fadeUp 0.2s ease;}
+.view.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══ OVERVIEW ══ */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color 0.2s;}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);opacity:0.4;}
+.stat-card.red::after{background:var(--red);}
+.stat-card.green::after{background:var(--green);}
+.stat-card.purple::after{background:var(--purple);}
+.stat-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--muted);letter-spacing:0.15em;margin-bottom:8px;}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--white);line-height:1;}
+.stat-note{font-size:0.64rem;color:var(--muted);margin-top:5px;}
+.stat-note.up{color:var(--green-bright);}
+.stat-note.alert{color:var(--red-bright);}
+
+/* PIPELINE ACTIVITY */
+.pipeline-track{display:flex;align-items:center;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;}
+.pt-step{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;position:relative;}
+.pt-step:not(:last-child)::after{content:'';position:absolute;top:14px;left:calc(50% + 18px);right:calc(-50% + 18px);height:1px;background:var(--border2);}
+.pt-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;border:2px solid var(--border2);background:var(--surface2);}
+.pt-icon.done{border-color:var(--green);background:var(--green-dim);}
+.pt-icon.active-step{border-color:var(--gold);background:var(--gold-dim);animation:ptPulse 2s infinite;}
+@keyframes ptPulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,0.4)}50%{box-shadow:0 0 0 6px rgba(201,168,76,0)}}
+.pt-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:var(--muted);letter-spacing:0.1em;text-align:center;}
+.pt-lbl.done{color:var(--green-bright);}
+.pt-lbl.active-step{color:var(--gold2);}
+.pt-count{font-size:0.62rem;color:var(--muted2);}
+
+/* SECTION HEADERS */
+.sec-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:12px;margin-top:26px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--white);}
+.sec-sub{font-size:0.68rem;color:var(--muted);margin-top:2px;}
+.sec-action{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--gold);cursor:pointer;letter-spacing:0.1em;background:none;border:none;transition:color 0.15s;}
+.sec-action:hover{color:var(--gold2);}
+
+/* TEMPLATE GRID */
+.tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:28px;}
+.tpl-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;cursor:pointer;transition:all 0.18s;position:relative;overflow:hidden;}
+.tpl-card::before{content:'';position:absolute;inset:0;background:var(--gold-glow);opacity:0;transition:opacity 0.18s;}
+.tpl-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+.tpl-card:hover::before{opacity:1;}
+.tpl-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:10px;}
+.tpl-name{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:700;color:var(--white);margin-bottom:4px;}
+.tpl-desc{font-size:0.68rem;color:var(--muted);line-height:1.55;margin-bottom:12px;}
+.tpl-foot{display:flex;align-items:center;justify-content:space-between;}
+.tpl-tag{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;padding:2px 7px;border-radius:3px;letter-spacing:0.07em;}
+.tpl-arr{color:var(--gold);font-size:0.8rem;transition:transform 0.18s;}
+.tpl-card:hover .tpl-arr{transform:translateX(4px);}
+
+/* ══ CASES TABLE ══ */
+.cases-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.cases-wrap table{width:100%;border-collapse:collapse;}
+.cases-wrap th{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.13em;color:var(--muted2);padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
+.cases-wrap td{padding:10px 14px;font-size:0.76rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+.cases-wrap tr:last-child td{border-bottom:none;}
+.cases-wrap tbody tr{cursor:pointer;transition:background 0.12s;}
+.cases-wrap tbody tr:hover td{background:rgba(201,168,76,0.05);}
+.mono{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;}
+.topic-tag{font-size:0.67rem;background:var(--surface2);color:var(--muted);border:1px solid var(--border);padding:2px 8px;border-radius:3px;white-space:nowrap;}
+.urg{font-family:'IBM Plex Mono',monospace;font-size:0.55rem;padding:3px 8px;border-radius:3px;font-weight:600;letter-spacing:0.06em;}
+.urg-high{background:var(--red-dim);color:var(--red-bright);}
+.urg-med{background:#2a1f08;color:#f0a500;}
+.urg-low{background:var(--green-dim);color:var(--green-bright);}
+
+/* PIPELINE STATUS BADGE */
+.pipe-badge{display:inline-flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:0.52rem;padding:3px 8px;border-radius:10px;white-space:nowrap;}
+.pb-intake{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+.pb-advocate{background:rgba(201,168,76,0.12);color:var(--gold2);border:1px solid rgba(201,168,76,0.25);}
+.pb-devil{background:rgba(192,57,43,0.12);color:#e74c3c;border:1px solid rgba(192,57,43,0.25);}
+.pb-strategist{background:rgba(142,68,173,0.12);color:#a855f7;border:1px solid rgba(142,68,173,0.25);}
+.pb-complete{background:var(--green-dim);color:var(--green-bright);border:1px solid rgba(39,174,96,0.25);}
+
+/* SEARCH */
+.search-wrap{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 13px;margin-bottom:10px;transition:border-color 0.15s;}
+.search-wrap:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glow);}
+.search-icon{font-size:0.85rem;color:var(--muted2);}
+.search-input{flex:1;border:none;background:none;outline:none;font-family:'IBM Plex Sans',sans-serif;font-size:0.82rem;color:var(--text);}
+.search-input::placeholder{color:var(--muted2);}
+.search-clear{background:none;border:none;cursor:pointer;color:var(--muted2);font-size:0.85rem;padding:2px;}
+
+/* ══ CASE PROFILE VIEW ══ */
+.profile-back{display:flex;align-items:center;gap:7px;font-size:0.73rem;color:var(--muted);cursor:pointer;margin-bottom:18px;background:none;border:none;padding:0;transition:color 0.15s;}
+.profile-back:hover{color:var(--gold);}
+
+.profile-header{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin-bottom:16px;}
+.ph-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px;}
+.ph-icon{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.ph-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--white);}
+.ph-caseid{font-family:'IBM Plex Mono',monospace;font-size:0.64rem;color:var(--muted);margin-top:3px;}
+.ph-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.ph-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.profile-field{display:flex;flex-direction:column;gap:3px;}
+.profile-field.full{grid-column:1/-1;}
+.profile-field label{font-size:0.62rem;font-weight:600;color:var(--muted2);letter-spacing:0.1em;text-transform:uppercase;}
+.profile-field .val{font-size:0.8rem;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;line-height:1.5;}
+.profile-field textarea.val{min-height:80px;resize:vertical;font-family:'IBM Plex Sans',sans-serif;}
+
+/* ANALYSIS TABS */
+.analysis-tabs{display:flex;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+.a-tab{flex:1;padding:11px 14px;border:none;background:none;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:0.76rem;font-weight:500;color:var(--muted);transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:7px;border-right:1px solid var(--border);}
+.a-tab:last-child{border-right:none;}
+.a-tab:hover{background:rgba(255,255,255,0.03);color:var(--text);}
+.a-tab.active-advocate{background:rgba(201,168,76,0.12);color:var(--gold2);}
+.a-tab.active-devil{background:rgba(192,57,43,0.12);color:#e74c3c;}
+.a-tab.active-strategist{background:rgba(142,68,173,0.12);color:#a855f7;}
+.a-tab.active-intake{background:var(--surface2);color:var(--text);}
+.tab-dot{width:7px;height:7px;border-radius:50%;}
+
+.analysis-panel{display:none;}
+.analysis-panel.active{display:block;animation:fadeUp 0.18s ease;}
+
+/* ANALYSIS CARD */
+.analysis-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:14px;}
+.ac-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.ac-role-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.ac-role-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;}
+.ac-role-sub{font-size:0.68rem;color:var(--muted);margin-top:1px;}
+.ac-pending{display:flex;align-items:center;gap:8px;padding:16px;background:var(--surface2);border-radius:8px;font-size:0.75rem;color:var(--muted);}
+
+.ac-section{margin-bottom:16px;}
+.ac-section-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--muted2);letter-spacing:0.15em;margin-bottom:8px;}
+.ac-text{font-size:0.79rem;color:var(--text);line-height:1.65;background:var(--surface2);border-radius:7px;padding:12px 14px;border-left:2px solid var(--border2);}
+.ac-text.advocate{border-left-color:var(--gold);}
+.ac-text.devil{border-left-color:var(--red);}
+.ac-text.strategist{border-left-color:var(--purple);}
+
+.ac-args{display:flex;flex-direction:column;gap:8px;}
+.ac-arg{background:var(--surface2);border-radius:7px;padding:11px 13px;font-size:0.77rem;color:var(--text);line-height:1.6;border-left:2px solid var(--gold);position:relative;}
+.ac-arg.devil{border-left-color:var(--red);}
+.ac-arg-num{font-family:'IBM Plex Mono',monospace;font-size:0.55rem;color:var(--muted2);margin-bottom:4px;}
+
+.verdict-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.verdict-box{background:var(--surface2);border-radius:8px;padding:12px 14px;text-align:center;}
+.vb-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:var(--muted2);letter-spacing:0.12em;margin-bottom:6px;}
+.vb-val{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;}
+.vb-val.strong,.vb-val.high{color:var(--green-bright);}
+.vb-val.moderate,.vb-val.medium{color:#f0a500;}
+.vb-val.weak,.vb-val.low{color:var(--red-bright);}
+.vb-note{font-size:0.65rem;color:var(--muted);margin-top:4px;line-height:1.4;}
+
+.docs-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.doc-tag{font-size:0.7rem;background:var(--surface2);color:var(--muted);border:1px solid var(--border);padding:3px 9px;border-radius:4px;}
+.doc-tag.needed{border-color:rgba(201,168,76,0.3);color:var(--gold2);background:var(--gold-dim);}
+
+/* ══ FORM VIEW ══ */
+.form-back{display:flex;align-items:center;gap:7px;font-size:0.73rem;color:var(--muted);cursor:pointer;margin-bottom:18px;background:none;border:none;padding:0;transition:color 0.15s;}
+.form-back:hover{color:var(--gold);}
+.form-top{display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--border);}
+.form-top-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.form-top-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:var(--white);}
+.form-top-sub{font-size:0.7rem;color:var(--muted);margin-top:3px;}
+.form-layout{display:grid;grid-template-columns:1fr 310px;gap:18px;align-items:start;}
+
+.fsec{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:12px;}
+.fsec-title{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--gold);letter-spacing:0.18em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px;}
+.frow.full{grid-template-columns:1fr;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:0.7rem;font-weight:500;color:var(--text);}
+.req{color:var(--gold);margin-left:2px;}
+.opt{font-weight:300;color:var(--muted);font-size:0.65rem;}
+.field input,.field select,.field textarea{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 11px;font-family:'IBM Plex Sans',sans-serif;font-size:0.79rem;color:var(--text);outline:none;transition:all 0.15s;width:100%;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glow);background:var(--surface3);}
+.field textarea{resize:vertical;min-height:90px;line-height:1.6;}
+.field select option{background:var(--surface2);}
+
+.cb-list{display:flex;flex-direction:column;gap:6px;}
+.cb-item{display:flex;align-items:flex-start;gap:9px;padding:8px 11px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;user-select:none;transition:all 0.15s;}
+.cb-item:hover{border-color:var(--border2);}
+.cb-item.checked{border-color:rgba(201,168,76,0.4);background:var(--gold-dim);}
+.cb-item input[type=checkbox]{width:14px;height:14px;margin-top:2px;accent-color:var(--gold);cursor:pointer;flex-shrink:0;}
+.cb-lbl{font-size:0.77rem;color:var(--text);}
+.cb-sub{font-size:0.64rem;color:var(--muted);margin-top:1px;}
+
+.radio-row{display:flex;gap:7px;flex-wrap:wrap;}
+.ri{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;user-select:none;transition:all 0.18s;}
+.ri input[type=radio]{display:none;}
+.ri span{font-size:0.79rem;color:var(--muted);font-weight:400;transition:color 0.18s;}
+.ri.sel-low{border-color:var(--green);background:var(--green-dim);} .ri.sel-low span{color:var(--green-bright);font-weight:600;}
+.ri.sel-med{border-color:#c47d00;background:#2a1f08;} .ri.sel-med span{color:#f0a500;font-weight:600;}
+.ri.sel-high{border-color:var(--red);background:var(--red-dim);} .ri.sel-high span{color:var(--red-bright);font-weight:600;}
+
+.submit-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px;}
+.submit-hint{font-size:0.7rem;color:var(--muted);line-height:1.55;}
+.submit-hint strong{color:var(--text);}
+.btn-submit{display:flex;align-items:center;gap:8px;background:var(--gold);color:#0e0f14;border:none;border-radius:7px;padding:10px 22px;font-family:'IBM Plex Sans',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;flex-shrink:0;}
+.btn-submit:hover{background:var(--gold2);box-shadow:0 5px 16px rgba(201,168,76,0.3);transform:translateY(-1px);}
+.btn-submit.loading{background:var(--muted2);pointer-events:none;}
+.spinner{width:13px;height:13px;border:2px solid rgba(0,0,0,0.2);border-top-color:#000;border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* FORM SIDEBAR */
+.fside{position:sticky;top:70px;display:flex;flex-direction:column;gap:11px;}
+.fside-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px;}
+.fside-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--muted2);letter-spacing:0.14em;margin-bottom:10px;}
+.caseid-box{font-family:'IBM Plex Mono',monospace;font-size:0.9rem;color:var(--gold2);background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px 11px;letter-spacing:0.08em;}
+.hook-display{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px 11px;word-break:break-all;line-height:1.55;}
+.btn-copy-hook{display:flex;align-items:center;justify-content:center;gap:5px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:5px;padding:6px 11px;font-size:0.7rem;font-family:'IBM Plex Sans',sans-serif;font-weight:500;cursor:pointer;margin-top:7px;transition:all 0.15s;width:100%;}
+.btn-copy-hook:hover{border-color:var(--gold);color:var(--gold2);}
+.btn-copy-hook.copied{background:var(--green-dim);border-color:var(--green);color:var(--green-bright);}
+.btn-edit-hook{background:none;border:1px solid var(--border);border-radius:5px;padding:5px 11px;font-size:0.68rem;color:var(--muted);cursor:pointer;margin-top:6px;transition:all 0.15s;width:100%;}
+.btn-edit-hook:hover{border-color:var(--gold);color:var(--gold);}
+.hook-hint{font-size:0.63rem;color:var(--muted2);margin-top:5px;line-height:1.5;}
+.req-list{display:flex;flex-direction:column;gap:5px;}
+.req-item{display:flex;align-items:center;gap:7px;font-size:0.7rem;color:var(--muted);}
+.req-item.done{color:var(--green-bright);}
+.req-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);flex-shrink:0;}
+.req-item.done .req-dot{background:var(--green-bright);}
+.topic-lbl{font-size:0.82rem;font-weight:600;color:var(--white);}
+.topic-sub{font-size:0.67rem;color:var(--muted);margin-top:3px;line-height:1.5;}
+#hook-indicator{font-family:'IBM Plex Mono',monospace;font-size:0.55rem;letter-spacing:0.1em;}
+
+/* ══ SETTINGS ══ */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:840px;}
+.s-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;}
+.s-card-title{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--gold);letter-spacing:0.16em;margin-bottom:14px;padding-bottom:9px;border-bottom:1px solid var(--border);}
+.s-field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.s-field label{font-size:0.72rem;font-weight:500;color:var(--text);}
+.s-field input{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px 11px;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--text);outline:none;transition:border-color 0.15s;}
+.s-field input:focus{border-color:var(--gold);}
+.s-field .hint{font-size:0.64rem;color:var(--muted);line-height:1.5;}
+.code-eg{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:9px 13px;font-family:'IBM Plex Mono',monospace;font-size:0.63rem;color:var(--muted2);margin-bottom:14px;line-height:1.75;}
+.btn-save{background:var(--gold);color:#0e0f14;border:none;border-radius:6px;padding:9px 18px;font-family:'IBM Plex Sans',sans-serif;font-size:0.79rem;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.btn-save:hover{background:var(--gold2);}
+.save-msg{font-size:0.72rem;padding:7px 11px;border-radius:5px;margin-top:8px;display:none;}
+.save-ok{background:var(--green-dim);color:var(--green-bright);border:1px solid rgba(39,174,96,0.2);}
+.save-err{background:var(--red-dim);color:var(--red-bright);border:1px solid rgba(192,57,43,0.2);}
+
+/* ══ WEBHOOK MODAL ══ */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:500;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:30px;width:90%;max-width:500px;box-shadow:0 24px 60px rgba(0,0,0,0.5);animation:popIn 0.22s cubic-bezier(0.175,0.885,0.32,1.275);}
+@keyframes popIn{from{transform:scale(0.88);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--white);margin-bottom:4px;}
+.modal-sub{font-size:0.74rem;color:var(--muted);line-height:1.6;margin-bottom:16px;}
+.modal-field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.modal-field label{font-size:0.72rem;font-weight:500;color:var(--text);}
+.modal-field input{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:9px 12px;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--text);outline:none;transition:border-color 0.15s;}
+.modal-field input:focus{border-color:var(--gold);}
+.modal-field .hint{font-size:0.63rem;color:var(--muted);line-height:1.5;}
+.mode-toggle{display:flex;gap:0;border:1px solid var(--border);border-radius:7px;overflow:hidden;margin-bottom:16px;}
+.mode-btn{flex:1;padding:8px 12px;border:none;background:var(--surface2);font-family:'IBM Plex Sans',sans-serif;font-size:0.76rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all 0.15s;text-align:center;}
+.mode-btn:first-child{border-right:1px solid var(--border);}
+.mode-btn.active-test{background:#2a1f08;color:#f0a500;font-weight:600;}
+.mode-btn.active-live{background:var(--green-dim);color:var(--green-bright);font-weight:600;}
+.modal-preview{font-family:'IBM Plex Mono',monospace;font-size:0.63rem;background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px 11px;margin-bottom:16px;color:var(--muted2);word-break:break-all;line-height:1.6;}
+.modal-btns{display:flex;gap:9px;}
+.btn-cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:9px 16px;font-family:'IBM Plex Sans',sans-serif;font-size:0.8rem;cursor:pointer;transition:all 0.15s;}
+.btn-cancel:hover{color:var(--text);}
+.btn-modal-save{flex:1;background:var(--gold);color:#0e0f14;border:none;border-radius:6px;padding:9px;font-family:'IBM Plex Sans',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;transition:background 0.15s;}
+.btn-modal-save:hover{background:var(--gold2);}
+
+/* ══ SUCCESS MODAL ══ */
+.success-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);z-index:600;align-items:center;justify-content:center;}
+.success-bg.open{display:flex;}
+.success-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:38px;max-width:430px;width:90%;text-align:center;box-shadow:0 28px 70px rgba(0,0,0,0.5);animation:popIn 0.24s cubic-bezier(0.175,0.885,0.32,1.275);}
+.success-ring{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8b6914);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 14px;box-shadow:0 6px 18px rgba(201,168,76,0.3);}
+.success-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--white);margin-bottom:4px;}
+.success-msg{font-size:0.75rem;color:var(--muted);line-height:1.65;margin-bottom:16px;}
+.success-id{font-family:'IBM Plex Mono',monospace;font-size:0.95rem;color:var(--gold2);background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3);padding:9px 16px;border-radius:7px;margin-bottom:16px;letter-spacing:0.1em;}
+.success-details{text-align:left;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:18px;}
+.sd-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:0.74rem;}
+.sd-row:last-child{border-bottom:none;}
+.sd-k{color:var(--muted);}
+.sd-v{color:var(--text);font-weight:500;}
+.btn-new{width:100%;background:var(--gold);color:#0e0f14;border:none;border-radius:7px;padding:11px;font-family:'IBM Plex Sans',sans-serif;font-size:0.84rem;font-weight:600;cursor:pointer;transition:background 0.15s;}
+.btn-new:hover{background:var(--gold2);}
+
+/* DETAIL MODAL */
+.detail-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(5px);z-index:600;align-items:flex-start;justify-content:center;overflow-y:auto;padding:28px 20px;}
+.detail-bg.open{display:flex;}
+.detail-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:700px;box-shadow:0 24px 64px rgba(0,0,0,0.5);animation:popIn 0.22s cubic-bezier(0.175,0.885,0.32,1.275);margin:auto;}
+.detail-hdr{padding:22px 26px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+.detail-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--white);}
+.detail-caseid{font-family:'IBM Plex Mono',monospace;font-size:0.64rem;color:var(--muted);margin-top:3px;}
+.detail-close{background:none;border:1px solid var(--border);border-radius:5px;padding:5px 9px;cursor:pointer;font-size:0.8rem;color:var(--muted);transition:all 0.15s;flex-shrink:0;}
+.detail-close:hover{border-color:var(--red);color:var(--red-bright);}
+.detail-body{padding:20px 26px;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.detail-field{display:flex;flex-direction:column;gap:4px;}
+.detail-field.full{grid-column:1/-1;}
+.detail-field label{font-size:0.62rem;font-weight:600;color:var(--muted2);letter-spacing:0.08em;text-transform:uppercase;}
+.detail-field input,.detail-field select,.detail-field textarea{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;font-family:'IBM Plex Sans',sans-serif;font-size:0.78rem;color:var(--text);outline:none;width:100%;transition:border-color 0.15s;}
+.detail-field input:focus,.detail-field select:focus,.detail-field textarea:focus{border-color:var(--gold);}
+.detail-field textarea{resize:vertical;min-height:75px;line-height:1.6;}
+.detail-sec-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--gold);letter-spacing:0.16em;margin-bottom:10px;padding-top:14px;border-top:1px solid var(--border);}
+.detail-docs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px;}
+.detail-doc-tag{font-size:0.7rem;background:var(--gold-dim);color:var(--gold2);border:1px solid rgba(201,168,76,0.25);padding:3px 9px;border-radius:4px;}
+.detail-footer{padding:14px 26px 20px;display:flex;gap:9px;justify-content:flex-end;border-top:1px solid var(--border);}
+.btn-detail-cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:9px 18px;font-family:'IBM Plex Sans',sans-serif;font-size:0.8rem;cursor:pointer;transition:all 0.15s;}
+.btn-detail-cancel:hover{color:var(--text);}
+.btn-detail-save{background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:6px;padding:9px 20px;font-family:'IBM Plex Sans',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.btn-detail-save:hover{border-color:var(--gold);color:var(--gold2);}
+.btn-detail-resubmit{background:var(--gold);color:#0e0f14;border:none;border-radius:6px;padding:9px 20px;font-family:'IBM Plex Sans',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.btn-detail-resubmit:hover{background:var(--gold2);}
+
+/* EMPTY STATE */
+.empty-state{padding:40px;text-align:center;color:var(--muted);font-size:0.8rem;}
+.empty-icon{font-size:2rem;margin-bottom:10px;opacity:0.4;}
+
+/* TOAST */
+/* PRINT BUTTONS */
+.btn-print{background:var(--surface2);color:var(--muted);border:1px solid var(--border2);border-radius:6px;padding:7px 14px;font-family:'IBM Plex Sans',sans-serif;font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.15s;}
+.btn-print:hover{border-color:var(--gold);color:var(--gold);}
+.tbl-print-btn{background:none;border:1px solid var(--border);border-radius:5px;color:var(--muted2);font-size:0.8rem;padding:4px 9px;cursor:pointer;transition:all 0.15s;}
+.tbl-print-btn:hover{border-color:var(--gold);color:var(--gold);}
+.tbl-delete-btn{background:none;border:1px solid var(--border);border-radius:5px;color:var(--muted2);font-size:0.8rem;padding:4px 9px;cursor:pointer;transition:all 0.15s;}
+.tbl-delete-btn:hover{border-color:var(--red);color:var(--red-bright);}
+
+/* ══ PRINT FRAME (hidden on screen) ══ */
+#print-frame{display:none;}
+
+/* ══ PRINT STYLESHEET ══ */
+@media print{
+  @page{size:A4;margin:20mm 18mm 22mm 18mm;}
+  body>*{display:none!important;}
+  #print-frame{display:block!important;font-family:'Times New Roman',Georgia,serif;font-size:11pt;color:#000;background:#fff;line-height:1.55;}
+  .pf-firm-header{text-align:center;border-bottom:2.5pt solid #000;padding-bottom:10pt;margin-bottom:14pt;}
+  .pf-firm-name{font-size:16pt;font-weight:bold;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:2pt;}
+  .pf-firm-tagline{font-size:8.5pt;letter-spacing:0.18em;text-transform:uppercase;color:#444;}
+  .pf-case-header{border:1.5pt solid #000;padding:8pt 10pt;margin-bottom:16pt;display:flex;justify-content:space-between;align-items:flex-start;}
+  .pf-case-id{font-size:10pt;font-weight:bold;letter-spacing:0.1em;text-transform:uppercase;}
+  .pf-case-meta{font-size:8.5pt;color:#333;margin-top:3pt;line-height:1.6;}
+  .pf-urgency-badge{font-size:8pt;font-weight:bold;letter-spacing:0.12em;border:1.5pt solid #000;padding:3pt 8pt;text-transform:uppercase;align-self:flex-start;}
+  .pf-section{margin-bottom:14pt;page-break-inside:avoid;}
+  .pf-section-title{font-size:7.5pt;font-weight:bold;letter-spacing:0.22em;text-transform:uppercase;border-bottom:0.75pt solid #000;padding-bottom:3pt;margin-bottom:8pt;}
+  .pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:6pt 18pt;margin-bottom:4pt;}
+  .pf-field{margin-bottom:2pt;}
+  .pf-field-full{grid-column:1/-1;}
+  .pf-label{font-size:7pt;font-weight:bold;letter-spacing:0.12em;text-transform:uppercase;color:#555;margin-bottom:1pt;}
+  .pf-value{font-size:10.5pt;border-bottom:0.5pt solid #ccc;padding-bottom:2pt;min-height:14pt;}
+  .pf-narrative{font-size:10.5pt;line-height:1.75;text-align:justify;white-space:pre-wrap;}
+  .pf-notes{font-size:10pt;font-style:italic;line-height:1.65;white-space:pre-wrap;border-left:2pt solid #aaa;padding-left:8pt;color:#333;}
+  .pf-docs-list{font-size:10pt;line-height:2;}
+  .pf-docs-item::before{content:'☑  ';}
+  .pf-footer{margin-top:22pt;border-top:1pt solid #000;padding-top:7pt;display:flex;justify-content:space-between;font-size:8pt;color:#555;}
+  .pf-sig-block{margin-top:32pt;display:flex;justify-content:space-around;gap:24pt;}
+  .pf-sig{flex:1;text-align:center;border-top:0.75pt solid #000;padding-top:4pt;font-size:8.5pt;}
+  .pf-confidential{font-size:7.5pt;letter-spacing:0.15em;text-align:center;margin-top:10pt;color:#888;text-transform:uppercase;}
+}
+
+.toast{position:fixed;bottom:22px;right:22px;padding:10px 16px;border-radius:8px;font-size:0.8rem;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.4);animation:fadeUp 0.2s ease;}
+
+/* FILE UPLOAD */
+.upload-dropzone{border:2px dashed var(--border2);border-radius:10px;padding:24px 16px;text-align:center;cursor:pointer;background:rgba(255,255,255,0.015);transition:all 0.2s;margin-bottom:10px;}
+.upload-dropzone:hover,.upload-dropzone.drag-over{border-color:var(--gold);background:var(--gold-glow);}
+.uz-icon{font-size:1.6rem;margin-bottom:7px;}
+.uz-title{font-size:0.8rem;font-weight:600;color:var(--white);margin-bottom:3px;}
+.uz-sub{font-size:0.62rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:0.1em;}
+.uz-file-item{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;margin-bottom:6px;animation:fadeUp 0.15s ease;}
+.uz-fi-icon{font-size:1.1rem;flex-shrink:0;}
+.uz-fi-info{flex:1;min-width:0;}
+.uz-fi-name{font-size:0.76rem;font-weight:500;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.uz-fi-meta{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:var(--muted);margin-top:2px;}
+.uz-fi-remove{background:none;border:none;color:var(--muted2);cursor:pointer;padding:4px 7px;border-radius:4px;font-size:0.75rem;transition:color 0.15s;flex-shrink:0;}
+.uz-fi-remove:hover{color:var(--red-bright);}
+.uz-fi-status{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;padding:2px 7px;border-radius:3px;flex-shrink:0;}
+.uz-fi-status.ok{background:var(--green-dim);color:var(--green-bright);}
+.uz-fi-status.err{background:var(--red-dim);color:var(--red-bright);}
+
+/* POLLING STATUS BAR */
+.poll-status-bar{display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);margin-bottom:12px;font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--muted);letter-spacing:0.05em;}
+.poll-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--gold);animation:pulse 1.4s infinite;}
+.poll-status-bar.poll-done{border-color:rgba(39,174,96,0.3);background:var(--green-dim);}
+.poll-status-bar.poll-done .poll-dot{background:var(--green-bright);animation:none;}
+.poll-status-bar.poll-error{border-color:rgba(192,57,43,0.3);background:var(--red-dim);}
+.poll-status-bar.poll-error .poll-dot{background:var(--red-bright);animation:none;}
+
+/* ══ LIVE CASE PIPELINE SECTION ══ */
+.live-pipeline-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px;}
+.lp-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;border-bottom:1px solid var(--border);}
+.lp-title{font-family:'IBM Plex Mono',monospace;font-size:0.56rem;color:var(--gold);letter-spacing:0.18em;}
+.lp-case-id{font-family:'IBM Plex Mono',monospace;font-size:0.56rem;color:var(--muted2);letter-spacing:0.1em;}
+.lp-pulse-row{display:flex;align-items:center;gap:6px;}
+.lp-pulse{width:6px;height:6px;border-radius:50%;background:var(--green-bright);animation:pulse 1.4s infinite;}
+.lp-pulse.stopped{background:var(--muted2);animation:none;}
+.lp-pulse-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--muted2);letter-spacing:0.1em;}
+
+.lp-stages{display:flex;padding:20px 18px;}
+.lp-stage{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;}
+.lp-stage:not(:last-child)::after{content:'';position:absolute;top:18px;left:calc(50% + 22px);right:calc(-50% + 22px);height:2px;background:var(--border2);transition:background 0.4s;}
+.lp-stage.done:not(:last-child)::after{background:var(--green);}
+.lp-stage.active-stage:not(:last-child)::after{background:linear-gradient(90deg,var(--gold),var(--border2));}
+
+.lp-icon-wrap{position:relative;margin-bottom:8px;}
+.lp-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.95rem;border:2px solid var(--border2);background:var(--surface2);transition:all 0.35s;}
+.lp-stage.done .lp-icon{border-color:var(--green);background:var(--green-dim);font-size:0;}
+.lp-stage.done .lp-icon::after{content:'✓';font-size:0.9rem;color:var(--green-bright);font-weight:700;}
+.lp-stage.active-stage .lp-icon{border-color:var(--gold);background:var(--gold-dim);animation:lpPulse 2s infinite;}
+@keyframes lpPulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,0.5)}60%{box-shadow:0 0 0 8px rgba(201,168,76,0)}}
+.lp-spinner{position:absolute;inset:-4px;border-radius:50%;border:2px solid transparent;border-top-color:var(--gold);animation:spin 1s linear infinite;}
+.lp-stage:not(.active-stage) .lp-spinner{display:none;}
+
+.lp-name{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.12em;color:var(--muted2);margin-bottom:3px;text-align:center;transition:color 0.3s;}
+.lp-stage.done .lp-name{color:var(--green-bright);}
+.lp-stage.active-stage .lp-name{color:var(--gold2);}
+
+.lp-status{font-size:0.6rem;color:var(--muted2);text-align:center;transition:color 0.3s;min-height:16px;}
+.lp-stage.done .lp-status{color:var(--green);}
+.lp-stage.active-stage .lp-status{color:var(--gold);animation:textPulse 1.8s infinite;}
+@keyframes textPulse{0%,100%{opacity:1}50%{opacity:0.5}}
+
+.lp-footer{padding:10px 18px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.lp-elapsed{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--muted2);letter-spacing:0.08em;}
+.lp-complete-msg{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--green-bright);letter-spacing:0.1em;display:none;}
+.lp-complete-msg.show{display:block;}
+.lp-view-btn{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--gold);background:none;border:1px solid rgba(201,168,76,0.3);border-radius:4px;padding:4px 10px;cursor:pointer;letter-spacing:0.08em;transition:all 0.15s;}
+.lp-view-btn:hover{background:var(--gold-dim);border-color:var(--gold);}
+
+/* Analysis panel entry animation */
+.analysis-panel.active .ac-section{animation:fadeUp 0.3s ease both;}
+.analysis-panel.active .ac-section:nth-child(1){animation-delay:0.05s;}
+.analysis-panel.active .ac-section:nth-child(2){animation-delay:0.1s;}
+.analysis-panel.active .ac-section:nth-child(3){animation-delay:0.15s;}
+.analysis-panel.active .verdict-row{animation:fadeUp 0.3s ease 0.12s both;}
+
+/* Tab completion indicator */
+.tab-check{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:var(--green-dim);color:var(--green-bright);font-size:0.55rem;font-weight:700;margin-left:5px;}
+.tab-pending{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:var(--gold-dim);font-size:0.55rem;margin-left:5px;animation:spin 1.2s linear infinite;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo-block">
+    <div class="logo-row">
+      <div class="logo-mark">JL</div>
+      <div>
+        <div class="firm-name">JL Laniog<br>Law Firm</div>
+      </div>
+    </div>
+    <div class="firm-tagline">// LEXFLOW CASE MANAGEMENT</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-lbl">// MAIN</div>
+    <button class="nav-btn active" id="nav-overview" onclick="showView('overview',this)">
+      <div class="ni">⚖️</div><span class="nt">Overview</span>
+    </button>
+    <button class="nav-btn" id="nav-cases" onclick="showView('cases',this)">
+      <div class="ni">🗂</div><span class="nt">All Cases</span>
+    </button>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-lbl">// CASE INTAKE</div>
+    <button class="nav-btn" id="nav-labor" onclick="openTemplate('labor',this)">
+      <div class="ni">👷</div><span class="nt">Labor Law</span>
+    </button>
+    <button class="nav-btn" id="nav-criminal" onclick="openTemplate('criminal',this)">
+      <div class="ni">⚔️</div><span class="nt">Criminal Law</span>
+    </button>
+    <button class="nav-btn" id="nav-family" onclick="openTemplate('family',this)">
+      <div class="ni">🏠</div><span class="nt">Family Law</span>
+    </button>
+    <button class="nav-btn" id="nav-civil" onclick="openTemplate('civil',this)">
+      <div class="ni">📜</div><span class="nt">Civil Law</span>
+    </button>
+    <button class="nav-btn" id="nav-property" onclick="openTemplate('property',this)">
+      <div class="ni">🏗️</div><span class="nt">Property Law</span>
+    </button>
+    <button class="nav-btn" id="nav-corporate" onclick="openTemplate('corporate',this)">
+      <div class="ni">🏢</div><span class="nt">Corporate Law</span>
+    </button>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-lbl">// AI LEGAL PIPELINE</div>
+    <button class="nav-btn" id="nav-advocate" onclick="showView('pipeline-advocate',this)">
+      <div class="ni">⚖️</div><span class="nt">The Advocate</span>
+      <div class="pni-dot dot-advocate" style="margin-left:auto"></div>
+    </button>
+    <button class="nav-btn" id="nav-devil" onclick="showView('pipeline-devil',this)">
+      <div class="ni">⚔️</div><span class="nt">Devil's Advocate</span>
+      <div class="pni-dot dot-devil" style="margin-left:auto"></div>
+    </button>
+    <button class="nav-btn" id="nav-strategist" onclick="showView('pipeline-strategist',this)">
+      <div class="ni">♟️</div><span class="nt">The Strategist</span>
+      <div class="pni-dot dot-strategist" style="margin-left:auto"></div>
+    </button>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-lbl">// SYSTEM</div>
+    <button class="nav-btn" id="nav-settings" onclick="showView('settings',this)">
+      <div class="ni">⚙️</div><span class="nt">Settings</span>
+    </button>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="clerk-card">
+      <div class="clerk-top">
+        <div class="clerk-av" id="clerk-av">J</div>
+        <div>
+          <div class="clerk-name" id="clerk-name-display">John Lennon</div>
+          <div class="clerk-role">INTAKE CLERK</div>
+        </div>
+      </div>
+      <select class="clerk-select" id="clerk-selector" onchange="switchClerk(this)">
+        <option value="John Lennon">John Lennon</option>
+        <option value="Luka">Luka</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2 id="topbar-title">Case Overview</h2>
+      <p id="topbar-sub">JL Laniog Law Firm — LexFlow Case Management</p>
+    </div>
+    <div class="topbar-right">
+      <div class="t-pill green"><div class="pulse"></div>AI PIPELINE ACTIVE</div>
+      <div class="t-pill date" id="datechip"></div>
+    </div>
+  </div>
+
+  <div class="page">
+
+    <!-- ══ OVERVIEW VIEW ══ -->
+    <div class="view active" id="view-overview">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-lbl">CASES TODAY</div>
+          <div class="stat-num" id="s-today">0</div>
+          <div class="stat-note up">↑ Active intake</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">THIS WEEK</div>
+          <div class="stat-num" id="s-week">0</div>
+          <div class="stat-note up">↑ 0 from last week</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-lbl">HIGH URGENCY</div>
+          <div class="stat-num" style="color:var(--red-bright)" id="s-high">0</div>
+          <div class="stat-note alert">⚠ Needs attention</div>
+        </div>
+      </div>
+
+      <!-- PIPELINE TRACKER -->
+      <div class="pipeline-track">
+        <div class="pt-step" id="pt-step-intake">
+          <div class="pt-icon">📋</div>
+          <div class="pt-lbl">INTAKE</div>
+          <div class="pt-count" id="pt-count-total">0 cases</div>
+        </div>
+        <div class="pt-step" id="pt-step-advocate">
+          <div class="pt-icon">⚖️</div>
+          <div class="pt-lbl">ADVOCATE</div>
+          <div class="pt-count" id="pt-count-advocate">0 done</div>
+        </div>
+        <div class="pt-step" id="pt-step-devil">
+          <div class="pt-icon">⚔️</div>
+          <div class="pt-lbl">DEVIL'S ADV.</div>
+          <div class="pt-count" id="pt-count-devil">0 done</div>
+        </div>
+        <div class="pt-step" id="pt-step-strategist">
+          <div class="pt-icon">♟️</div>
+          <div class="pt-lbl">STRATEGIST</div>
+          <div class="pt-count" id="pt-count-strategist">0 done</div>
+        </div>
+        <div class="pt-step" id="pt-step-complete">
+          <div class="pt-icon">✓</div>
+          <div class="pt-lbl">COMPLETE</div>
+          <div class="pt-count" id="pt-count-complete">0 done</div>
+        </div>
+      </div>
+
+      <div class="sec-hdr">
+        <div><div class="sec-title">Case Intake Templates</div><div class="sec-sub">Select a template to begin a new case intake</div></div>
+        <span class="sec-action">6 TEMPLATES</span>
+      </div>
+      <div class="tpl-grid">
+        <div class="tpl-card" onclick="openTemplate('labor')"><div class="tpl-icon" style="background:rgba(240,165,0,0.12)">👷</div><div class="tpl-name">Labor Law</div><div class="tpl-desc">Illegal dismissal, constructive dismissal, labor standards, NLRC filing.</div><div class="tpl-foot"><span class="tpl-tag" style="background:rgba(240,165,0,0.1);color:#f0a500">LABOR</span><span class="tpl-arr">→</span></div></div>
+        <div class="tpl-card" onclick="openTemplate('criminal')"><div class="tpl-icon" style="background:var(--red-dim)">⚔️</div><div class="tpl-name">Criminal Law</div><div class="tpl-desc">Estafa, theft, physical injuries, cybercrime, drug cases, NBI complaints.</div><div class="tpl-foot"><span class="tpl-tag" style="background:var(--red-dim);color:var(--red-bright)">CRIMINAL</span><span class="tpl-arr">→</span></div></div>
+        <div class="tpl-card" onclick="openTemplate('family')"><div class="tpl-icon" style="background:var(--blue-dim)">🏠</div><div class="tpl-name">Family Law</div><div class="tpl-desc">Annulment, legal separation, child custody, support, adoption, VAWC.</div><div class="tpl-foot"><span class="tpl-tag" style="background:var(--blue-dim);color:#5dade2">FAMILY</span><span class="tpl-arr">→</span></div></div>
+        <div class="tpl-card" onclick="openTemplate('civil')"><div class="tpl-icon" style="background:var(--green-dim)">📜</div><div class="tpl-name">Civil Law</div><div class="tpl-desc">Contract disputes, breach, damages, collection cases, quasi-delicts.</div><div class="tpl-foot"><span class="tpl-tag" style="background:var(--green-dim);color:var(--green-bright)">CIVIL</span><span class="tpl-arr">→</span></div></div>
+        <div class="tpl-card" onclick="openTemplate('property')"><div class="tpl-icon" style="background:var(--purple-dim)">🏗️</div><div class="tpl-name">Property Law</div><div class="tpl-desc">Land disputes, ejectment, unlawful detainer, titling, ownership conflicts.</div><div class="tpl-foot"><span class="tpl-tag" style="background:var(--purple-dim);color:#a855f7">PROPERTY</span><span class="tpl-arr">→</span></div></div>
+        <div class="tpl-card" onclick="openTemplate('corporate')"><div class="tpl-icon" style="background:var(--gold-dim)">🏢</div><div class="tpl-name">Corporate Law</div><div class="tpl-desc">SEC complaints, business disputes, governance, shareholder conflicts.</div><div class="tpl-foot"><span class="tpl-tag" style="background:var(--gold-dim);color:var(--gold2)">CORPORATE</span><span class="tpl-arr">→</span></div></div>
+      </div>
+
+      <div class="sec-hdr">
+        <div><div class="sec-title">Recent Cases</div><div class="sec-sub" id="recent-cases-label">0 most recent — click to open case profile</div></div>
+        <button class="sec-action" onclick="showView('cases',document.getElementById('nav-cases'))">VIEW ALL →</button>
+      </div>
+      <div id="recent-cases-wrap"></div>
+    </div>
+
+    <!-- ══ ALL CASES VIEW ══ -->
+    <div class="view" id="view-cases">
+      <div class="search-wrap">
+        <div class="search-icon">🔍</div>
+        <input type="text" id="search-input" class="search-input" placeholder="Search by name, case ID, issue, legal topic…" oninput="handleSearch(this.value)">
+        <button class="search-clear" id="search-clear" onclick="clearSearch()" style="display:none">✕</button>
+      </div>
+      <div id="search-status" style="display:none;font-size:0.7rem;color:var(--muted);margin-bottom:10px;padding:0 2px;"></div>
+      <div id="all-cases-wrap"></div>
+    </div>
+
+    <!-- ══ CASE PROFILE VIEW ══ -->
+    <div class="view" id="view-profile">
+      <button class="profile-back" onclick="goBackFromProfile()">← Back</button>
+      <div class="profile-header">
+        <div class="ph-top">
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div class="ph-icon" id="prof-icon">📋</div>
+            <div>
+              <div class="ph-title" id="prof-title">Case Profile</div>
+              <div class="ph-caseid" id="prof-caseid">—</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-shrink:0;">
+            <button class="btn-detail-save" onclick="openEditModal()">✏ Edit</button>
+            <button class="btn-print" onclick="printCase(profileIdx)">🖨 Print</button>
+            <button class="btn-detail-resubmit" onclick="resubmitFromProfile()">🚀 Resubmit</button>
+          </div>
+        </div>
+        <div class="ph-pills" id="prof-pills"></div>
+      </div>
+
+      <!-- LIVE CASE PIPELINE -->
+      <div class="live-pipeline-wrap" id="live-pipeline-wrap" style="display:none">
+        <div class="lp-header">
+          <span class="lp-title">// AI PIPELINE — LIVE STATUS</span>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span class="lp-case-id" id="lp-case-id-lbl">—</span>
+            <div class="lp-pulse-row">
+              <div class="lp-pulse" id="lp-pulse-dot"></div>
+              <span class="lp-pulse-lbl" id="lp-pulse-lbl">POLLING</span>
+            </div>
+          </div>
+        </div>
+        <div class="lp-stages">
+          <div class="lp-stage" id="lps-intake">
+            <div class="lp-icon-wrap">
+              <div class="lp-icon">📋</div>
+            </div>
+            <div class="lp-name">INTAKE</div>
+            <div class="lp-status" id="lps-intake-status">—</div>
+          </div>
+          <div class="lp-stage" id="lps-advocate">
+            <div class="lp-icon-wrap">
+              <div class="lp-icon">⚖️</div>
+              <div class="lp-spinner"></div>
+            </div>
+            <div class="lp-name">ADVOCATE</div>
+            <div class="lp-status" id="lps-advocate-status">Waiting…</div>
+          </div>
+          <div class="lp-stage" id="lps-devil">
+            <div class="lp-icon-wrap">
+              <div class="lp-icon">⚔️</div>
+              <div class="lp-spinner"></div>
+            </div>
+            <div class="lp-name">DEVIL'S ADV.</div>
+            <div class="lp-status" id="lps-devil-status">Waiting…</div>
+          </div>
+          <div class="lp-stage" id="lps-strategist">
+            <div class="lp-icon-wrap">
+              <div class="lp-icon">♟️</div>
+              <div class="lp-spinner"></div>
+            </div>
+            <div class="lp-name">STRATEGIST</div>
+            <div class="lp-status" id="lps-strategist-status">Waiting…</div>
+          </div>
+          <div class="lp-stage" id="lps-complete">
+            <div class="lp-icon-wrap">
+              <div class="lp-icon">🏁</div>
+            </div>
+            <div class="lp-name">COMPLETE</div>
+            <div class="lp-status" id="lps-complete-status">—</div>
+          </div>
+        </div>
+        <div class="lp-footer">
+          <span class="lp-elapsed" id="lp-elapsed">Elapsed: 0s</span>
+          <span class="lp-complete-msg" id="lp-complete-msg">✓ ALL ANALYSES COMPLETE</span>
+          <button class="lp-view-btn" onclick="switchTab('advocate')">VIEW ANALYSIS →</button>
+        </div>
+      </div>
+
+      <!-- ANALYSIS TABS -->
+      <div class="analysis-tabs">
+        <button class="a-tab active-intake" id="tab-intake" onclick="switchTab('intake')">
+          <span>📋</span> Intake
+        </button>
+        <button class="a-tab" id="tab-advocate" onclick="switchTab('advocate')">
+          <span style="color:var(--gold)">⚖️</span> The Advocate
+        </button>
+        <button class="a-tab" id="tab-devil" onclick="switchTab('devil')">
+          <span style="color:var(--red-bright)">⚔️</span> Devil's Advocate
+        </button>
+        <button class="a-tab" id="tab-strategist" onclick="switchTab('strategist')">
+          <span style="color:#a855f7">♟️</span> The Strategist
+        </button>
+      </div>
+
+      <!-- INTAKE PANEL -->
+      <div class="analysis-panel active" id="panel-intake">
+        <div class="analysis-card">
+          <div class="ac-header">
+            <div class="ac-role-icon" style="background:var(--surface2)">📋</div>
+            <div><div class="ac-role-name" style="color:var(--white)">Case Intake Record</div><div class="ac-role-sub">Original submission — clerk data only</div></div>
+          </div>
+          <div class="detail-grid" id="prof-intake-grid"></div>
+          <div class="detail-sec-lbl" style="margin-top:14px">// CLIENT NARRATIVE</div>
+          <div class="ac-text" id="prof-narrative" style="margin-top:8px"></div>
+          <div class="detail-sec-lbl" style="margin-top:14px">// DOCUMENTS SUBMITTED</div>
+          <div class="docs-tags" id="prof-docs-submitted" style="margin-top:8px"></div>
+          <div class="detail-sec-lbl" style="margin-top:14px">// UPLOADED FILES</div>
+          <div id="prof-uploaded-files" style="margin-top:8px"></div>
+          <div class="detail-sec-lbl" style="margin-top:14px">// CLERK'S NOTES</div>
+          <div class="ac-text" id="prof-clerk-notes" style="margin-top:8px;color:var(--muted)"></div>
+        </div>
+      </div>
+
+      <!-- ADVOCATE PANEL -->
+      <div class="analysis-panel" id="panel-advocate">
+        <div class="analysis-card">
+          <div class="ac-header">
+            <div class="ac-role-icon" style="background:var(--gold-dim)">⚖️</div>
+            <div><div class="ac-role-name" style="color:var(--gold2)">The Advocate</div><div class="ac-role-sub">Argues for the client — strongest possible legal position</div></div>
+          </div>
+          <div class="poll-status-bar" id="advocate-poll-bar" style="display:none">
+            <div class="poll-dot"></div>
+            <span id="advocate-poll-msg">Waiting for Advocate analysis — pipeline is running…</span>
+          </div>
+          <div id="advocate-content"></div>
+        </div>
+      </div>
+
+      <!-- DEVIL'S ADVOCATE PANEL -->
+      <div class="analysis-panel" id="panel-devil">
+        <div class="analysis-card">
+          <div class="ac-header">
+            <div class="ac-role-icon" style="background:var(--red-dim)">⚔️</div>
+            <div><div class="ac-role-name" style="color:var(--red-bright)">The Devil's Advocate</div><div class="ac-role-sub">Challenges the argument — finds weaknesses and counterarguments</div></div>
+          </div>
+          <div class="poll-status-bar" id="devil-poll-bar" style="display:none">
+            <div class="poll-dot"></div>
+            <span id="devil-poll-msg">Waiting for Devil's Advocate analysis — pipeline is running…</span>
+          </div>
+          <div id="devil-content"></div>
+        </div>
+      </div>
+
+      <!-- STRATEGIST PANEL -->
+      <div class="analysis-panel" id="panel-strategist">
+        <div class="analysis-card">
+          <div class="ac-header">
+            <div class="ac-role-icon" style="background:var(--purple-dim)">♟️</div>
+            <div><div class="ac-role-name" style="color:#a855f7">The Strategist</div><div class="ac-role-sub">Senior Partner — final recommendation and approved strategy</div></div>
+          </div>
+          <div class="poll-status-bar" id="strategist-poll-bar" style="display:none">
+            <div class="poll-dot"></div>
+            <span id="strategist-poll-msg">Waiting for Strategist review — pipeline is running…</span>
+          </div>
+          <div id="strategist-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PIPELINE VIEWS ══ -->
+    <div class="view" id="view-pipeline-advocate">
+      <div class="sec-hdr"><div><div class="sec-title">⚖️ The Advocate — Analysis Queue</div><div class="sec-sub">Cases with completed Advocate analysis</div></div></div>
+      <div id="pipeline-advocate-wrap"></div>
+    </div>
+    <div class="view" id="view-pipeline-devil">
+      <div class="sec-hdr"><div><div class="sec-title">⚔️ Devil's Advocate — Analysis Queue</div><div class="sec-sub">Cases with completed Devil's Advocate analysis</div></div></div>
+      <div id="pipeline-devil-wrap"></div>
+    </div>
+    <div class="view" id="view-pipeline-strategist">
+      <div class="sec-hdr"><div><div class="sec-title">♟️ The Strategist — Final Recommendations</div><div class="sec-sub">Cases with completed Senior Partner analysis</div></div></div>
+      <div id="pipeline-strategist-wrap"></div>
+    </div>
+
+    <!-- ══ FORM VIEW ══ -->
+    <div class="view" id="view-form">
+      <button class="form-back" onclick="showView('overview',document.getElementById('nav-overview'))">← Back to Overview</button>
+      <div class="form-top">
+        <div class="form-top-icon" id="form-icon">📋</div>
+        <div>
+          <div class="form-top-title" id="form-title">Case Intake Form</div>
+          <div class="form-top-sub" id="form-sub">Complete all required fields and submit to the AI pipeline</div>
+        </div>
+      </div>
+      <div class="form-layout">
+        <div>
+          <div class="fsec">
+            <div class="fsec-title">// 01 · CLIENT INFORMATION</div>
+            <div class="frow">
+              <div class="field"><label>Full Name <span class="req">*</span></label><input type="text" id="f-name" placeholder="e.g. Maria Santos dela Cruz" oninput="updateReqs()"></div>
+              <div class="field"><label>Contact Number <span class="req">*</span></label><input type="text" id="f-contact" placeholder="e.g. 0917-345-6789" oninput="updateReqs()"></div>
+            </div>
+            <div class="frow">
+              <div class="field"><label>Date of Birth</label><input type="date" id="f-dob"></div>
+              <div class="field"><label>Civil Status</label><select id="f-civil"><option value="">Select...</option><option>Single</option><option>Married</option><option>Widowed</option><option>Separated</option></select></div>
+            </div>
+            <div class="frow full"><div class="field"><label>Complete Address</label><input type="text" id="f-address" placeholder="Barangay, City, Province"></div></div>
+            <div class="frow full"><div class="field"><label>Occupation / Employer</label><input type="text" id="f-occupation" placeholder="e.g. Sales Supervisor — FastTrack Logistics Corp."></div></div>
+          </div>
+          <div class="fsec">
+            <div class="fsec-title">// 02 · CASE DETAILS</div>
+            <div class="frow">
+              <div class="field"><label>Specific Legal Issue <span class="req">*</span></label>
+                <select id="f-issue" onchange="handleIssueChange(this)"></select>
+                <input type="text" id="f-issue-other" placeholder="Describe the legal issue..." oninput="updateReqs()" style="display:none;margin-top:7px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 11px;font-family:'IBM Plex Sans',sans-serif;font-size:0.79rem;color:var(--text);outline:none;width:100%;">
+              </div>
+              <div class="field"><label>Date of Incident</label><input type="date" id="f-incident-date"></div>
+            </div>
+            <div class="frow full"><div class="field"><label>Opposing Party / Respondent</label><input type="text" id="f-opposing" placeholder="Name of employer, respondent, or accused"></div></div>
+            <div class="frow full">
+              <div class="field"><label>Urgency Level <span class="req">*</span></label>
+                <div class="radio-row">
+                  <label class="ri" id="r-low" onclick="pickUrgency('LOW',event)"><input type="radio" name="urgency" value="LOW"><span>🟢 LOW</span></label>
+                  <label class="ri" id="r-med" onclick="pickUrgency('MEDIUM',event)"><input type="radio" name="urgency" value="MEDIUM"><span>🟡 MEDIUM</span></label>
+                  <label class="ri" id="r-high" onclick="pickUrgency('HIGH',event)"><input type="radio" name="urgency" value="HIGH"><span>🔴 HIGH</span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fsec">
+            <div class="fsec-title">// 03 · CLIENT NARRATIVE</div>
+            <div class="frow full"><div class="field"><label>Summary of Legal Issue <span class="req">*</span> <span class="opt">(clerk's summary or client's own words)</span></label><textarea id="f-narrative" rows="6" placeholder="Describe what happened in detail. Include dates, people involved, actions taken, and what the client is seeking..." oninput="updateReqs()"></textarea></div></div>
+          </div>
+          <div class="fsec">
+            <div class="fsec-title">// 04 · DOCUMENTS SUBMITTED</div>
+            <div style="font-size:0.68rem;color:var(--muted);margin-bottom:10px">Check all documents the client physically submitted today</div>
+            <div class="cb-list" id="docs-list"></div>
+          </div>
+          <div class="fsec">
+            <div class="fsec-title">// 05 · CLERK'S NOTES</div>
+            <div class="frow full"><div class="field"><label>Additional Observations <span class="opt">(optional)</span></label><textarea id="f-notes" rows="3" placeholder="Client demeanor, follow-up dates, additional context..."></textarea></div></div>
+          </div>
+          <div class="fsec">
+            <div class="fsec-title">// 06 · FILE UPLOADS <span class="opt" style="font-weight:400;font-size:0.65rem;letter-spacing:0">(optional)</span></div>
+            <div style="font-size:0.68rem;color:var(--muted);margin-bottom:12px;line-height:1.6">Attach any documents the client brought today. Accepted: PDF, DOCX, DOC, TXT, JPG, PNG, XLSX.</div>
+            <div class="upload-dropzone" id="upload-dropzone"
+              ondragover="uzDragOver(event)"
+              ondragleave="uzDragLeave(event)"
+              ondrop="uzDrop(event)"
+              onclick="document.getElementById('f-file-input').click()">
+              <input type="file" id="f-file-input" multiple
+                accept=".pdf,.docx,.doc,.txt,.jpg,.jpeg,.png,.xlsx,.xls"
+                style="display:none" onchange="uzFilesAdded(this.files)">
+              <div class="uz-icon">📎</div>
+              <div class="uz-title">Drop files here or click to browse</div>
+              <div class="uz-sub">PDF · DOCX · JPG · PNG · TXT · XLSX</div>
+            </div>
+            <div id="uz-file-list"></div>
+          </div>
+          <div class="submit-bar">
+            <div class="submit-hint"><strong>Ready to submit?</strong><br>Case data fires directly to your n8n AI pipeline.</div>
+            <button class="btn-submit" id="btn-submit" onclick="submitCase()">
+              <span id="btn-label">Submit to AI Pipeline</span>
+              <span id="btn-icon">→</span>
+            </button>
+          </div>
+        </div>
+        <div class="fside">
+          <div class="fside-card">
+            <div class="fside-lbl">// CASE ID</div>
+            <div class="caseid-box" id="caseid-display">—</div>
+            <div style="font-size:0.62rem;color:var(--muted);margin-top:5px">Auto-generated per intake</div>
+          </div>
+          <div class="fside-card">
+            <div class="fside-lbl">// WEBHOOK URL</div>
+            <div class="hook-display" id="hook-display">— not set —</div>
+            <div style="display:flex;align-items:center;margin-top:7px;margin-bottom:4px;">
+              <span id="hook-indicator" style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;color:var(--muted2)">● UNCHECKED</span>
+            </div>
+            <button class="btn-copy-hook" id="btn-copy-hook" onclick="copyWebhook()">⎘ Copy URL</button>
+            <button id="btn-test-hook" class="btn-edit-hook" style="font-weight:600;color:var(--text);border-color:var(--border2);" onclick="testWebhookConnection()">⚡ Test Connection</button>
+            <div class="hook-hint">Test fires a dummy case to confirm n8n is listening.</div>
+            <button class="btn-edit-hook" onclick="openHookModal()">⚙ Edit Webhook URL</button>
+          </div>
+          <div class="fside-card">
+            <div class="fside-lbl">// REQUIRED FIELDS</div>
+            <div class="req-list">
+              <div class="req-item" id="req-name"><div class="req-dot"></div>Client name</div>
+              <div class="req-item" id="req-contact"><div class="req-dot"></div>Contact number</div>
+              <div class="req-item" id="req-issue"><div class="req-dot"></div>Legal issue</div>
+              <div class="req-item" id="req-narrative"><div class="req-dot"></div>Narrative / summary</div>
+              <div class="req-item" id="req-urgency"><div class="req-dot"></div>Urgency level</div>
+            </div>
+          </div>
+          <div class="fside-card">
+            <div class="fside-lbl">// LEGAL TOPIC</div>
+            <div class="topic-lbl" id="side-topic">—</div>
+            <div class="topic-sub" id="side-sub">No template selected</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS VIEW ══ -->
+    <div class="view" id="view-settings">
+      <div style="margin-bottom:20px"><div class="sec-title">Settings</div><div class="sec-sub">Configure your n8n Webhook URL and clerk profile</div></div>
+      <div class="settings-grid">
+        <div class="s-card" style="grid-column:1/-1">
+          <div class="s-card-title">// n8n WEBHOOK CONFIGURATION</div>
+          <div class="s-field"><label>Live Webhook URL</label><input type="text" id="set-hook-live" placeholder="https://your-n8n.app.n8n.cloud/webhook/intake"><div class="hint">Use when workflow is Activated (toggle ON).</div></div>
+          <div class="s-field"><label>Test Webhook URL</label><input type="text" id="set-hook-test" placeholder="https://your-n8n.app.n8n.cloud/webhook-test/intake"><div class="hint">Use while building. n8n must be in Test Workflow mode.</div></div>
+          <div class="s-field"><label>Active URL <span style="color:var(--gold);margin-left:4px">← Submit uses this</span></label><input type="text" id="set-hook-active" placeholder="Paste the URL you want active right now"><div class="hint">This is the URL that fires on Submit.</div></div>
+          <div class="s-field" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+            <label>Results Fetch URL <span style="color:var(--muted);font-weight:400;font-size:0.62rem">(polling — Advocate &amp; Devil's Advocate)</span></label>
+            <input type="text" id="set-hook-results" placeholder="http://localhost:5678/webhook/fetch-results">
+            <div class="hint">n8n webhook that accepts <code style="font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--gold)">{ case_id }</code> and returns <code style="font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--gold)">lawyer_a</code> / <code style="font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--gold)">lawyer_b</code> from Supabase. Dashboard polls this every 5s after submission.</div>
+          </div>
+          <div class="s-field">
+            <label>Delete Case Webhook URL <span style="color:var(--red-bright);font-weight:400;font-size:0.62rem">(optional — for server-side delete)</span></label>
+            <input type="text" id="set-hook-delete" placeholder="http://localhost:5678/webhook/delete-case">
+            <div class="hint">If set, clicking the delete 🗑 button will also call this webhook to remove the case from Supabase. Omit for local-only delete.</div>
+          </div>
+          <div class="code-eg">LOCAL (test):  http://localhost:5678/webhook-test/intake
+LOCAL (live):  http://localhost:5678/webhook/intake</div>
+          <button class="btn-save" onclick="saveSettings()">Save Webhook Settings</button>
+          <div class="save-msg save-ok" id="set-msg-ok">✓ Webhook URL saved.</div>
+          <div class="save-msg save-err" id="set-msg-err">⚠ Please enter an active webhook URL.</div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-title">// CLERK PROFILE</div>
+          <div class="s-field"><label>Clerk Name</label><input type="text" id="set-clerk" value="John Lennon"></div>
+          <div class="s-field"><label>Firm Name</label><input type="text" id="set-firm" value="JL Laniog Law Firm"></div>
+          <button class="btn-save" onclick="saveProfile()">Save Profile</button>
+          <div class="save-msg save-ok" id="profile-msg" style="display:none">✓ Profile saved.</div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-title">// ACTIVE WEBHOOK</div>
+          <div id="cur-hook-display" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:9px 12px;word-break:break-all;line-height:1.6;min-height:44px">— not set yet —</div>
+          <div style="font-size:0.64rem;color:var(--muted2);margin-top:7px;line-height:1.5">This URL receives all case submissions.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page -->
+</div><!-- /main -->
+
+<!-- WEBHOOK MODAL -->
+<div class="modal-bg" id="hook-modal">
+  <div class="modal-box">
+    <div class="modal-title">Webhook Configuration</div>
+    <div class="modal-sub">Paste your n8n URLs, then choose which mode is active.</div>
+    <div class="modal-field"><label>🧪 Test URL</label><input type="text" id="modal-hook-test" placeholder="http://localhost:5678/webhook-test/intake" oninput="updateModalPreview()"><div class="hint">Only works when n8n is in Test Workflow mode</div></div>
+    <div class="modal-field"><label>🚀 Production URL</label><input type="text" id="modal-hook-live" placeholder="http://localhost:5678/webhook/intake" oninput="updateModalPreview()"><div class="hint">Only works when the workflow is Activated</div></div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--muted2);letter-spacing:0.12em;margin-bottom:7px;">// ACTIVE MODE</div>
+    <div class="mode-toggle">
+      <button class="mode-btn active-test" id="mode-btn-test" onclick="setMode('test')">🧪 TEST</button>
+      <button class="mode-btn" id="mode-btn-live" onclick="setMode('live')">🚀 PRODUCTION</button>
+    </div>
+    <div class="modal-preview" id="modal-active-preview">Active URL will appear here</div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeHookModal()">Cancel</button>
+      <button class="btn-modal-save" onclick="saveHookModal()">Save & Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="detail-bg" id="detail-modal">
+  <div class="detail-box">
+    <div class="detail-hdr">
+      <div>
+        <div class="detail-title" id="d-title">Edit Case</div>
+        <div class="detail-caseid" id="d-caseid">—</div>
+      </div>
+      <button class="detail-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-grid">
+        <div class="detail-field"><label>Full Name</label><input type="text" id="d-name"></div>
+        <div class="detail-field"><label>Contact Number</label><input type="text" id="d-contact"></div>
+        <div class="detail-field"><label>Date of Birth</label><input type="date" id="d-dob"></div>
+        <div class="detail-field"><label>Civil Status</label><select id="d-civil"><option value="">—</option><option>Single</option><option>Married</option><option>Widowed</option><option>Separated</option></select></div>
+        <div class="detail-field full"><label>Address</label><input type="text" id="d-address"></div>
+        <div class="detail-field full"><label>Occupation / Employer</label><input type="text" id="d-occupation"></div>
+      </div>
+      <div class="detail-sec-lbl">// CASE DETAILS</div>
+      <div class="detail-grid">
+        <div class="detail-field"><label>Legal Topic</label><input type="text" id="d-topic" readonly style="color:var(--muted)"></div>
+        <div class="detail-field"><label>Legal Issue</label><input type="text" id="d-issue"></div>
+        <div class="detail-field"><label>Date of Incident</label><input type="date" id="d-incident"></div>
+        <div class="detail-field"><label>Opposing Party</label><input type="text" id="d-opposing"></div>
+        <div class="detail-field"><label>Urgency</label><select id="d-urgency"><option value="LOW">🟢 LOW</option><option value="MEDIUM">🟡 MEDIUM</option><option value="HIGH">🔴 HIGH</option></select></div>
+        <div class="detail-field"><label>Submitted By</label><input type="text" id="d-clerk" readonly style="color:var(--muted)"></div>
+      </div>
+      <div class="detail-sec-lbl">// CLIENT NARRATIVE</div>
+      <div class="detail-grid"><div class="detail-field full"><label>Summary / Narrative</label><textarea id="d-narrative" rows="5"></textarea></div></div>
+      <div class="detail-sec-lbl">// DOCUMENTS SUBMITTED</div>
+      <div class="detail-docs" id="d-docs"></div>
+      <div class="detail-sec-lbl">// CLERK'S NOTES</div>
+      <div class="detail-grid"><div class="detail-field full"><label>Notes</label><textarea id="d-notes" rows="3"></textarea></div></div>
+    </div>
+    <div class="detail-footer">
+      <button class="btn-detail-cancel" onclick="closeDetail()">Cancel</button>
+      <button class="btn-detail-save" onclick="saveDetail()">💾 Save Changes</button>
+      <button class="btn-detail-resubmit" onclick="resubmitDetail()">🚀 Save & Resubmit</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="success-bg" id="success-modal">
+  <div class="success-box">
+    <div class="success-ring">✓</div>
+    <div class="success-title">Case Submitted</div>
+    <div class="success-msg">Successfully sent to the AI legal pipeline. The team will begin processing immediately.</div>
+    <div class="success-id" id="suc-id">—</div>
+    <div class="success-details" id="suc-details"></div>
+    <button class="btn-new" onclick="resetDashboard()">+ Start New Case Intake</button>
+  </div>
+</div>
+
+<!-- PRINT FRAME (hidden on screen, shown on print) -->
+<div id="print-frame"></div>
+
+<script>
+const TPLS = {
+  labor:{label:'Labor Law',icon:'👷',bg:'rgba(240,165,0,0.12)',sub:'Illegal dismissal, constructive dismissal, NLRC',
+    issues:['Illegal Dismissal','Constructive Dismissal','Unfair Labor Practice','Non-payment of Wages / Benefits','Illegal Suspension','Forced Resignation','Labor Standards Violation','NLRC Complaint','Overtime Pay Dispute','13th Month Pay Dispute','Others'],
+    docs:[{l:'Resignation Letter',s:'If applicable'},{l:'Employment Contract',s:'Original or photocopy'},{l:'Payslips (last 3 months)',s:''},{l:'Performance Evaluation Records',s:'If available'},{l:'Written Communications from Employer',s:'Emails, texts, memos'},{l:'Valid Government ID',s:''}]},
+  criminal:{label:'Criminal Law',icon:'⚔️',bg:'var(--red-dim)',sub:'Estafa, theft, physical injuries, cybercrime',
+    issues:['Estafa / Swindling','Theft / Robbery','Physical Injuries','Grave Threats / Coercion','Cybercrime','Illegal Drugs (RA 9165)','Murder / Homicide','Kidnapping / Serious Illegal Detention','Qualified Theft','Falsification of Documents','Others'],
+    docs:[{l:'Sworn Complaint Affidavit',s:'Notarized if available'},{l:'Photos / Physical Evidence',s:''},{l:'Medical Certificate',s:'For physical injury cases'},{l:'Screenshots / Digital Evidence',s:'For cybercrime or estafa'},{l:'Witness List & Contact Info',s:''},{l:'Valid Government ID',s:''}]},
+  family:{label:'Family Law',icon:'🏠',bg:'var(--blue-dim)',sub:'Annulment, custody, support, VAWC',
+    issues:['Annulment of Marriage','Legal Separation','Child Custody','Child Support','VAWC (RA 9262)','Adoption','Nullity of Marriage','Recognition of Foreign Divorce','Protection Order','Parental Authority','Others'],
+    docs:[{l:'Marriage Certificate (PSA)',s:'Original'},{l:'Birth Certificates of Children',s:'If applicable'},{l:'Barangay Protection Order',s:'For VAWC cases'},{l:'Medical / Psychological Report',s:'If available'},{l:'Property Documents',s:'For separation cases'},{l:'Valid Government ID',s:''}]},
+  civil:{label:'Civil Law',icon:'📜',bg:'var(--green-dim)',sub:'Contract disputes, damages, breach',
+    issues:['Breach of Contract','Collection of Sum of Money','Damages','Specific Performance','Quasi-Delict / Negligence','Rescission of Contract','Unjust Enrichment','Reformation of Instrument','Foreclosure of Mortgage','Ejectment / Unlawful Detainer','Others'],
+    docs:[{l:'Contract / Agreement',s:'Original or photocopy'},{l:'Demand Letter',s:'Sent or received'},{l:'Receipts / Proof of Payment',s:''},{l:'Correspondence / Communications',s:''},{l:'Witness List',s:''},{l:'Valid Government ID',s:''}]},
+  property:{label:'Property Law',icon:'🏗️',bg:'var(--purple-dim)',sub:'Land disputes, ejectment, titling',
+    issues:['Ejectment / Unlawful Detainer','Forcible Entry','Recovery of Ownership','Land Title Dispute','Quieting of Title','Partition of Property','Cancellation of Title','Adverse Claim','Boundary Dispute','Expropriation','Others'],
+    docs:[{l:'Transfer Certificate of Title (TCT)',s:'Original or certified true copy'},{l:'Tax Declaration',s:''},{l:'Survey / Lot Plan',s:'If available'},{l:'Deed of Sale / Transfer Documents',s:''},{l:'Photos of Property',s:''},{l:'Valid Government ID',s:''}]},
+  corporate:{label:'Corporate Law',icon:'🏢',bg:'var(--gold-dim)',sub:'SEC complaints, governance, shareholders',
+    issues:['SEC Complaint','Intra-Corporate Dispute','Dissolution of Corporation','Breach of Fiduciary Duty','Shareholder Oppression','Fraudulent Acts by Directors','Deadlock in Management','Involuntary Dissolution','Corporate Rehabilitation','Business Name Dispute','Others'],
+    docs:[{l:'SEC Registration / Articles of Incorporation',s:''},{l:'Corporate By-Laws',s:''},{l:'Board / Stockholder Meeting Minutes',s:''},{l:'Financial Statements (last 2 yrs)',s:'If available'},{l:'Shareholder / Partnership Agreements',s:''},{l:'Valid Government ID',s:''}]}
+};
+
+let curTpl=null,curCaseId='',curUrgency='',webhookUrl='';
+let webhookTest='',webhookLive='',webhookMode='test';
+let deleteWebhookUrl='';
+let caseStore=[];
+let searchQuery='';
+let detailIdx=null;
+let profileIdx=null;
+let profilePrevView='overview';
+let curTab='intake';
+
+const SEED=[
+  {case_id:'2026-0307-7754',timestamp:'2026-03-07T11:05:00.000Z',submitted_by:'John Lennon',legal_topic:'Family Law',user_name:'Ana Reyes Villanueva',contact_number:'0917-234-5678',date_of_birth:'1990-05-14',civil_status:'Married',address:'Brgy. Sto. Niño, Majayjay, Laguna',occupation:'Nurse — PGH Manila',legal_issue:'VAWC / Domestic Violence',incident_date:'2026-02-28',opposing_party:'Ramon Villanueva',urgency:'HIGH',legal_narrative:'Client reports repeated physical and verbal abuse by husband spanning 3 months. Last incident resulted in bruising on face and arms. Barangay blotter filed. Client requesting Temporary Protection Order and legal separation proceedings.',documents_submitted:['Marriage Certificate (PSA)','Barangay Protection Order','Medical / Psychological Report','Valid Government ID'],clerk_notes:'Client visibly distressed. Priority case. Referred to DSWD for immediate shelter.',document_url:'',ai_summary:'Ms. Ana Reyes Villanueva, a married nurse employed at PGH Manila, seeks legal protection against her husband Ramon Villanueva following a documented pattern of physical and verbal abuse spanning three months. The most recent incident on February 28, 2026 resulted in visible bruising, and a barangay blotter has been filed. The client is seeking a Temporary Protection Order under RA 9262 and the commencement of legal separation proceedings.',case_theory:'Violation of RA 9262 (VAWC) with application for Temporary Protection Order and ancillary legal separation proceedings.',pipeline_status:'ADVOCATE_COMPLETE',lawyer_a:{case_assessment:'The client has a strong case under RA 9262. The pattern of abuse is documented and a barangay blotter exists.',legal_arguments:['RA 9262 Section 5 prohibits physical, psychological, and economic abuse against women and their children.','The barangay blotter and medical certificate constitute prima facie evidence of abuse.','The client qualifies for a Temporary Protection Order under Section 15 of RA 9262.'],recommended_strategy:'URGENT_PROTECTION_ORDER',strategy_reasoning:'Client faces immediate safety risk. A TPO must be filed ex parte without delay.',settlement_viability:'LOW',settlement_notes:'Given the severity of documented abuse, settlement is not advisable. Full legal protection is recommended.',evidence_gaps:['Sworn affidavit from client detailing all incidents','Witness statements from neighbors or family','Photo documentation of injuries'],win_probability:'STRONG',win_probability_notes:'Strong documentary evidence and clear statutory basis under RA 9262.'}},
+  {case_id:'2026-0307-3190',timestamp:'2026-03-07T10:32:00.000Z',submitted_by:'John Lennon',legal_topic:'Criminal Law',user_name:'Roberto Pascual Jr.',contact_number:'0919-876-5432',date_of_birth:'1978-11-03',civil_status:'Single',address:'Brgy. Buenavista, Liliw, Laguna',occupation:'Businessman',legal_issue:'Estafa',incident_date:'2026-01-15',opposing_party:'Felicidad Morales',urgency:'MEDIUM',legal_narrative:'Client claims to have invested ₱250,000 with respondent for a rice trading business in January 2026. Respondent has since become unreachable. No signed agreement exists but client has bank transfer receipts.',documents_submitted:['Sworn Complaint Affidavit','Screenshots / Digital Evidence','Valid Government ID'],clerk_notes:'Client has transfer receipts via GCash and BDO. No written contract. Advised to gather more evidence.',document_url:'',ai_summary:'',case_theory:'',pipeline_status:'INTAKE_COMPLETE'},
+  {case_id:'2026-0307-4821',timestamp:'2026-03-07T09:14:00.000Z',submitted_by:'Luka',legal_topic:'Labor Law',user_name:'Maria Santos dela Cruz',contact_number:'0920-111-2233',date_of_birth:'1995-08-22',civil_status:'Single',address:'Brgy. Pangil, Pangil, Laguna',occupation:'Sales Supervisor — FastTrack Logistics Corp.',legal_issue:'Constructive Dismissal',incident_date:'2026-02-10',opposing_party:'FastTrack Logistics Corp.',urgency:'HIGH',legal_narrative:'Client was pressured by HR to sign a resignation letter after refusing a transfer to a distant branch without pay adjustment. She was told her position would be dissolved if she refused. She signed under duress on Feb 10, 2026.',documents_submitted:['Resignation Letter','Employment Contract','Payslips (last 3 months)','Written Communications from Employer','Valid Government ID'],clerk_notes:'Client has email exchanges with HR. Strong constructive dismissal case.',document_url:'',ai_summary:'Ms. Maria Santos dela Cruz, a Sales Supervisor at FastTrack Logistics Corp., was coerced into signing a resignation letter on February 10, 2026 after her employer threatened to dissolve her position if she refused a transfer to a distant branch without salary adjustment. The resignation was not voluntary and constitutes constructive dismissal under Philippine Labor Law.',case_theory:'Constructive dismissal under Article 294 of the Labor Code, with claims for separation pay, back wages, and reinstatement.',pipeline_status:'INTAKE_COMPLETE'}
+];
+
+// INIT
+(function(){
+  document.getElementById('datechip').textContent = new Date().toLocaleDateString('en-PH',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+  try{
+    webhookTest=localStorage.getItem('jll_webhook_test')||'';
+    webhookLive=localStorage.getItem('jll_webhook_live')||'';
+    webhookMode=localStorage.getItem('jll_webhook_mode')||'test';
+    webhookUrl=webhookMode==='live'?webhookLive:webhookTest;
+    const resultsUrl=localStorage.getItem('jll_results_url')||'';
+    if(resultsUrl){const rf=document.getElementById('set-hook-results');if(rf)rf.value=resultsUrl;}
+    const deleteUrl=localStorage.getItem('jll_delete_webhook')||'';
+    if(deleteUrl){const df=document.getElementById('set-hook-delete');if(df)df.value=deleteUrl;}
+    deleteWebhookUrl=deleteUrl;
+    const stored=localStorage.getItem('jll_cases');
+    caseStore=stored?JSON.parse(stored):[...SEED];
+    refreshHookUI();
+    renderRecentCases();
+    renderAllCases();
+    renderPipelineViews();
+  }catch(e){caseStore=[...SEED];renderRecentCases();renderAllCases();}
+})();
+
+// VIEWS
+function showView(id,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  const titles={overview:['Case Overview','JL Laniog Law Firm — LexFlow Case Management'],cases:['All Cases','Complete case registry — click any row to open case profile'],settings:['Settings','Configure webhook and clerk profile'],form:['New Case Intake','Fill out the form and submit to the AI pipeline'],'pipeline-advocate':['The Advocate — Queue','Cases with completed Advocate analysis'],'pipeline-devil':["Devil's Advocate — Queue","Cases with completed Devil's Advocate analysis"],'pipeline-strategist':['The Strategist — Queue','Cases with completed Senior Partner analysis'],profile:['Case Profile','Full case record and AI analysis']};
+  if(titles[id]){document.getElementById('topbar-title').textContent=titles[id][0];document.getElementById('topbar-sub').textContent=titles[id][1];}
+  window.scrollTo(0,0);
+}
+
+// PIPELINE STATUS HELPERS
+function getPipelineStatus(c){
+  const s=c.pipeline_status||'INTAKE_COMPLETE';
+  const map={'INTAKE_COMPLETE':{label:'Intake Done',cls:'pb-intake',icon:'📋'},'ADVOCATE_COMPLETE':{label:'Advocate Done',cls:'pb-advocate',icon:'⚖️'},'DEVIL_COMPLETE':{label:"Devil's Done",cls:'pb-devil',icon:'⚔️'},'STRATEGIST_COMPLETE':{label:'Strategy Ready',cls:'pb-strategist',icon:'♟️'},'COMPLETE':{label:'Complete',cls:'pb-complete',icon:'✓'}};
+  return map[s]||map['INTAKE_COMPLETE'];
+}
+
+// BUILD CASES TABLE
+function buildCasesTable(cases, limit){
+  if(!cases||cases.length===0) return '<div class="empty-state"><div class="empty-icon">🗂</div>No cases found.</div>';
+  const rows=limit?cases.slice(0,limit):cases;
+  const ps=c=>getPipelineStatus(c);
+  const urgCls=u=>u==='HIGH'?'urg-high':u==='MEDIUM'?'urg-med':'urg-low';
+  let html=`<div class="cases-wrap"><table><thead><tr><th>CASE ID</th><th>CLIENT</th><th>LEGAL TOPIC</th><th>ISSUE</th><th>URGENCY</th><th>PIPELINE</th><th>DATE</th><th></th></tr></thead><tbody>`;
+  rows.forEach((c,i)=>{
+    const realIdx=caseStore.indexOf(c);
+    const dt=new Date(c.timestamp);
+    const dateStr=dt.toLocaleDateString('en-PH',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit'});
+    const p=ps(c);
+    const tpl=Object.values(TPLS).find(t=>t.label===c.legal_topic);
+    html+=`<tr onclick="openProfile(${realIdx},'${limit?'overview':'cases'}')">
+      <td class="mono">${c.case_id}</td>
+      <td style="font-weight:500">${c.user_name}</td>
+      <td><span class="topic-tag">${tpl?tpl.icon:''} ${c.legal_topic}</span></td>
+      <td style="color:var(--muted);font-size:0.73rem">${c.legal_issue}</td>
+      <td><span class="urg ${urgCls(c.urgency)}">${c.urgency}</span></td>
+      <td><span class="pipe-badge ${p.cls}">${p.icon} ${p.label}</span></td>
+      <td style="color:var(--muted2);font-size:0.68rem;white-space:nowrap">${dateStr}</td>
+      <td onclick="event.stopPropagation()">
+        <button class="tbl-print-btn" onclick="event.stopPropagation();printCase(${realIdx})">🖨</button>
+        <button class="tbl-delete-btn" onclick="event.stopPropagation();deleteCase(${realIdx})">🗑</button>
+      </td>
+    </tr>`;
+  });
+  html+='</tbody></table>';
+  if(limit&&caseStore.length>limit) html+=`<div style="text-align:center;padding:10px;font-size:0.72rem;color:var(--gold);cursor:pointer" onclick="showView('cases',document.getElementById('nav-cases'))">Show all ${caseStore.length} cases →</div>`;
+  html+='</div>';
+  return html;
+}
+
+function renderRecentCases(){
+  document.getElementById('recent-cases-wrap').innerHTML=buildCasesTable(caseStore,5);
+
+  // Update "Cases Today" stat
+  const todayCount=caseStore.filter(c=>new Date(c.timestamp).toDateString()===new Date().toDateString()).length;
+  document.getElementById('s-today').textContent=todayCount;
+
+  // Update "This Week" stat (cases from current week)
+  const now=new Date();
+  const weekStart=new Date(now.setDate(now.getDate()-now.getDay())); // Sunday
+  const weekCount=caseStore.filter(c=>new Date(c.timestamp)>=weekStart).length;
+  document.getElementById('s-week').textContent=weekCount;
+
+  // Update "High Urgency" stat
+  const highCount=caseStore.filter(c=>c.urgency==='HIGH').length;
+  document.getElementById('s-high').textContent=highCount;
+
+  // Update "Recent Cases" subtext to show actual count (up to 5)
+  const recentCount=Math.min(caseStore.length,5);
+  const recentLabel=document.getElementById('recent-cases-label');
+  if(recentLabel) recentLabel.textContent=`${recentCount} most recent — click to open case profile`;
+}
+function renderAllCases(filtered){
+  const src=filtered!==undefined?filtered:caseStore;
+  document.getElementById('all-cases-wrap').innerHTML=buildCasesTable(src,null);
+}
+function renderPipelineViews(){
+  const advocate=caseStore.filter(c=>c.lawyer_a&&c.lawyer_a.case_assessment);
+  const devil=caseStore.filter(c=>c.lawyer_b&&c.lawyer_b.case_assessment);
+  const strategist=caseStore.filter(c=>c.senior_partner&&c.senior_partner.final_recommendation);
+  const complete=caseStore.filter(c=>c.pipeline_status==='COMPLETE');
+  document.getElementById('pipeline-advocate-wrap').innerHTML=advocate.length?buildCasesTable(advocate,null):'<div class="empty-state"><div class="empty-icon">⚖️</div>No Advocate analyses yet. Cases will appear here after The Advocate processes them.</div>';
+  document.getElementById('pipeline-devil-wrap').innerHTML=devil.length?buildCasesTable(devil,null):"<div class='empty-state'><div class='empty-icon'>⚔️</div>No Devil's Advocate analyses yet.</div>";
+  document.getElementById('pipeline-strategist-wrap').innerHTML=strategist.length?buildCasesTable(strategist,null):"<div class='empty-state'><div class='empty-icon'>♟️</div>No Strategist recommendations yet.</div>";
+
+  // Update pipeline tracker counters
+  const total=caseStore.length;
+  const intakeDone=caseStore.filter(c=>c.pipeline_status).length; // all cases that passed intake
+  const advocateDone=advocate.length;
+  const devilDone=devil.length;
+  const strategistDone=strategist.length;
+  const completeDone=complete.length;
+
+  const elTotal=document.getElementById('pt-count-total');
+  const elAdvocate=document.getElementById('pt-count-advocate');
+  const elDevil=document.getElementById('pt-count-devil');
+  const elStrategist=document.getElementById('pt-count-strategist');
+  const elComplete=document.getElementById('pt-count-complete');
+
+  if(elTotal) elTotal.textContent=total+' case'+(total!==1?'s':'');
+  if(elAdvocate) elAdvocate.textContent=advocateDone+' done';
+  if(elDevil) elDevil.textContent=devilDone+' done';
+  if(elStrategist) elStrategist.textContent=strategistDone+' done';
+  if(elComplete) elComplete.textContent=completeDone+' done';
+
+  // Update pipeline step status icons
+  const order = ['INTAKE_COMPLETE','ADVOCATE_COMPLETE','DEVIL_COMPLETE','STRATEGIST_COMPLETE','COMPLETE'];
+  let maxIdx = -1;
+  for(const c of caseStore){
+    const status = c.pipeline_status || 'INTAKE_COMPLETE';
+    const idx = order.indexOf(status);
+    if(idx > maxIdx) maxIdx = idx;
+  }
+
+  // Reset all step classes
+  ['intake','advocate','devil','strategist','complete'].forEach(step => {
+    const icon = document.querySelector(`#pt-step-${step} .pt-icon`);
+    const lbl = document.querySelector(`#pt-step-${step} .pt-lbl`);
+    if(icon) icon.className = 'pt-icon';
+    if(lbl) lbl.className = 'pt-lbl';
+  });
+
+  // Mark completed steps
+  for(let i = 0; i <= maxIdx; i++){
+    const stepName = ['intake','advocate','devil','strategist','complete'][i];
+    const icon = document.querySelector(`#pt-step-${stepName} .pt-icon`);
+    const lbl = document.querySelector(`#pt-step-${stepName} .pt-lbl`);
+    if(icon) icon.classList.add('done');
+    if(lbl) lbl.classList.add('done');
+  }
+
+  // Mark active next step
+  if(maxIdx < 4 && caseStore.length > 0){
+    const nextStep = ['advocate','devil','strategist','complete'][maxIdx];
+    const icon = document.querySelector(`#pt-step-${nextStep} .pt-icon`);
+    const lbl = document.querySelector(`#pt-step-${nextStep} .pt-lbl`);
+    if(icon) icon.classList.add('active-step');
+    if(lbl) lbl.classList.add('active-step');
+  }
+}
+
+// SEARCH
+function handleSearch(q){
+  searchQuery=q.trim().toLowerCase();
+  const clear=document.getElementById('search-clear');
+  const status=document.getElementById('search-status');
+  clear.style.display=searchQuery?'block':'none';
+  if(!searchQuery){status.style.display='none';renderAllCases();return;}
+  const results=caseStore.filter(c=>c.case_id.toLowerCase().includes(searchQuery)||c.user_name.toLowerCase().includes(searchQuery)||c.legal_topic.toLowerCase().includes(searchQuery)||c.legal_issue.toLowerCase().includes(searchQuery)||(c.opposing_party||'').toLowerCase().includes(searchQuery));
+  status.style.display='block';
+  status.textContent=results.length+' result'+(results.length!==1?'s':'')+' for "'+q.trim()+'"';
+  renderAllCases(results);
+}
+function clearSearch(){
+  document.getElementById('search-input').value='';
+  document.getElementById('search-clear').style.display='none';
+  document.getElementById('search-status').style.display='none';
+  searchQuery='';renderAllCases();
+}
+
+// CASE PROFILE
+function openProfile(idx, fromView){
+  profileIdx=idx;
+  profilePrevView=fromView||'overview';
+  const c=caseStore[idx];
+  const tpl=Object.values(TPLS).find(t=>t.label===c.legal_topic);
+  const p=getPipelineStatus(c);
+  const urgCls=u=>u==='HIGH'?'urg-high':u==='MEDIUM'?'urg-med':'urg-low';
+
+  document.getElementById('prof-icon').textContent=tpl?tpl.icon:'📋';
+  document.getElementById('prof-icon').style.background=tpl?tpl.bg:'var(--surface2)';
+  document.getElementById('prof-title').textContent=c.user_name+' — '+c.legal_topic;
+  document.getElementById('prof-caseid').textContent='Case ID: '+c.case_id+'  ·  '+new Date(c.timestamp).toLocaleString('en-PH');
+
+  document.getElementById('prof-pills').innerHTML=`
+    <span class="urg ${urgCls(c.urgency)}">${c.urgency}</span>
+    <span class="pipe-badge ${p.cls}">${p.icon} ${p.label}</span>
+    <span class="topic-tag">${tpl?tpl.icon:''} ${c.legal_topic}</span>
+    ${c.opposing_party?`<span class="topic-tag">vs. ${c.opposing_party}</span>`:''}
+  `;
+
+  // Intake grid
+  document.getElementById('prof-intake-grid').innerHTML=`
+    <div class="profile-field"><label>Full Name</label><div class="val">${c.user_name||'—'}</div></div>
+    <div class="profile-field"><label>Contact</label><div class="val">${c.contact_number||'—'}</div></div>
+    <div class="profile-field"><label>Date of Birth</label><div class="val">${c.date_of_birth||'—'}</div></div>
+    <div class="profile-field"><label>Civil Status</label><div class="val">${c.civil_status||'—'}</div></div>
+    <div class="profile-field full"><label>Address</label><div class="val">${c.address||'—'}</div></div>
+    <div class="profile-field full"><label>Occupation</label><div class="val">${c.occupation||'—'}</div></div>
+    <div class="profile-field"><label>Legal Issue</label><div class="val">${c.legal_issue||'—'}</div></div>
+    <div class="profile-field"><label>Incident Date</label><div class="val">${c.incident_date||'—'}</div></div>
+    <div class="profile-field"><label>Submitted By</label><div class="val">${c.submitted_by||'—'}</div></div>
+    <div class="profile-field"><label>Urgency</label><div class="val"><span class="urg ${urgCls(c.urgency)}">${c.urgency}</span></div></div>
+  `;
+
+  document.getElementById('prof-narrative').textContent=c.legal_narrative||'No narrative recorded.';
+
+  const docsSubmitted=document.getElementById('prof-docs-submitted');
+  docsSubmitted.innerHTML=(c.documents_submitted||[]).length?c.documents_submitted.map(d=>`<span class="doc-tag">${d}</span>`).join(''):'<span style="font-size:0.73rem;color:var(--muted)">None recorded.</span>';
+
+  // Uploaded files
+  const uploadedEl=document.getElementById('prof-uploaded-files');
+  const atts=c.attachments||c.attachments_meta||[];
+  if(atts.length){
+    const icons={PDF:'📄',DOCX:'📝',DOC:'📝',TXT:'📃',JPG:'🖼',JPEG:'🖼',PNG:'🖼',XLSX:'📊',XLS:'📊'};
+    uploadedEl.innerHTML=atts.map(a=>{
+      const ext=(a.ext||a.name.split('.').pop()||'').toUpperCase();
+      const icon=icons[ext]||'📎';
+      const size=a.size>1048576?(a.size/1048576).toFixed(1)+' MB':(a.size/1024).toFixed(0)+' KB';
+      return `<div class="uz-file-item" style="margin-bottom:5px">${icon} <span style="font-size:0.76rem;color:var(--white);margin-left:6px">${a.name}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:var(--muted);margin-left:8px">${ext} · ${size}</span></div>`;
+    }).join('');
+  }else{
+    uploadedEl.innerHTML='<span style="font-size:0.73rem;color:var(--muted)">No files uploaded.</span>';
+  }
+
+  // Clerk notes
+  const notesEl=document.getElementById('prof-clerk-notes');
+  notesEl.textContent=c.clerk_notes||'No clerk notes recorded.';
+
+  // Advocate
+  renderAdvocatePanel(c);
+  renderDevilPanel(c);
+  renderStrategistPanel(c);
+
+  // Show live pipeline if case is still in progress
+  const inProgress = c.pipeline_status && c.pipeline_status !== 'COMPLETE';
+  const wrap = document.getElementById('live-pipeline-wrap');
+  if(wrap){
+    if(inProgress){
+      wrap.style.display='block';
+      const lbl=document.getElementById('lp-case-id-lbl');
+      if(lbl)lbl.textContent=c.case_id;
+      // Reflect current known state
+      setLiveStage('intake','done');
+      setLiveStage('advocate', c.lawyer_a ? 'done' : 'active');
+      if(c.lawyer_a) setLiveStage('devil', c.lawyer_b ? 'done' : 'active');
+      if(c.lawyer_b) setLiveStage('strategist', c.senior_partner ? 'done' : 'active');
+      if(c.senior_partner) setLiveStage('complete','done');
+    } else {
+      wrap.style.display='none';
+    }
+  }
+
+  // Update tab indicators based on existing data
+  if(c.lawyer_a) updateTabIndicator('advocate','done');
+  if(c.lawyer_b) updateTabIndicator('devil','done');
+  if(c.senior_partner) updateTabIndicator('strategist','done');
+
+  switchTab('intake');
+  showView('profile', null);
+  document.getElementById('topbar-title').textContent=c.user_name+' — Case Profile';
+  document.getElementById('topbar-sub').textContent='Case ID: '+c.case_id;
+}
+
+function goBackFromProfile(){
+  showView(profilePrevView, document.getElementById('nav-'+profilePrevView)||document.getElementById('nav-overview'));
+}
+
+function renderAdvocatePanel(c){
+  const el=document.getElementById('advocate-content');
+  if(!c.lawyer_a||!c.lawyer_a.case_assessment){
+    el.innerHTML='<div class="ac-pending">⏳ The Advocate has not yet processed this case. Analysis will appear here automatically once the AI pipeline completes.</div>';return;
+  }
+  const a=c.lawyer_a;
+  const args=(a.legal_arguments||[]).map((arg,i)=>`<div class="ac-arg"><div class="ac-arg-num">ARGUMENT ${i+1}</div>${arg}</div>`).join('');
+  const gaps=(a.evidence_gaps||[]).map(g=>`<span class="doc-tag needed">${g}</span>`).join('');
+  el.innerHTML=`
+    <div class="ac-section"><div class="ac-section-lbl">// CASE ASSESSMENT</div><div class="ac-text advocate">${a.case_assessment||'—'}</div></div>
+    <div class="ac-section"><div class="ac-section-lbl">// LEGAL ARGUMENTS</div><div class="ac-args">${args||'<div class="ac-pending">No arguments generated.</div>'}</div></div>
+    <div class="verdict-row">
+      <div class="verdict-box"><div class="vb-lbl">STRATEGY</div><div class="vb-val" style="font-size:0.85rem;color:var(--gold2)">${a.recommended_strategy||'—'}</div></div>
+      <div class="verdict-box"><div class="vb-lbl">SETTLEMENT</div><div class="vb-val ${(a.settlement_viability||'').toLowerCase()}">${a.settlement_viability||'—'}</div><div class="vb-note">${a.settlement_notes||''}</div></div>
+      <div class="verdict-box"><div class="vb-lbl">WIN PROBABILITY</div><div class="vb-val ${(a.win_probability||'').toLowerCase()}">${a.win_probability||'—'}</div><div class="vb-note">${a.win_probability_notes||''}</div></div>
+    </div>
+    <div class="ac-section"><div class="ac-section-lbl">// STRATEGY REASONING</div><div class="ac-text advocate">${a.strategy_reasoning||'—'}</div></div>
+    <div class="ac-section"><div class="ac-section-lbl">// EVIDENCE GAPS</div><div class="docs-tags">${gaps||'<span style="font-size:0.73rem;color:var(--muted)">None identified.</span>'}</div></div>
+  `;
+}
+
+function renderDevilPanel(c){
+  const el=document.getElementById('devil-content');
+  if(!c.lawyer_b||!c.lawyer_b.case_assessment){
+    el.innerHTML='<div class="ac-pending">⏳ The Devil\'s Advocate has not yet processed this case. Analysis will appear here automatically once the AI pipeline completes.</div>';return;
+  }
+  const b=c.lawyer_b;
+  const args=(b.legal_arguments||b.counterarguments||[]).map((arg,i)=>`<div class="ac-arg devil"><div class="ac-arg-num">COUNTERARGUMENT ${i+1}</div>${arg}</div>`).join('');
+  el.innerHTML=`
+    <div class="ac-section"><div class="ac-section-lbl">// CASE ASSESSMENT</div><div class="ac-text devil">${b.case_assessment||'—'}</div></div>
+    <div class="ac-section"><div class="ac-section-lbl">// COUNTERARGUMENTS</div><div class="ac-args">${args||'<div class="ac-pending">No counterarguments generated.</div>'}</div></div>
+    ${b.strategy_reasoning?`<div class="ac-section"><div class="ac-section-lbl">// ANALYSIS</div><div class="ac-text devil">${b.strategy_reasoning}</div></div>`:''}
+  `;
+}
+
+function renderStrategistPanel(c){
+  const el=document.getElementById('strategist-content');
+  if(!c.senior_partner||!c.senior_partner.final_recommendation){
+    el.innerHTML='<div class="ac-pending">⏳ The Strategist has not yet reviewed this case. The final recommendation will appear here once The Advocate and Devil\'s Advocate have both completed their analysis.</div>';return;
+  }
+  const s=c.senior_partner;
+  el.innerHTML=`
+    <div class="ac-section"><div class="ac-section-lbl">// FINAL RECOMMENDATION</div><div class="ac-text strategist">${s.final_recommendation||'—'}</div></div>
+    <div class="verdict-row">
+      <div class="verdict-box"><div class="vb-lbl">APPROVED STRATEGY</div><div class="vb-val" style="font-size:0.82rem;color:#a855f7">${s.approved_strategy||'—'}</div></div>
+      <div class="verdict-box"><div class="vb-lbl">WIN PROBABILITY</div><div class="vb-val ${(s.win_probability||'').toLowerCase()}">${s.win_probability||'—'}</div></div>
+      <div class="verdict-box"><div class="vb-lbl">PRIORITY</div><div class="vb-val ${s.priority==='HIGH'?'strong':s.priority==='LOW'?'weak':'moderate'}">${s.priority||'—'}</div></div>
+    </div>
+    ${s.notes?`<div class="ac-section"><div class="ac-section-lbl">// SENIOR PARTNER NOTES</div><div class="ac-text strategist">${s.notes}</div></div>`:''}
+  `;
+}
+
+// TAB SWITCHING
+function switchTab(tab){
+  curTab=tab;
+  ['intake','advocate','devil','strategist'].forEach(t=>{
+    document.getElementById('tab-'+t).className='a-tab'+(t===tab?' active-'+tab:'');
+    document.getElementById('panel-'+t).classList.toggle('active',t===tab);
+  });
+}
+
+// EDIT MODAL
+function openEditModal(){
+  if(profileIdx===null)return;
+  detailIdx=profileIdx;
+  const c=caseStore[profileIdx];
+  const tpl=Object.values(TPLS).find(t=>t.label===c.legal_topic);
+  document.getElementById('d-title').textContent=c.legal_topic+' — Edit Record';
+  document.getElementById('d-caseid').textContent='Case ID: '+c.case_id;
+  document.getElementById('d-name').value=c.user_name||'';
+  document.getElementById('d-contact').value=c.contact_number||'';
+  document.getElementById('d-dob').value=c.date_of_birth||'';
+  document.getElementById('d-civil').value=c.civil_status||'';
+  document.getElementById('d-address').value=c.address||'';
+  document.getElementById('d-occupation').value=c.occupation||'';
+  document.getElementById('d-topic').value=c.legal_topic||'';
+  document.getElementById('d-issue').value=c.legal_issue||'';
+  document.getElementById('d-incident').value=c.incident_date||'';
+  document.getElementById('d-opposing').value=c.opposing_party||'';
+  document.getElementById('d-urgency').value=c.urgency||'MEDIUM';
+  document.getElementById('d-clerk').value=c.submitted_by||'';
+  document.getElementById('d-narrative').value=c.legal_narrative||'';
+  document.getElementById('d-notes').value=c.clerk_notes||'';
+  const docsEl=document.getElementById('d-docs');
+  docsEl.innerHTML=(c.documents_submitted||[]).length?c.documents_submitted.map(d=>`<span class="detail-doc-tag">${d}</span>`).join(''):'<span style="font-size:0.73rem;color:var(--muted)">None recorded.</span>';
+  document.getElementById('detail-modal').classList.add('open');
+}
+
+function closeDetail(){document.getElementById('detail-modal').classList.remove('open');}
+
+function readDetailFields(){
+  return{user_name:document.getElementById('d-name').value.trim(),contact_number:document.getElementById('d-contact').value.trim(),date_of_birth:document.getElementById('d-dob').value,civil_status:document.getElementById('d-civil').value,address:document.getElementById('d-address').value.trim(),occupation:document.getElementById('d-occupation').value.trim(),legal_issue:document.getElementById('d-issue').value.trim(),incident_date:document.getElementById('d-incident').value,opposing_party:document.getElementById('d-opposing').value.trim(),urgency:document.getElementById('d-urgency').value,legal_narrative:document.getElementById('d-narrative').value.trim(),clerk_notes:document.getElementById('d-notes').value.trim()};
+}
+
+function saveDetail(){
+  if(detailIdx===null)return;
+  caseStore[detailIdx]={...caseStore[detailIdx],...readDetailFields()};
+  try{localStorage.setItem('jll_cases',JSON.stringify(caseStore));}catch(e){}
+  renderRecentCases();renderAllCases();renderPipelineViews();
+  closeDetail();
+  if(profileIdx!==null) openProfile(profileIdx,profilePrevView);
+  showToast('✓ Case record updated','var(--green)');
+}
+
+async function resubmitDetail(){
+  if(detailIdx===null)return;
+  saveDetail();
+  if(!webhookUrl){alert('No webhook URL set.');return;}
+  const payload=caseStore[detailIdx];
+  try{await fetch(webhookUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,resubmitted:true,resubmit_timestamp:new Date().toISOString()}),mode:'no-cors'});}catch(e){}
+  showToast('🚀 Resubmitted to AI pipeline','var(--surface3)');
+}
+
+function resubmitFromProfile(){
+  if(profileIdx===null)return;
+  detailIdx=profileIdx;
+  resubmitDetail();
+}
+
+// TEMPLATE
+function openTemplate(type,btn){
+  curTpl=type;curUrgency='';
+  const t=TPLS[type];
+  document.getElementById('form-icon').textContent=t.icon;
+  document.getElementById('form-icon').style.background=t.bg;
+  document.getElementById('form-title').textContent=t.label+' — Case Intake';
+  document.getElementById('form-sub').textContent=t.sub;
+  document.getElementById('side-topic').textContent=t.label;
+  document.getElementById('side-sub').textContent=t.sub;
+  curCaseId=genId();
+  document.getElementById('caseid-display').textContent=curCaseId;
+  const sel=document.getElementById('f-issue');
+  sel.innerHTML='<option value="">Select legal issue...</option>';
+  t.issues.forEach(iss=>{const opt=document.createElement('option');opt.value=iss;opt.textContent=iss;sel.appendChild(opt);});
+  sel.value='';
+  document.getElementById('f-issue-other').style.display='none';
+  document.getElementById('f-issue-other').value='';
+  ['f-name','f-contact','f-dob','f-address','f-occupation','f-incident-date','f-opposing','f-narrative','f-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-civil').value='';
+  document.getElementById('r-low').className='ri';
+  document.getElementById('r-med').className='ri';
+  document.getElementById('r-high').className='ri';
+  document.querySelectorAll('input[name="urgency"]').forEach(r=>r.checked=false);
+  const list=document.getElementById('docs-list');
+  list.innerHTML='';
+  t.docs.forEach(doc=>{const lbl=document.createElement('label');lbl.className='cb-item';lbl.innerHTML=`<input type="checkbox" onchange="this.closest('.cb-item').classList.toggle('checked',this.checked)"><div><div class="cb-lbl">${doc.l}</div>${doc.s?`<div class="cb-sub">${doc.s}</div>`:''}</div>`;list.appendChild(lbl);});
+  refreshHookUI();updateReqs();
+  showView('form',btn||document.getElementById('nav-'+type));
+  document.getElementById('topbar-title').textContent=t.label+' — Case Intake';
+  document.getElementById('topbar-sub').textContent='New case intake — complete all required fields';
+}
+
+function pickUrgency(val,e){
+  if(e)e.preventDefault();
+  curUrgency=val;
+  document.getElementById('r-low').className='ri'+(val==='LOW'?' sel-low':'');
+  document.getElementById('r-med').className='ri'+(val==='MEDIUM'?' sel-med':'');
+  document.getElementById('r-high').className='ri'+(val==='HIGH'?' sel-high':'');
+  const inp=document.querySelector(`input[name="urgency"][value="${val}"]`);
+  if(inp)inp.checked=true;
+  updateReqs();
+}
+
+function updateReqs(){
+  const map={'req-name':'f-name','req-contact':'f-contact','req-narrative':'f-narrative'};
+  Object.entries(map).forEach(([rid,fid])=>{const done=(document.getElementById(fid)?.value.trim().length||0)>0;document.getElementById(rid)?.classList.toggle('done',done);});
+  const issueVal=document.getElementById('f-issue')?.value||'';
+  const issueOther=document.getElementById('f-issue-other')?.value.trim()||'';
+  document.getElementById('req-issue')?.classList.toggle('done',issueVal!==''&&(issueVal!=='Others'||issueOther.length>0));
+  document.getElementById('req-urgency')?.classList.toggle('done',curUrgency.length>0);
+}
+
+function handleIssueChange(sel){
+  const other=document.getElementById('f-issue-other');
+  if(sel.value==='Others'){other.style.display='block';other.focus();}
+  else{other.style.display='none';other.value='';}
+  updateReqs();
+}
+
+// ════════════════════════════════════════════════
+// FILE UPLOAD
+// ════════════════════════════════════════════════
+let uzFiles = []; // {id, file, name, ext, size}
+
+function uzDragOver(e){e.preventDefault();document.getElementById('upload-dropzone').classList.add('drag-over');}
+function uzDragLeave(){document.getElementById('upload-dropzone').classList.remove('drag-over');}
+function uzDrop(e){
+  e.preventDefault();
+  document.getElementById('upload-dropzone').classList.remove('drag-over');
+  uzFilesAdded(e.dataTransfer.files);
+}
+function uzFilesAdded(fileList){
+  if(!fileList||!fileList.length)return;
+  const icons={PDF:'📄',DOCX:'📝',DOC:'📝',TXT:'📃',JPG:'🖼',JPEG:'🖼',PNG:'🖼',XLSX:'📊',XLS:'📊'};
+  Array.from(fileList).forEach(f=>{
+    const id='uz'+Date.now()+Math.random().toString(36).slice(2,6);
+    const ext=f.name.split('.').pop().toUpperCase();
+    const size=f.size>1048576?(f.size/1048576).toFixed(1)+' MB':(f.size/1024).toFixed(0)+' KB';
+    uzFiles.push({id,file:f,name:f.name,ext,size});
+    const icon=icons[ext]||'📎';
+    const list=document.getElementById('uz-file-list');
+    const el=document.createElement('div');
+    el.className='uz-file-item';el.id='uzf-'+id;
+    el.innerHTML=`<span class="uz-fi-icon">${icon}</span><div class="uz-fi-info"><div class="uz-fi-name">${f.name}</div><div class="uz-fi-meta">${ext} · ${size}</div></div><button class="uz-fi-remove" onclick="uzRemove('${id}')">✕</button>`;
+    list.appendChild(el);
+  });
+  document.getElementById('f-file-input').value='';
+}
+function uzRemove(id){
+  uzFiles=uzFiles.filter(f=>f.id!==id);
+  const el=document.getElementById('uzf-'+id);if(el)el.remove();
+}
+function uzReset(){
+  uzFiles=[];
+  const list=document.getElementById('uz-file-list');if(list)list.innerHTML='';
+}
+async function uzReadAsBase64(file){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=()=>resolve(r.result.split(',')[1]);
+    r.onerror=()=>reject(new Error('Read failed'));
+    r.readAsDataURL(file);
+  });
+}
+async function uzBuildAttachments(){
+  const attachments=[];
+  for(const uf of uzFiles){
+    try{
+      const data=await uzReadAsBase64(uf.file);
+      attachments.push({name:uf.name,type:uf.file.type,size:uf.file.size,ext:uf.ext,data});
+    }catch(e){
+      attachments.push({name:uf.name,type:uf.file.type,size:uf.file.size,ext:uf.ext,data:null,error:e.message});
+    }
+  }
+  return attachments;
+}
+
+// ════════════════════════════════════════════════
+// POLLING ENGINE — LIVE PIPELINE (all 3 lawyers)
+// ════════════════════════════════════════════════
+let pollTimer=null;
+let pollCaseId=null;
+let pollAttempts=0;
+let pollStartTime=null;
+let pollElapsedTimer=null;
+const POLL_MAX=72; // 72×5s = 6 min max
+const POLL_MS=5000;
+
+// Track what we've already received so we only trigger renders once
+let pollGot={a:false,b:false,sp:false};
+
+function startPolling(caseId){
+  stopPolling();
+  const resultsUrl=(()=>{try{return localStorage.getItem('jll_results_url')||'';}catch(e){return '';}})();
+  if(!resultsUrl)return; // silently skip — Results Fetch URL not configured
+  pollCaseId=caseId;
+  pollAttempts=0;
+  pollGot={a:false,b:false,sp:false};
+  pollStartTime=Date.now();
+
+  // Show poll bars on whichever panels are visible
+  ['advocate','devil','strategist'].forEach(role=>{
+    const bar=document.getElementById(role+'-poll-bar');
+    if(bar){bar.style.display='flex';bar.className='poll-status-bar';}
+    const msg=document.getElementById(role+'-poll-msg');
+    const labels={advocate:'Advocate is analyzing — pipeline is running…',devil:"Devil's Advocate is analyzing — pipeline is running…",strategist:'Strategist is reviewing — waiting for prior analyses…'};
+    if(msg)msg.textContent=labels[role];
+  });
+
+  // Show & initialize the live pipeline section
+  showLivePipeline(caseId);
+
+  // Elapsed timer
+  pollElapsedTimer=setInterval(()=>{
+    const secs=Math.floor((Date.now()-pollStartTime)/1000);
+    const el=document.getElementById('lp-elapsed');
+    if(el)el.textContent='Elapsed: '+secs+'s';
+  },1000);
+
+  pollTimer=setInterval(()=>doPoll(resultsUrl),POLL_MS);
+  // Fire immediately once so we don't wait 5s for first check
+  doPoll(resultsUrl);
+}
+
+function stopPolling(){
+  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
+  if(pollElapsedTimer){clearInterval(pollElapsedTimer);pollElapsedTimer=null;}
+  // Stop live pipeline pulse
+  const dot=document.getElementById('lp-pulse-dot');
+  const lbl=document.getElementById('lp-pulse-lbl');
+  if(dot)dot.classList.add('stopped');
+  if(lbl)lbl.textContent='STOPPED';
+}
+
+async function doPoll(url){
+  pollAttempts++;
+  if(pollAttempts>POLL_MAX){
+    stopPolling();
+    ['advocate','devil','strategist'].forEach(role=>{
+      if(!pollGot[role==='advocate'?'a':role==='devil'?'b':'sp'])
+        setPollBar(role,'error','⚠ Timed out — check your n8n pipeline');
+    });
+    setLiveStage('advocate','error');
+    return;
+  }
+  try{
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({case_id:pollCaseId})});
+    if(!res.ok)return;
+    const raw=await res.json();
+    const d=Array.isArray(raw)?raw[0]:raw;
+    if(!d)return;
+
+    let changed=false;
+
+    // ── Advocate (lawyer_a) ──
+    if(!pollGot.a && d.lawyer_a && d.lawyer_a.case_assessment){
+      pollGot.a=true;
+      changed=true;
+      updateCaseInStore(pollCaseId,{lawyer_a:d.lawyer_a,pipeline_status:'ADVOCATE_COMPLETE'});
+      setPollBar('advocate','done','✓ Advocate analysis received');
+      setLiveStage('advocate','done');
+      setLiveStage('devil','active');
+      // Simultaneously render advocate panel if this case is open
+      if(profileIdx!==null && caseStore[profileIdx] && caseStore[profileIdx].case_id===pollCaseId){
+        renderAdvocatePanel(caseStore[profileIdx]);
+        updateTabIndicator('advocate','done');
+      }
+      showToast('⚖️ Advocate analysis ready','rgba(201,168,76,0.9)');
+    }
+
+    // ── Devil's Advocate (lawyer_b) ──
+    if(!pollGot.b && d.lawyer_b && (d.lawyer_b.case_assessment||d.lawyer_b.counterarguments)){
+      pollGot.b=true;
+      changed=true;
+      updateCaseInStore(pollCaseId,{lawyer_b:d.lawyer_b,pipeline_status:'DEVIL_COMPLETE'});
+      setPollBar('devil','done','✓ Devil\'s Advocate analysis received');
+      setLiveStage('devil','done');
+      setLiveStage('strategist','active');
+      if(profileIdx!==null && caseStore[profileIdx] && caseStore[profileIdx].case_id===pollCaseId){
+        renderDevilPanel(caseStore[profileIdx]);
+        updateTabIndicator('devil','done');
+      }
+      showToast('⚔️ Devil\'s Advocate analysis ready','rgba(192,57,43,0.9)');
+    }
+
+    // ── Senior Partner / Strategist ──
+    if(!pollGot.sp && d.senior_partner && d.senior_partner.final_recommendation){
+      pollGot.sp=true;
+      changed=true;
+      updateCaseInStore(pollCaseId,{senior_partner:d.senior_partner,pipeline_status:'COMPLETE'});
+      setPollBar('strategist','done','✓ Strategist final recommendation received');
+      setLiveStage('strategist','done');
+      setLiveStage('complete','done');
+      if(profileIdx!==null && caseStore[profileIdx] && caseStore[profileIdx].case_id===pollCaseId){
+        renderStrategistPanel(caseStore[profileIdx]);
+        updateTabIndicator('strategist','done');
+        // Refresh profile pills to show updated pipeline status
+        const c=caseStore[profileIdx];
+        const p=getPipelineStatus(c);
+        const pills=document.getElementById('prof-pills');
+        if(pills){
+          const tpl=Object.values(TPLS).find(t=>t.label===c.legal_topic);
+          const urgCls=u=>u==='HIGH'?'urg-high':u==='MEDIUM'?'urg-med':'urg-low';
+          pills.innerHTML=`
+            <span class="urg ${urgCls(c.urgency)}">${c.urgency}</span>
+            <span class="pipe-badge ${p.cls}">${p.icon} ${p.label}</span>
+            <span class="topic-tag">${tpl?tpl.icon:''} ${c.legal_topic}</span>
+            ${c.opposing_party?`<span class="topic-tag">vs. ${c.opposing_party}</span>`:''}`;
+        }
+      }
+      showToast('♟️ Full AI analysis complete — all 3 lawyers done','rgba(142,68,173,0.9)');
+    }
+
+    // Stop polling once all three are done
+    if(pollGot.a && pollGot.b && pollGot.sp){
+      stopPolling();
+      completeLivePipeline();
+      renderPipelineViews();
+      renderRecentCases();
+    }
+
+    if(changed) renderPipelineViews();
+
+  }catch(e){/* silently retry */}
+}
+
+function setPollBar(role,state,msg){
+  const bar=document.getElementById(role+'-poll-bar');
+  const msgEl=document.getElementById(role+'-poll-msg');
+  if(!bar||!msgEl)return;
+  bar.style.display='flex';
+  bar.className='poll-status-bar'+(state==='done'?' poll-done':state==='error'?' poll-error':'');
+  msgEl.textContent=msg;
+}
+
+// ── LIVE PIPELINE SECTION HELPERS ──
+
+function showLivePipeline(caseId){
+  const wrap=document.getElementById('live-pipeline-wrap');
+  if(!wrap)return;
+  wrap.style.display='block';
+
+  const lbl=document.getElementById('lp-case-id-lbl');
+  if(lbl)lbl.textContent=caseId;
+
+  // Reset all stages
+  ['intake','advocate','devil','strategist','complete'].forEach(s=>setLiveStage(s,'idle'));
+
+  // Intake is always done by the time we start polling
+  setLiveStage('intake','done');
+  // Advocate is the first active stage
+  setLiveStage('advocate','active');
+
+  const completeMsg=document.getElementById('lp-complete-msg');
+  if(completeMsg)completeMsg.classList.remove('show');
+
+  const dot=document.getElementById('lp-pulse-dot');
+  const lbl2=document.getElementById('lp-pulse-lbl');
+  if(dot){dot.classList.remove('stopped');}
+  if(lbl2)lbl2.textContent='POLLING';
+}
+
+function setLiveStage(stage,state){
+  // state: 'idle' | 'active' | 'done' | 'error'
+  const el=document.getElementById('lps-'+stage);
+  if(!el)return;
+  el.classList.remove('done','active-stage');
+  const statusEl=document.getElementById('lps-'+stage+'-status');
+  const statusText={
+    intake:{idle:'—',active:'Receiving…',done:'✓ Received',error:'✗ Error'},
+    advocate:{idle:'Waiting…',active:'Analyzing…',done:'✓ Complete',error:'✗ Timed out'},
+    devil:{idle:'Waiting…',active:'Analyzing…',done:'✓ Complete',error:'✗ Timed out'},
+    strategist:{idle:'Waiting…',active:'Reviewing…',done:'✓ Complete',error:'✗ Timed out'},
+    complete:{idle:'—',active:'Finalizing…',done:'✓ Done',error:'✗ Error'}
+  };
+  if(state==='done'){el.classList.add('done');}
+  else if(state==='active'){el.classList.add('active-stage');}
+  if(statusEl&&statusText[stage])statusEl.textContent=statusText[stage][state]||'—';
+}
+
+function completeLivePipeline(){
+  setLiveStage('complete','done');
+  const msg=document.getElementById('lp-complete-msg');
+  if(msg)msg.classList.add('show');
+  const dot=document.getElementById('lp-pulse-dot');
+  const lbl=document.getElementById('lp-pulse-lbl');
+  if(dot){dot.classList.add('stopped');dot.style.background='var(--green-bright)';}
+  if(lbl)lbl.textContent='COMPLETE';
+}
+
+// Update tab labels with ✓ / spinner indicators
+function updateTabIndicator(tab,state){
+  const tabEl=document.getElementById('tab-'+tab);
+  if(!tabEl)return;
+  // Remove any existing indicator
+  const existing=tabEl.querySelector('.tab-check,.tab-pending');
+  if(existing)existing.remove();
+  if(state==='done'){
+    const badge=document.createElement('span');
+    badge.className='tab-check';badge.textContent='✓';
+    tabEl.appendChild(badge);
+  } else if(state==='active'){
+    const badge=document.createElement('span');
+    badge.className='tab-pending';badge.textContent='⟳';
+    tabEl.appendChild(badge);
+  }
+}
+
+function updateCaseInStore(caseId,updates){
+  const idx=caseStore.findIndex(c=>c.case_id===caseId);
+  if(idx<0)return;
+  caseStore[idx]={...caseStore[idx],...updates};
+  try{localStorage.setItem('jll_cases',JSON.stringify(caseStore));}catch(e){}
+}
+
+// ════════════════════════════════════════════════
+// SUBMIT (file-upload aware)
+// ════════════════════════════════════════════════
+async function submitCase(){
+  const name=document.getElementById('f-name').value.trim();
+  const contact=document.getElementById('f-contact').value.trim();
+  const issueRaw=document.getElementById('f-issue').value.trim();
+  const issueOther=document.getElementById('f-issue-other').value.trim();
+  const issue=issueRaw==='Others'?(issueOther||'Others'):issueRaw;
+  const narrative=document.getElementById('f-narrative').value.trim();
+  if(!name||!contact||!issue||!narrative){alert('Please complete all required fields:\n• Full Name\n• Contact Number\n• Legal Issue\n• Narrative / Summary');return;}
+  if(!curUrgency){alert('Please select an urgency level.');return;}
+  if(!webhookUrl){const go=confirm('No Webhook URL set yet.\nPress OK to go to Settings.');if(go)showView('settings',document.getElementById('nav-settings'));return;}
+  const docs=[];
+  document.querySelectorAll('#docs-list input[type=checkbox]:checked').forEach(cb=>{docs.push(cb.closest('.cb-item').querySelector('.cb-lbl').textContent);});
+  const clerk=document.getElementById('set-clerk')?.value||'Clerk';
+  const btn=document.getElementById('btn-submit');
+  document.getElementById('btn-label').textContent='Reading files…';
+  document.getElementById('btn-icon').innerHTML='<div class="spinner"></div>';
+  btn.classList.add('loading');
+  // Read uploaded files as base64
+  const attachments=await uzBuildAttachments();
+  const attachmentsMeta=attachments.map(a=>({name:a.name,type:a.type,size:a.size,ext:a.ext}));
+  document.getElementById('btn-label').textContent='Sending…';
+  const payload={
+    case_id:curCaseId,
+    timestamp:new Date().toISOString(),
+    submitted_by:clerk,
+    legal_topic:TPLS[curTpl].label,
+    user_name:name,
+    contact_number:contact,
+    date_of_birth:document.getElementById('f-dob').value||'',
+    civil_status:document.getElementById('f-civil').value||'',
+    address:document.getElementById('f-address').value.trim(),
+    occupation:document.getElementById('f-occupation').value.trim(),
+    legal_issue:issue,
+    incident_date:document.getElementById('f-incident-date').value||'',
+    opposing_party:document.getElementById('f-opposing').value.trim(),
+    urgency:curUrgency,
+    legal_narrative:narrative,
+    documents_submitted:docs,
+    clerk_notes:document.getElementById('f-notes').value.trim(),
+    attachments, // full base64 files — for n8n to forward/store
+    attachments_meta:attachmentsMeta, // names/sizes only — for display
+    pipeline_status:'INTAKE_COMPLETE'
+  };
+  let pipelineStatus='✓ Sent to n8n';
+  try{
+    const controller=new AbortController();
+    const tid=setTimeout(()=>controller.abort(),20000);
+    const res=await fetch(webhookUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
+    clearTimeout(tid);
+    if(res.ok||res.status===200){pipelineStatus='✓ Received by n8n (HTTP '+res.status+')';setWebhookIndicator('connected');}
+    else{pipelineStatus='⚠ n8n responded HTTP '+res.status;setWebhookIndicator('error');}
+  }catch(e){
+    if(e.name==='AbortError')pipelineStatus='⏱ Request timed out';
+    else pipelineStatus='✗ Network error: '+e.message;
+    setWebhookIndicator('error');
+  }
+  btn.classList.remove('loading');
+  document.getElementById('btn-label').textContent='Submit to AI Pipeline';
+  document.getElementById('btn-icon').textContent='→';
+  // Store without base64 data to keep localStorage lean
+  const storePayload={...payload,attachments:attachmentsMeta};
+  caseStore.unshift(storePayload);
+  try{localStorage.setItem('jll_cases',JSON.stringify(caseStore));}catch(e){}
+  renderRecentCases();renderAllCases();renderPipelineViews();
+  // Start polling for AI results
+  startPolling(curCaseId);
+
+  // Pre-open the case profile so when user closes success modal, they see the live pipeline
+  // We open it silently — index 0 since we just unshifted
+  profileIdx=0;
+  profilePrevView='overview';
+
+  document.getElementById('suc-id').textContent='Case ID: '+payload.case_id;
+  document.getElementById('suc-details').innerHTML=`
+    <div class="sd-row"><span class="sd-k">Client</span><span class="sd-v">${payload.user_name}</span></div>
+    <div class="sd-row"><span class="sd-k">Legal Topic</span><span class="sd-v">${payload.legal_topic}</span></div>
+    <div class="sd-row"><span class="sd-k">Issue</span><span class="sd-v">${payload.legal_issue}</span></div>
+    <div class="sd-row"><span class="sd-k">Urgency</span><span class="sd-v">${payload.urgency}</span></div>
+    <div class="sd-row"><span class="sd-k">Documents</span><span class="sd-v">${docs.length} checked</span></div>
+    <div class="sd-row"><span class="sd-k">Files Uploaded</span><span class="sd-v">${attachments.length} file${attachments.length!==1?'s':''}</span></div>
+    <div class="sd-row"><span class="sd-k">Pipeline</span><span class="sd-v">${pipelineStatus}</span></div>`;
+  document.getElementById('success-modal').classList.add('open');
+  uzReset();
+}
+
+// WEBHOOK
+function copyWebhook(){
+  if(!webhookUrl){alert('No webhook URL set yet.');return;}
+  const btn=document.getElementById('btn-copy-hook');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(webhookUrl).then(()=>{btn.textContent='✓ Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='⎘ Copy URL';btn.classList.remove('copied');},2000);}).catch(()=>fallbackCopy(btn));
+  }else fallbackCopy(btn);
+}
+function fallbackCopy(btn){
+  const ta=document.createElement('textarea');ta.value=webhookUrl;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');btn.textContent='✓ Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='⎘ Copy URL';btn.classList.remove('copied');},2000);}catch(e){alert('URL: '+webhookUrl);}
+  document.body.removeChild(ta);
+}
+function refreshHookUI(){
+  webhookUrl=webhookMode==='live'?webhookLive:webhookTest;
+  const activeUrl=webhookUrl||'— not set yet —';
+  const modeLabel=webhookMode==='live'?'🚀 LIVE':'🧪 TEST';
+  const d=document.getElementById('hook-display');
+  if(d)d.innerHTML=`<span style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;padding:2px 6px;border-radius:3px;margin-bottom:4px;display:inline-block;${webhookMode==='live'?'background:var(--green-dim);color:var(--green-bright)':'background:#2a1f08;color:#f0a500'}">${modeLabel}</span><br>${activeUrl}`;
+  const c=document.getElementById('cur-hook-display');if(c)c.textContent=activeUrl;
+  const sl=document.getElementById('set-hook-active');if(sl)sl.value=activeUrl!=='— not set yet —'?activeUrl:'';
+}
+function openHookModal(){
+  document.getElementById('modal-hook-test').value=webhookTest||'';
+  document.getElementById('modal-hook-live').value=webhookLive||'';
+  setMode(webhookMode,false);
+  document.getElementById('hook-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-hook-test').focus(),100);
+}
+function closeHookModal(){document.getElementById('hook-modal').classList.remove('open');}
+function setMode(mode,updatePreview=true){
+  webhookMode=mode;
+  document.getElementById('mode-btn-test').className='mode-btn'+(mode==='test'?' active-test':'');
+  document.getElementById('mode-btn-live').className='mode-btn'+(mode==='live'?' active-live':'');
+  if(updatePreview)updateModalPreview();
+}
+function updateModalPreview(){
+  const t=document.getElementById('modal-hook-test')?.value.trim()||'';
+  const l=document.getElementById('modal-hook-live')?.value.trim()||'';
+  const p=document.getElementById('modal-active-preview');
+  if(p)p.textContent=(webhookMode==='live'?l:t)||'(paste a URL above first)';
+}
+function saveHookModal(){
+  const t=document.getElementById('modal-hook-test').value.trim();
+  const l=document.getElementById('modal-hook-live').value.trim();
+  const active=webhookMode==='live'?l:t;
+  if(!active){alert(webhookMode==='live'?'Please paste a Production URL.':'Please paste a Test URL.');return;}
+  webhookTest=t;webhookLive=l;webhookUrl=active;
+  try{if(t)localStorage.setItem('jll_webhook_test',t);if(l)localStorage.setItem('jll_webhook_live',l);localStorage.setItem('jll_webhook_mode',webhookMode);}catch(e){}
+  refreshHookUI();closeHookModal();
+}
+function saveSettings(){
+  const t=document.getElementById('set-hook-test')?.value.trim()||'';
+  const l=document.getElementById('set-hook-live')?.value.trim()||'';
+  const a=document.getElementById('set-hook-active')?.value.trim()||'';
+  const r=document.getElementById('set-hook-results')?.value.trim()||'';
+  const d=document.getElementById('set-hook-delete')?.value.trim()||'';
+  const ok=document.getElementById('set-msg-ok');const err=document.getElementById('set-msg-err');
+  [ok,err].forEach(el=>el.style.display='none');
+  if(!a&&!t&&!l){err.style.display='block';setTimeout(()=>err.style.display='none',3000);return;}
+  if(t){webhookTest=t;try{localStorage.setItem('jll_webhook_test',t);}catch(e){}}
+  if(l){webhookLive=l;try{localStorage.setItem('jll_webhook_live',l);}catch(e){}}
+  if(a)webhookUrl=a;
+  if(r){try{localStorage.setItem('jll_results_url',r);}catch(e){}}
+  if(d){deleteWebhookUrl=d;try{localStorage.setItem('jll_delete_webhook',d);}catch(e){}} else {deleteWebhookUrl=''; localStorage.removeItem('jll_delete_webhook');}
+  refreshHookUI();ok.style.display='block';setTimeout(()=>ok.style.display='none',3000);
+}
+function saveProfile(){
+  const n=document.getElementById('set-clerk').value.trim();
+  if(n)document.getElementById('clerk-name-display').textContent=n;
+  const m=document.getElementById('profile-msg');m.style.display='block';setTimeout(()=>m.style.display='none',2500);
+}
+async function testWebhookConnection(){
+  if(!webhookUrl){alert('No webhook URL configured.');return;}
+  const btn=document.getElementById('btn-test-hook');if(!btn)return;
+  btn.textContent='Testing...';btn.disabled=true;
+  try{
+    const controller=new AbortController();
+    setTimeout(()=>controller.abort(),10000);
+    const res=await fetch(webhookUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({case_id:'TEST-0000',_is_test:true,legal_narrative:'Connection test'}),signal:controller.signal});
+    if(res.ok||res.status===200){btn.textContent='✓ Connected!';btn.style.color='var(--green-bright)';setWebhookIndicator('connected');}
+    else{btn.textContent='⚠ HTTP '+res.status;setWebhookIndicator('error');}
+  }catch(e){btn.textContent=e.name==='AbortError'?'⏱ Timed Out':'✗ No Response';btn.style.color='var(--red-bright)';setWebhookIndicator('error');}
+  setTimeout(()=>{btn.textContent='⚡ Test Connection';btn.style.color='';btn.disabled=false;},3000);
+}
+function setWebhookIndicator(state){
+  const ind=document.getElementById('hook-indicator');if(!ind)return;
+  if(state==='connected'){ind.textContent='● CONNECTED';ind.style.color='var(--green-bright)';}
+  else if(state==='error'){ind.textContent='● ERROR';ind.style.color='var(--red-bright)';}
+  else{ind.textContent='● UNCHECKED';ind.style.color='var(--muted2)';}
+}
+function genId(){const now=new Date();return`2026-${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${Math.floor(Math.random()*9000)+1000}`;}
+function switchClerk(sel){
+  const name=sel.value;
+  document.getElementById('clerk-name-display').textContent=name;
+  document.getElementById('clerk-av').textContent=name.charAt(0).toUpperCase();
+  const sc=document.getElementById('set-clerk');if(sc)sc.value=name;
+}
+function resetDashboard(){
+  document.getElementById('success-modal').classList.remove('open');
+  // If we have a profile ready (just submitted), open it to show live pipeline
+  if(profileIdx!==null && caseStore[profileIdx]){
+    openProfile(profileIdx,'overview');
+  } else {
+    showView('overview',document.getElementById('nav-overview'));
+  }
+}
+// ════════════════════════════════════════════════
+// PRINT CASE
+// ════════════════════════════════════════════════
+function printCase(idx){
+  const c=caseStore[idx];
+  if(!c)return;
+  const firm=document.getElementById('set-firm')?.value||'JL Laniog Law Firm';
+  const clerk=c.submitted_by||'—';
+  const dt=new Date(c.timestamp);
+  const dateStr=dt.toLocaleDateString('en-PH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const timeStr=dt.toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit'});
+  const printedAt=new Date().toLocaleString('en-PH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  const urgLabel=c.urgency==='HIGH'?'⚠ HIGH URGENCY':c.urgency==='MEDIUM'?'MEDIUM URGENCY':'LOW URGENCY';
+
+  // Documents submitted
+  const docsHtml=(c.documents_submitted||[]).length
+    ? c.documents_submitted.map(d=>`<div class="pf-docs-item">${d}</div>`).join('')
+    : '<div style="color:#555;font-style:italic">None recorded.</div>';
+
+  // Uploaded file names
+  const atts=c.attachments||c.attachments_meta||[];
+  const attsHtml=atts.length
+    ? atts.map(a=>`<div class="pf-docs-item">${a.name}</div>`).join('')
+    : '<div style="color:#555;font-style:italic">No files uploaded.</div>';
+
+  const html=`
+    <div class="pf-firm-header">
+      <div class="pf-firm-name">${firm}</div>
+      <div class="pf-firm-tagline">Confidential Case File &nbsp;·&nbsp; AI-Assisted Legal Research System</div>
+    </div>
+
+    <div class="pf-case-header">
+      <div>
+        <div class="pf-case-id">Case File No. ${c.case_id}</div>
+        <div class="pf-case-meta">
+          Legal Topic: ${c.legal_topic}<br>
+          Legal Issue: ${c.legal_issue}<br>
+          Date Submitted: ${dateStr} at ${timeStr}<br>
+          Submitted By: ${clerk}
+        </div>
+      </div>
+      <div class="pf-urgency-badge">${urgLabel}</div>
+    </div>
+
+    <div class="pf-section">
+      <div class="pf-section-title">// 01 &nbsp; Client Information</div>
+      <div class="pf-grid">
+        <div class="pf-field"><div class="pf-label">Full Name</div><div class="pf-value">${c.user_name||'—'}</div></div>
+        <div class="pf-field"><div class="pf-label">Contact Number</div><div class="pf-value">${c.contact_number||'—'}</div></div>
+        <div class="pf-field"><div class="pf-label">Date of Birth</div><div class="pf-value">${c.date_of_birth||'—'}</div></div>
+        <div class="pf-field"><div class="pf-label">Civil Status</div><div class="pf-value">${c.civil_status||'—'}</div></div>
+        <div class="pf-field pf-field-full"><div class="pf-label">Complete Address</div><div class="pf-value">${c.address||'—'}</div></div>
+        <div class="pf-field pf-field-full"><div class="pf-label">Occupation / Employer</div><div class="pf-value">${c.occupation||'—'}</div></div>
+      </div>
+    </div>
+
+    <div class="pf-section">
+      <div class="pf-section-title">// 02 &nbsp; Case Details</div>
+      <div class="pf-grid">
+        <div class="pf-field"><div class="pf-label">Legal Topic</div><div class="pf-value">${c.legal_topic||'—'}</div></div>
+        <div class="pf-field"><div class="pf-label">Specific Legal Issue</div><div class="pf-value">${c.legal_issue||'—'}</div></div>
+        <div class="pf-field"><div class="pf-label">Date of Incident</div><div class="pf-value">${c.incident_date||'—'}</div></div>
+        <div class="pf-field"><div class="pf-label">Opposing Party / Respondent</div><div class="pf-value">${c.opposing_party||'—'}</div></div>
+        <div class="pf-field"><div class="pf-label">Urgency Level</div><div class="pf-value">${c.urgency||'—'}</div></div>
+        <div class="pf-field"><div class="pf-label">Pipeline Status</div><div class="pf-value">${c.pipeline_status||'INTAKE_COMPLETE'}</div></div>
+      </div>
+    </div>
+
+    <div class="pf-section">
+      <div class="pf-section-title">// 03 &nbsp; Client Narrative / Summary</div>
+      <div class="pf-narrative">${c.legal_narrative||'No narrative recorded.'}</div>
+    </div>
+
+    <div class="pf-section">
+      <div class="pf-section-title">// 04 &nbsp; Documents Submitted by Client</div>
+      <div class="pf-docs-list">${docsHtml}</div>
+    </div>
+
+    <div class="pf-section">
+      <div class="pf-section-title">// 05 &nbsp; Digital Files Uploaded</div>
+      <div class="pf-docs-list">${attsHtml}</div>
+    </div>
+
+    <div class="pf-section">
+      <div class="pf-section-title">// 06 &nbsp; Clerk's Notes</div>
+      <div class="pf-notes">${c.clerk_notes||'No notes recorded.'}</div>
+    </div>
+
+    <div class="pf-sig-block">
+      <div class="pf-sig">Received by Clerk<br><br>${clerk}</div>
+      <div class="pf-sig">Reviewed by<br><br>&nbsp;</div>
+      <div class="pf-sig">Supervising Lawyer<br><br>&nbsp;</div>
+    </div>
+
+    <div class="pf-footer">
+      <span>${firm} &nbsp;·&nbsp; Confidential</span>
+      <span>Printed: ${printedAt}</span>
+      <span>Case No. ${c.case_id}</span>
+    </div>
+    <div class="pf-confidential">This document contains privileged and confidential information intended solely for authorized personnel.</div>
+  `;
+
+  document.getElementById('print-frame').innerHTML=html;
+  window.print();
+}
+
+// DELETE CASE
+function deleteCase(idx){
+  if(idx===null||idx===undefined)return;
+  const c=caseStore[idx];
+  if(!c)return;
+
+  const confirmed=confirm(`Delete case "${c.case_id}"?\n\nThis will remove it from the dashboard and localStorage.\n\nNote: This does NOT delete the record from Supabase.`+
+    (window.deleteWebhookUrl ? '\nServer delete will also be attempted.' : '')
+  );
+  if(!confirmed)return;
+
+  // Remove from local store
+  caseStore.splice(idx,1);
+  try{localStorage.setItem('jll_cases',JSON.stringify(caseStore));}catch(e){}
+  renderAllCases();
+  renderRecentCases();
+  renderPipelineViews();
+  showToast('🗑 Case deleted from local storage','var(--red-dim)');
+
+  // Attempt server-side deletion if webhook configured
+  if(window.deleteWebhookUrl){
+    fetch(window.deleteWebhookUrl,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({case_id:c.case_id}),
+      mode:'no-cors'
+    }).catch(()=>{});
+  }
+}
+
+function showToast(msg,bg){
+  const t=document.createElement('div');
+  t.className='toast';t.style.background=bg||'var(--surface3)';t.style.color='var(--text)';t.style.border='1px solid var(--border2)';
+  t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);
+}
+</script>
+</body>
+</html>
