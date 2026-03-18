@@ -2328,6 +2328,7 @@ function switchClerk(sel){
 }
 function resetDashboard(){
   document.getElementById('success-modal').classList.remove('open');
+  resetLivePipeline();
   // If we have a profile ready (just submitted), open it to show live pipeline
   if(profileIdx!==null && caseStore[profileIdx]){
     openProfile(profileIdx,'overview');
