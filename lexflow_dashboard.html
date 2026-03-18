@@ -1325,6 +1325,7 @@ function showView(id,btn){
     const liveWrap = document.getElementById('live-pipeline-wrap');
     if(liveWrap){
       if(pollTimer === null){ // no active workflow
+        resetLivePipeline();
         liveWrap.style.display = 'none';
       } else {
         liveWrap.style.display = 'block'; // ensure visible if workflow still running
