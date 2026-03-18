@@ -2342,10 +2342,20 @@ async function testWebhookInline(inputId, button, method = 'POST'){
     alert('Please enter a webhook URL first.');
     return;
   }
-  const originalText = button.textContent;
+
+  // If already showing success, let user reset before re-testing
+  if (button.classList.contains('success')) {
+    button.classList.remove('success');
+    button.textContent = 'Connect';
+    button.disabled = false;
+    return;
+  }
+
+  // Otherwise, perform test
   button.textContent = 'Testing...';
   button.disabled = true;
   button.classList.remove('success', 'error');
+
   try {
     const controller = new AbortController();
     setTimeout(() => controller.abort(), 10000);
@@ -2361,19 +2371,29 @@ async function testWebhookInline(inputId, button, method = 'POST'){
     if (res.ok || res.status === 200) {
       button.textContent = 'Connected';
       button.classList.add('success');
+      button.disabled = false; // stay clickable to reset
     } else {
       button.textContent = '⚠ HTTP ' + res.status;
       button.classList.add('error');
+      setTimeout(() => {
+        if (!button.classList.contains('success')) {
+          button.textContent = 'Connect';
+          button.classList.remove('error');
+          button.disabled = false;
+        }
+      }, 3000);
     }
   } catch (e) {
     button.textContent = e.name === 'AbortError' ? '⏱ Timed Out' : '✗ No Response';
     button.classList.add('error');
+    setTimeout(() => {
+      if (!button.classList.contains('success')) {
+        button.textContent = 'Connect';
+        button.classList.remove('error');
+        button.disabled = false;
+      }
+    }, 3000);
   }
-  setTimeout(() => {
-    button.textContent = 'Connect';
-    button.disabled = false;
-    button.classList.remove('success', 'error');
-  }, 3000);
 }
 async function testWebhookConnection(){
   if(!webhookUrl){alert('No webhook URL configured.');return;}
