@@ -7,16 +7,47 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0e0f14;--surface:#151720;--surface2:#1c1f2e;--surface3:#222538;
-  --border:#2a2d3e;--border2:#353850;
-  --gold:#c9a84c;--gold2:#e8c56a;--gold-dim:#3a2e10;--gold-glow:rgba(201,168,76,0.15);
-  --text:#e8e6e0;--muted:#7a7890;--muted2:#5a5870;
-  --red:#c0392b;--red-dim:#2a1010;--red-bright:#e74c3c;
-  --green:#27ae60;--green-dim:#0f2a1a;--green-bright:#2ecc71;
-  --blue:#2980b9;--blue-dim:#0f1e2a;
-  --purple:#8e44ad;--purple-dim:#1e1030;
-  --advocate:#c9a84c;--devil:#c0392b;--strategist:#8e44ad;
-  --white:#f5f3ee;
+  --bg:#1a1c29;--surface:#232634;--surface2:#2b2f45;--surface3:#343949;
+  --border:#4a4e6a;--border2:#5a5f7a;
+  --gold:#d4af61;--gold2:#ebd18a;--gold-dim:#4a3c15;--gold-glow:rgba(212,175,97,0.2);
+  --text:#f0efe9;--muted:#9a9aab;--muted2:#7a7a8d;
+  --red:#e74c3c;--red-dim:#3d1515;--red-bright:#ff6b6b;
+  --green:#2ecc71;--green-dim:#1a3d25;--green-bright:#58d68d;
+  --blue:#3498db;--blue-dim:#1a2d4d;
+  --purple:#9b59b6;--purple-dim:#2d2a4d;
+  --advocate:#d4af61;--devil:#e74c3c;--strategist:#9b59b6;
+  --white:#ffffff;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --bg:#f5f5f7;
+  --surface:#ffffff;
+  --surface2:#f0f0f2;
+  --surface3:#e5e5e7;
+  --border:#d1d1d6;
+  --border2:#c7c7cc;
+  --gold:#b8860b;
+  --gold2:#d4af61;
+  --gold-dim:#3d2e05;
+  --gold-glow:rgba(212,175,97,0.15);
+  --text:#1c1c1e;
+  --muted:#6e6e73;
+  --muted2:#8e8e93;
+  --red:#e74c3c;
+  --red-dim:#fdeaea;
+  --red-bright:#ff3b30;
+  --green:#2ecc71;
+  --green-dim:#eafaf1;
+  --green-bright:#34c759;
+  --blue:#3498db;
+  --blue-dim:#eaf2fb;
+  --purple:#9b59b6;
+  --purple-dim:#f4edf7;
+  --white:#ffffff;
+  --advocate:#b8860b;
+  --devil:#e74c3c;
+  --strategist:#9b59b6;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -32,7 +63,8 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
 
 .logo-block{padding:22px 18px 18px;border-bottom:1px solid var(--border);}
 .logo-row{display:flex;align-items:center;gap:12px;margin-bottom:2px;}
-.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#8b6914);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;color:#fff;letter-spacing:-0.02em;flex-shrink:0;box-shadow:0 4px 12px rgba(201,168,76,0.3);}
+.logo-mark{width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo-mark svg{width:100%;height:100%;}
 .firm-name{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:700;color:var(--white);line-height:1.2;}
 .firm-tagline{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--gold);letter-spacing:0.2em;margin-top:6px;opacity:0.8;}
 
@@ -81,6 +113,16 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
 .t-pill.date{color:var(--muted);background:var(--surface2);border:1px solid var(--border);}
 .pulse{width:6px;height:6px;border-radius:50%;background:var(--green-bright);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* THEME TOGGLE */
+.theme-toggle{
+  background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;color:var(--muted);
+}
+.theme-toggle:hover{border-color:var(--gold);color:var(--gold);}
+.theme-toggle .moon-icon{display:none;}
+[data-theme="light"] .theme-toggle .sun-icon{display:none;}
+[data-theme="light"] .theme-toggle .moon-icon{display:block;}
 
 /* PAGE */
 .page{padding:24px 28px 60px;flex:1;}
@@ -515,7 +557,91 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
 <div class="sidebar">
   <div class="logo-block">
     <div class="logo-row">
-      <div class="logo-mark">JL</div>
+      <div class="logo-mark">
+        <svg viewBox="0 0 300 340" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+          <defs><style>
+            .lj  { stroke:var(--gold); stroke-width:2.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+            .ljf { stroke:var(--gold); stroke-width:2.2; fill:var(--gold); fill-opacity:0.09; stroke-linecap:round; stroke-linejoin:round; }
+            .ljb { stroke:var(--gold); stroke-width:3.4; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+            .ljB { stroke:var(--gold); stroke-width:2.8; fill:var(--gold); fill-opacity:0.22; stroke-linecap:round; stroke-linejoin:round; }
+            .lj-L { transform-origin: 122px 128px; animation: balL 7s ease-in-out infinite; }
+            .lj-R { transform-origin: 178px 128px; animation: balR 7s ease-in-out infinite; }
+            @keyframes balL { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-7deg); } }
+            @keyframes balR { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(7deg); } }
+          </style></defs>
+          <rect class="lj"  x="108" y="298" width="84"  height="10" rx="2"/>
+          <rect class="ljf" x="88"  y="308" width="124" height="13" rx="3"/>
+          <line class="ljb" x1="76" y1="321" x2="224" y2="321"/>
+          <path class="lj" d="M 106,296 Q 90,280 75,262 Q 59,243 49,221 Q 43,205 47,190"/>
+          <path class="lj" d="M 95,285 Q 78,277 72,262 Q 84,259 92,273 Z"/>
+          <path class="lj" d="M 82,268 Q 65,261 60,246 Q 72,243 79,257 Z"/>
+          <path class="lj" d="M 70,249 Q 54,241 51,226 Q 63,225 68,239 Z"/>
+          <path class="lj" d="M 60,228 Q 47,219 48,204 Q 59,206 60,220 Z"/>
+          <path class="lj" d="M 90,279 Q 84,262 93,251 Q 99,259 94,273 Z"/>
+          <path class="lj" d="M 77,261 Q 72,244 82,233 Q 87,242 82,256 Z"/>
+          <path class="lj" d="M 65,241 Q 62,224 73,214 Q 78,222 72,236 Z"/>
+          <path class="lj" d="M 55,220 Q 54,203 66,195 Q 70,204 63,217 Z"/>
+          <path class="lj" d="M 194,296 Q 210,280 225,262 Q 241,243 251,221 Q 257,205 253,190"/>
+          <path class="lj" d="M 205,285 Q 222,277 228,262 Q 216,259 208,273 Z"/>
+          <path class="lj" d="M 218,268 Q 235,261 240,246 Q 228,243 221,257 Z"/>
+          <path class="lj" d="M 230,249 Q 246,241 249,226 Q 237,225 232,239 Z"/>
+          <path class="lj" d="M 240,228 Q 253,219 252,204 Q 241,206 240,220 Z"/>
+          <path class="lj" d="M 210,279 Q 216,262 207,251 Q 201,259 206,273 Z"/>
+          <path class="lj" d="M 223,261 Q 228,244 218,233 Q 213,242 218,256 Z"/>
+          <path class="lj" d="M 235,241 Q 238,224 227,214 Q 222,222 228,236 Z"/>
+          <path class="lj" d="M 245,220 Q 246,203 234,195 Q 230,204 237,217 Z"/>
+          <path class="ljf" d="M 128,188 Q 116,198 112,216 Q 108,232 108,250 Q 108,270 112,284 Q 118,300 134,304 L 166,304 Q 182,300 188,284 Q 192,270 192,250 Q 192,232 188,216 Q 184,198 172,188 Z"/>
+          <path class="lj" d="M 116,208 Q 124,220 128,240 Q 129,256 126,272"/>
+          <path class="lj" d="M 184,208 Q 176,220 172,240 Q 171,256 174,272"/>
+          <path class="lj" d="M 138,192 Q 134,224 133,256 Q 133,276 135,300"/>
+          <path class="lj" d="M 150,192 Q 150,226 150,258 Q 150,278 150,302"/>
+          <path class="lj" d="M 162,192 Q 166,224 167,256 Q 167,276 165,300"/>
+          <path class="lj" d="M 128,194 Q 122,228 121,260 Q 121,280 124,300"/>
+          <path class="lj" d="M 172,194 Q 178,228 179,260 Q 179,280 176,300"/>
+          <path class="lj" d="M 158,200 Q 166,226 170,254 Q 174,272 172,292 Q 170,302 163,305"/>
+          <path class="lj" d="M 115,294 Q 132,290 150,291 Q 168,290 185,294"/>
+          <rect class="ljB" x="126" y="179" width="48" height="12" rx="3"/>
+          <line class="lj" x1="130" y1="183" x2="170" y2="183"/>
+          <line class="lj" x1="130" y1="187" x2="170" y2="187"/>
+          <path class="ljf" d="M 126,122 Q 112,130 110,146 Q 108,160 112,178 L 188,178 Q 192,160 190,146 Q 188,130 174,122 Z"/>
+          <path class="lj" d="M 116,142 Q 130,154 148,151"/>
+          <path class="lj" d="M 184,142 Q 170,154 152,151"/>
+          <path class="lj" d="M 150,128 Q 150,148 150,172"/>
+          <path class="lj" d="M 134,122 Q 141,136 150,140 Q 159,136 166,122"/>
+          <path class="lj" d="M 110,134 Q 101,130 95,134 Q 104,141 112,139"/>
+          <path class="lj" d="M 190,134 Q 199,130 205,134 Q 196,141 188,139"/>
+          <path class="lj" d="M 128,130 Q 136,150 137,172"/>
+          <path class="lj" d="M 172,130 Q 164,150 163,172"/>
+          <path class="lj" d="M 140,124 Q 143,146 144,170"/>
+          <path class="lj" d="M 160,124 Q 157,146 156,170"/>
+          <path class="ljf" d="M 143,104 L 143,122 L 157,122 L 157,104 Z"/>
+          <ellipse class="ljf" cx="150" cy="82" rx="16" ry="20"/>
+          <path class="lj" d="M 136,68 Q 143,60 150,58 Q 157,60 164,68"/>
+          <path class="lj" d="M 135,70 Q 129,84 130,100 Q 132,114 140,122"/>
+          <path class="lj" d="M 133,78 Q 128,94 131,110"/>
+          <path class="lj" d="M 165,70 Q 171,84 170,100 Q 168,114 160,122"/>
+          <path class="lj" d="M 167,78 Q 172,94 169,110"/>
+          <path class="lj" d="M 141,98 Q 150,104 159,98"/>
+          <path class="ljB" d="M 132,79 Q 141,76 150,76 Q 159,76 168,79 Q 170,82 168,87 Q 159,90 150,90 Q 141,90 132,87 Q 130,84 132,79 Z"/>
+          <line class="lj" x1="135" y1="83" x2="165" y2="83"/>
+          <path class="lj" d="M 166,82 Q 174,78 180,82 Q 176,88 168,87"/>
+          <path class="lj" d="M 166,84 Q 172,90 175,97"/>
+          <g class="lj-L">
+            <path class="ljf" d="M 122,124 Q 104,116 84,108 Q 72,102 62,96 L 62,106 Q 72,112 84,118 Q 104,126 120,134 Z"/>
+            <path class="lj" d="M 122,124 Q 104,116 84,108 Q 72,102 62,96"/>
+            <path class="lj" d="M 120,134 Q 104,126 84,118 Q 72,112 62,106"/>
+            <circle class="lj" cx="62" cy="92" r="7"/>
+            <circle class="lj" cx="62" cy="106" r="5"/>
+          </g>
+          <g class="lj-R">
+            <path class="ljf" d="M 178,124 Q 196,116 216,108 Q 228,102 238,96 L 238,106 Q 228,112 216,118 Q 196,126 180,134 Z"/>
+            <path class="lj" d="M 178,124 Q 196,116 216,108 Q 228,102 238,96"/>
+            <path class="lj" d="M 180,134 Q 196,126 216,118 Q 228,112 238,106"/>
+            <circle class="lj" cx="238" cy="92" r="7"/>
+            <circle class="lj" cx="238" cy="106" r="5"/>
+          </g>
+        </svg>
+      </div>
       <div>
         <div class="firm-name">JL Laniog<br>Law Firm</div>
       </div>
@@ -603,6 +729,10 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
       <p id="topbar-sub">JL Laniog Law Firm — LexFlow Case Management</p>
     </div>
     <div class="topbar-right">
+      <button id="theme-toggle" class="theme-toggle" title="Toggle dark/light mode">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
       <div class="t-pill green"><div class="pulse"></div>AI PIPELINE ACTIVE</div>
       <div class="t-pill date" id="datechip"></div>
     </div>
@@ -1106,6 +1236,21 @@ LOCAL (live):  http://localhost:5678/webhook/intake</div>
 <div id="print-frame"></div>
 
 <script>
+// THEME MANAGEMENT
+(function(){
+  const saved = localStorage.getItem('lexflow_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  const btn = document.getElementById('theme-toggle');
+  if(btn){
+    btn.addEventListener('click', function(){
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('lexflow_theme', next);
+    });
+  }
+})();
+
 const TPLS = {
   labor:{label:'Labor Law',icon:'👷',bg:'rgba(240,165,0,0.12)',sub:'Illegal dismissal, constructive dismissal, NLRC',
     issues:['Illegal Dismissal','Constructive Dismissal','Unfair Labor Practice','Non-payment of Wages / Benefits','Illegal Suspension','Forced Resignation','Labor Standards Violation','NLRC Complaint','Overtime Pay Dispute','13th Month Pay Dispute','Others'],
@@ -1174,6 +1319,19 @@ function showView(id,btn){
   const titles={overview:['Case Overview','JL Laniog Law Firm — LexFlow Case Management'],cases:['All Cases','Complete case registry — click any row to open case profile'],settings:['Settings','Configure webhook and clerk profile'],form:['New Case Intake','Fill out the form and submit to the AI pipeline'],'pipeline-advocate':['The Advocate — Queue','Cases with completed Advocate analysis'],'pipeline-devil':["Devil's Advocate — Queue","Cases with completed Devil's Advocate analysis"],'pipeline-strategist':['The Strategist — Queue','Cases with completed Senior Partner analysis'],profile:['Case Profile','Full case record and AI analysis']};
   if(titles[id]){document.getElementById('topbar-title').textContent=titles[id][0];document.getElementById('topbar-sub').textContent=titles[id][1];}
   window.scrollTo(0,0);
+
+  // When Overview is shown: hide live pipeline if no active polling, and refresh static pipeline tracker
+  if(id === 'overview'){
+    const liveWrap = document.getElementById('live-pipeline-wrap');
+    if(liveWrap){
+      if(pollTimer === null){ // no active workflow
+        liveWrap.style.display = 'none';
+      } else {
+        liveWrap.style.display = 'block'; // ensure visible if workflow still running
+      }
+    }
+    renderPipelineViews();
+  }
 }
 
 // PIPELINE STATUS HELPERS
@@ -1184,18 +1342,63 @@ function getPipelineStatus(c){
 }
 
 // BUILD CASES TABLE
-function buildCasesTable(cases, limit){
+function buildCasesTable(cases, limit, options = {}){
   if(!cases||cases.length===0) return '<div class="empty-state"><div class="empty-icon">🗂</div>No cases found.</div>';
   const rows=limit?cases.slice(0,limit):cases;
   const ps=c=>getPipelineStatus(c);
   const urgCls=u=>u==='HIGH'?'urg-high':u==='MEDIUM'?'urg-med':'urg-low';
-  let html=`<div class="cases-wrap"><table><thead><tr><th>CASE ID</th><th>CLIENT</th><th>LEGAL TOPIC</th><th>ISSUE</th><th>URGENCY</th><th>PIPELINE</th><th>DATE</th><th></th></tr></thead><tbody>`;
+  const showDurations = options.showDurations || false;
+
+  // Build headers based on view
+  let headers = ['CASE ID','CLIENT','LEGAL TOPIC','ISSUE','URGENCY','PIPELINE','DATE'];
+  if(showDurations) headers.push('TIME TO COMPLETE');
+
+  let html=`<div class="cases-wrap"><table><thead><tr>`;
+  headers.forEach(h=>html+=`<th>${h}</th>`);
+  html+='<th></th></tr></thead><tbody>';
+
   rows.forEach((c,i)=>{
     const realIdx=caseStore.indexOf(c);
     const dt=new Date(c.timestamp);
     const dateStr=dt.toLocaleDateString('en-PH',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit'});
     const p=ps(c);
     const tpl=Object.values(TPLS).find(t=>t.label===c.legal_topic);
+
+    // Calculate duration for pipeline views
+    let durationHTML = '';
+    if(showDurations){
+      let durationMs = null;
+      if(c.lawyer_a && c.lawyer_a._completed_at){
+        // For Advocate view: time from submission to advocate completion
+        durationMs = c.lawyer_a._completed_at - new Date(c.timestamp).getTime();
+      } else if(c.lawyer_b && c.lawyer_b._completed_at){
+        // For Devil view: time from advocate to devil completion
+        if(c.lawyer_a && c.lawyer_a._completed_at){
+          durationMs = c.lawyer_b._completed_at - c.lawyer_a._completed_at;
+        } else {
+          durationMs = c.lawyer_b._completed_at - new Date(c.timestamp).getTime();
+        }
+      } else if(c.senior_partner && c.senior_partner._completed_at){
+        // For Strategist view: time from devil to strategist completion
+        if(c.lawyer_b && c.lawyer_b._completed_at){
+          durationMs = c.senior_partner._completed_at - c.lawyer_b._completed_at;
+        } else if(c.lawyer_a && c.lawyer_a._completed_at){
+          durationMs = c.senior_partner._completed_at - c.lawyer_a._completed_at;
+        } else {
+          durationMs = c.senior_partner._completed_at - new Date(c.timestamp).getTime();
+        }
+      }
+
+      if(durationMs){
+        const mins = Math.floor(durationMs / 60000);
+        const secs = Math.floor((durationMs % 60000) / 1000);
+        const durationStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+        durationHTML = `<span style="font-family:'IBM Plex Mono';font-size:0.65rem;color:var(--gold);background:var(--gold-dim);padding:3px 8px;border-radius:4px;">${durationStr}</span>`;
+      } else {
+        durationHTML = '<span style="color:var(--muted);font-size:0.68rem">—</span>';
+      }
+    }
+
     html+=`<tr onclick="openProfile(${realIdx},'${limit?'overview':'cases'}')">
       <td class="mono">${c.case_id}</td>
       <td style="font-weight:500">${c.user_name}</td>
@@ -1204,6 +1407,7 @@ function buildCasesTable(cases, limit){
       <td><span class="urg ${urgCls(c.urgency)}">${c.urgency}</span></td>
       <td><span class="pipe-badge ${p.cls}">${p.icon} ${p.label}</span></td>
       <td style="color:var(--muted2);font-size:0.68rem;white-space:nowrap">${dateStr}</td>
+      ${showDurations ? `<td style="text-align:center">${durationHTML}</td>` : ''}
       <td onclick="event.stopPropagation()">
         <button class="tbl-print-btn" onclick="event.stopPropagation();printCase(${realIdx})">🖨</button>
         <button class="tbl-delete-btn" onclick="event.stopPropagation();deleteCase(${realIdx})">🗑</button>
@@ -1247,9 +1451,9 @@ function renderPipelineViews(){
   const devil=caseStore.filter(c=>c.lawyer_b&&c.lawyer_b.case_assessment);
   const strategist=caseStore.filter(c=>c.senior_partner&&c.senior_partner.final_recommendation);
   const complete=caseStore.filter(c=>c.pipeline_status==='COMPLETE');
-  document.getElementById('pipeline-advocate-wrap').innerHTML=advocate.length?buildCasesTable(advocate,null):'<div class="empty-state"><div class="empty-icon">⚖️</div>No Advocate analyses yet. Cases will appear here after The Advocate processes them.</div>';
-  document.getElementById('pipeline-devil-wrap').innerHTML=devil.length?buildCasesTable(devil,null):"<div class='empty-state'><div class='empty-icon'>⚔️</div>No Devil's Advocate analyses yet.</div>";
-  document.getElementById('pipeline-strategist-wrap').innerHTML=strategist.length?buildCasesTable(strategist,null):"<div class='empty-state'><div class='empty-icon'>♟️</div>No Strategist recommendations yet.</div>";
+  document.getElementById('pipeline-advocate-wrap').innerHTML=advocate.length?buildCasesTable(advocate,null,{showDurations:true}):'<div class="empty-state"><div class="empty-icon">⚖️</div>No Advocate analyses yet. Cases will appear here after The Advocate processes them.</div>';
+  document.getElementById('pipeline-devil-wrap').innerHTML=devil.length?buildCasesTable(devil,null,{showDurations:true}):"<div class='empty-state'><div class='empty-icon'>⚔️</div>No Devil's Advocate analyses yet.</div>";
+  document.getElementById('pipeline-strategist-wrap').innerHTML=strategist.length?buildCasesTable(strategist,null,{showDurations:true}):"<div class='empty-state'><div class='empty-icon'>♟️</div>No Strategist recommendations yet.</div>";
 
   // Update pipeline tracker counters
   const total=caseStore.length;
@@ -1271,10 +1475,12 @@ function renderPipelineViews(){
   if(elStrategist) elStrategist.textContent=strategistDone+' done';
   if(elComplete) elComplete.textContent=completeDone+' done';
 
-  // Update pipeline step status icons
+  // Update pipeline step status icons based on ACTIVE cases only (ignore COMPLETE)
   const order = ['INTAKE_COMPLETE','ADVOCATE_COMPLETE','DEVIL_COMPLETE','STRATEGIST_COMPLETE','COMPLETE'];
   let maxIdx = -1;
-  for(const c of caseStore){
+  // Only consider cases that haven't fully completed the pipeline
+  const activeCases = caseStore.filter(c => c.pipeline_status !== 'COMPLETE');
+  for(const c of activeCases){
     const status = c.pipeline_status || 'INTAKE_COMPLETE';
     const idx = order.indexOf(status);
     if(idx > maxIdx) maxIdx = idx;
@@ -1298,7 +1504,7 @@ function renderPipelineViews(){
   }
 
   // Mark active next step
-  if(maxIdx < 4 && caseStore.length > 0){
+  if(maxIdx >= 0 && maxIdx < 4 && caseStore.length > 0){
     const nextStep = ['advocate','devil','strategist','complete'][maxIdx];
     const icon = document.querySelector(`#pt-step-${nextStep} .pt-icon`);
     const lbl = document.querySelector(`#pt-step-${nextStep} .pt-lbl`);
@@ -1742,7 +1948,12 @@ async function doPoll(url){
     if(!pollGot.a && d.lawyer_a && d.lawyer_a.case_assessment){
       pollGot.a=true;
       changed=true;
-      updateCaseInStore(pollCaseId,{lawyer_a:d.lawyer_a,pipeline_status:'ADVOCATE_COMPLETE'});
+      // Capture timestamp when analysis completed
+      const completionTime = Date.now();
+      updateCaseInStore(pollCaseId,{
+        lawyer_a:{...d.lawyer_a, _completed_at: completionTime},
+        pipeline_status:'ADVOCATE_COMPLETE'
+      });
       setPollBar('advocate','done','✓ Advocate analysis received');
       setLiveStage('advocate','done');
       setLiveStage('devil','active');
@@ -1758,7 +1969,12 @@ async function doPoll(url){
     if(!pollGot.b && d.lawyer_b && (d.lawyer_b.case_assessment||d.lawyer_b.counterarguments)){
       pollGot.b=true;
       changed=true;
-      updateCaseInStore(pollCaseId,{lawyer_b:d.lawyer_b,pipeline_status:'DEVIL_COMPLETE'});
+      // Capture timestamp when analysis completed
+      const completionTime = Date.now();
+      updateCaseInStore(pollCaseId,{
+        lawyer_b:{...d.lawyer_b, _completed_at: completionTime},
+        pipeline_status:'DEVIL_COMPLETE'
+      });
       setPollBar('devil','done','✓ Devil\'s Advocate analysis received');
       setLiveStage('devil','done');
       setLiveStage('strategist','active');
@@ -1773,7 +1989,12 @@ async function doPoll(url){
     if(!pollGot.sp && d.senior_partner && d.senior_partner.final_recommendation){
       pollGot.sp=true;
       changed=true;
-      updateCaseInStore(pollCaseId,{senior_partner:d.senior_partner,pipeline_status:'COMPLETE'});
+      // Capture timestamp when analysis completed
+      const completionTime = Date.now();
+      updateCaseInStore(pollCaseId,{
+        senior_partner:{...d.senior_partner, _completed_at: completionTime},
+        pipeline_status:'COMPLETE'
+      });
       setPollBar('strategist','done','✓ Strategist final recommendation received');
       setLiveStage('strategist','done');
       setLiveStage('complete','done');
