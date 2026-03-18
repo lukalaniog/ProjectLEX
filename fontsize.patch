@@ -1,7 +1,0 @@
---- a/lexflow_dashboard.html
-+++ b/lexflow_dashboard.html
-@@ -183,3 +183,3 @@
- .cases-wrap th{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.13em;color:var(--muted2);padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
--.cases-wrap td{padding:10px 14px;font-size:0.76rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
-+.cases-wrap td{padding:10px 14px;font-size:0.86rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
- .cases-wrap tr:last-child td{border-bottom:none;}
