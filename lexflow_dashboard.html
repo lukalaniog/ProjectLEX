@@ -2095,6 +2095,21 @@ function completeLivePipeline(){
   if(lbl)lbl.textContent='COMPLETE';
 }
 
+function resetLivePipeline(){
+  ['intake','advocate','devil','strategist','complete'].forEach(s => setLiveStage(s, 'idle'));
+  const completeMsg = document.getElementById('lp-complete-msg');
+  if(completeMsg) completeMsg.classList.remove('show');
+  const dot = document.getElementById('lp-pulse-dot');
+  const lbl = document.getElementById('lp-pulse-lbl');
+  if(dot){
+    dot.classList.remove('stopped');
+    dot.style.background = '';
+  }
+  if(lbl) lbl.textContent = '—';
+  const wrap = document.getElementById('live-pipeline-wrap');
+  if(wrap) wrap.style.display = 'none';
+}
+
 // Update tab labels with ✓ / spinner indicators
 function updateTabIndicator(tab,state){
   const tabEl=document.getElementById('tab-'+tab);
