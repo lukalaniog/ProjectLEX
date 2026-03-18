@@ -1333,6 +1333,10 @@ function showView(id,btn){
     }
     renderPipelineViews();
   }
+
+  if(id === 'form'){
+    resetLivePipeline();
+  }
 }
 
 // PIPELINE STATUS HELPERS
