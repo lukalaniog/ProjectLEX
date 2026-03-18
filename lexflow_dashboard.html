@@ -2359,7 +2359,7 @@ async function testWebhookInline(inputId, button, method = 'POST'){
     }
     const res = await fetch(url, options);
     if (res.ok || res.status === 200) {
-      button.textContent = '✓ Connected!';
+      button.textContent = 'Connected';
       button.classList.add('success');
     } else {
       button.textContent = '⚠ HTTP ' + res.status;
