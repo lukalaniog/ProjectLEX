@@ -1155,7 +1155,7 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
             <label>Results Fetch URL <span style="color:var(--muted);font-weight:400;font-size:0.72rem">(polling — Advocate &amp; Devil's Advocate)</span></label>
             <div class="input-with-btn">
               <input type="text" id="set-hook-results" placeholder="http://localhost:5678/webhook/fetch-results">
-              <button class="btn-connect" onclick="testWebhookInline('set-hook-results', this, 'GET')">Connect</button>
+              <button class="btn-connect" onclick="testWebhookInline('set-hook-results', this, 'POST')">Connect</button>
             </div>
             <div class="hint">n8n webhook that accepts <code style="font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--gold)">{ case_id }</code> and returns <code style="font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--gold)">lawyer_a</code> / <code style="font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--gold)">lawyer_b</code> from Supabase. Dashboard polls this every 5s after submission.</div>
           </div>
@@ -1169,7 +1169,10 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
           </div>
           <div class="code-eg">LOCAL (test):  http://localhost:5678/webhook-test/intake
 LOCAL (live):  http://localhost:5678/webhook/intake</div>
-          <button class="btn-save" onclick="saveSettings()">Save Webhook Settings</button>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:12px;">
+            <button class="btn-save" onclick="saveSettings()">Save Webhook Settings</button>
+            <button class="btn-connect" onclick="testAllWebhooks()" style="flex:1">Test All Critical Webhooks</button>
+          </div>
           <div class="save-msg save-ok" id="set-msg-ok">✓ Webhook URL saved.</div>
           <div class="save-msg save-err" id="set-msg-err">⚠ Please enter an active webhook URL.</div>
         </div>
@@ -2187,6 +2190,8 @@ async function submitCase(){
   if(!name||!contact||!issue||!narrative){alert('Please complete all required fields:\n• Full Name\n• Contact Number\n• Legal Issue\n• Narrative / Summary');return;}
   if(!curUrgency){alert('Please select an urgency level.');return;}
   if(!webhookUrl){const go=confirm('No Webhook URL set yet.\nPress OK to go to Settings.');if(go)showView('settings',document.getElementById('nav-settings'));return;}
+  const resultsUrl=localStorage.getItem('jll_results_url')||'';
+  if(!resultsUrl){const go2=confirm('Results Fetch URL not configured.\nWithout it, the dashboard won\'t receive AI analysis.\n\nGo to Settings to set it up?');if(go2)showView('settings',document.getElementById('nav-settings'));return;}
   const docs=[];
   document.querySelectorAll('#docs-list input[type=checkbox]:checked').forEach(cb=>{docs.push(cb.closest('.cb-item').querySelector('.cb-lbl').textContent);});
   const clerk=document.getElementById('set-clerk')?.value||'Clerk';
@@ -2393,6 +2398,37 @@ async function testWebhookInline(inputId, button, method = 'POST'){
         button.disabled = false;
       }
     }, 3000);
+  }
+}
+
+async function testAllWebhooks(){
+  const fields = [
+    {id: 'set-hook-live', method: 'POST'},
+    {id: 'set-hook-test', method: 'POST'},
+    {id: 'set-hook-active', method: 'POST'},
+    {id: 'set-hook-results', method: 'POST'}
+  ];
+  for(const field of fields){
+    const input = document.getElementById(field.id);
+    if(!input) continue;
+    const btn = input.parentElement?.querySelector('.btn-connect');
+    if(!btn) continue;
+    // Skip if empty
+    if(!input.value.trim()){
+      continue;
+    }
+    // Force test even if already success (reset first)
+    if(btn.classList.contains('success')){
+      btn.classList.remove('success');
+      btn.textContent = 'Connect';
+      btn.disabled = false;
+    }
+    // Skip if currently disabled (another test running)
+    if(btn.disabled) continue;
+
+    await testWebhookInline(field.id, btn, field.method);
+    // Small delay between tests to avoid overwhelming the server
+    await new Promise(resolve => setTimeout(resolve, 500));
   }
 }
 async function testWebhookConnection(){
