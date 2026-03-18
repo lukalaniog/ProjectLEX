@@ -351,6 +351,13 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
 .s-field input{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px 11px;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--text);outline:none;transition:border-color 0.15s;}
 .s-field input:focus{border-color:var(--gold);}
 .s-field .hint{font-size:0.74rem;color:var(--muted);line-height:1.5;}
+.input-with-btn{display:flex;gap:8px;align-items:center;}
+.input-with-btn input{flex:1;}
+.btn-connect{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:6px 12px;font-size:0.72rem;font-family:'IBM Plex Sans',sans-serif;font-weight:500;color:var(--muted);cursor:pointer;transition:all 0.15s;white-space:nowrap;flex-shrink:0;}
+.btn-connect:hover{border-color:var(--gold);color:var(--gold2);}
+.btn-connect:disabled{opacity:0.6;cursor:not-allowed;}
+.btn-connect.success{background:var(--green-dim);border-color:var(--green);color:var(--green-bright);}
+.btn-connect.error{background:var(--red-dim);border-color:var(--red);color:var(--red-bright);}
 .code-eg{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:9px 13px;font-family:'IBM Plex Mono',monospace;font-size:0.73rem;color:var(--muted2);margin-bottom:14px;line-height:1.75;}
 .btn-save{background:var(--gold);color:#0e0f14;border:none;border-radius:6px;padding:9px 18px;font-family:'IBM Plex Sans',sans-serif;font-size:0.79rem;font-weight:600;cursor:pointer;transition:all 0.15s;}
 .btn-save:hover{background:var(--gold2);}
@@ -1120,17 +1127,44 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
       <div class="settings-grid">
         <div class="s-card" style="grid-column:1/-1">
           <div class="s-card-title">// n8n WEBHOOK CONFIGURATION</div>
-          <div class="s-field"><label>Live Webhook URL</label><input type="text" id="set-hook-live" placeholder="https://your-n8n.app.n8n.cloud/webhook/intake"><div class="hint">Use when workflow is Activated (toggle ON).</div></div>
-          <div class="s-field"><label>Test Webhook URL</label><input type="text" id="set-hook-test" placeholder="https://your-n8n.app.n8n.cloud/webhook-test/intake"><div class="hint">Use while building. n8n must be in Test Workflow mode.</div></div>
-          <div class="s-field"><label>Active URL <span style="color:var(--gold);margin-left:4px">← Submit uses this</span></label><input type="text" id="set-hook-active" placeholder="Paste the URL you want active right now"><div class="hint">This is the URL that fires on Submit.</div></div>
+          <div class="s-field">
+            <label>Live Webhook URL</label>
+            <div class="input-with-btn">
+              <input type="text" id="set-hook-live" placeholder="https://your-n8n.app.n8n.cloud/webhook/intake">
+              <button class="btn-connect" onclick="testWebhookInline('set-hook-live', this)">Connect</button>
+            </div>
+            <div class="hint">Use when workflow is Activated (toggle ON).</div>
+          </div>
+          <div class="s-field">
+            <label>Test Webhook URL</label>
+            <div class="input-with-btn">
+              <input type="text" id="set-hook-test" placeholder="https://your-n8n.app.n8n.cloud/webhook-test/intake">
+              <button class="btn-connect" onclick="testWebhookInline('set-hook-test', this)">Connect</button>
+            </div>
+            <div class="hint">Use while building. n8n must be in Test Workflow mode.</div>
+          </div>
+          <div class="s-field">
+            <label>Active URL <span style="color:var(--gold);margin-left:4px">← Submit uses this</span></label>
+            <div class="input-with-btn">
+              <input type="text" id="set-hook-active" placeholder="Paste the URL you want active right now">
+              <button class="btn-connect" onclick="testWebhookInline('set-hook-active', this)">Connect</button>
+            </div>
+            <div class="hint">This is the URL that fires on Submit.</div>
+          </div>
           <div class="s-field" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
             <label>Results Fetch URL <span style="color:var(--muted);font-weight:400;font-size:0.72rem">(polling — Advocate &amp; Devil's Advocate)</span></label>
-            <input type="text" id="set-hook-results" placeholder="http://localhost:5678/webhook/fetch-results">
+            <div class="input-with-btn">
+              <input type="text" id="set-hook-results" placeholder="http://localhost:5678/webhook/fetch-results">
+              <button class="btn-connect" onclick="testWebhookInline('set-hook-results', this, 'GET')">Connect</button>
+            </div>
             <div class="hint">n8n webhook that accepts <code style="font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--gold)">{ case_id }</code> and returns <code style="font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--gold)">lawyer_a</code> / <code style="font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--gold)">lawyer_b</code> from Supabase. Dashboard polls this every 5s after submission.</div>
           </div>
           <div class="s-field">
             <label>Delete Case Webhook URL <span style="color:var(--red-bright);font-weight:400;font-size:0.72rem">(optional — for server-side delete)</span></label>
-            <input type="text" id="set-hook-delete" placeholder="http://localhost:5678/webhook/delete-case">
+            <div class="input-with-btn">
+              <input type="text" id="set-hook-delete" placeholder="http://localhost:5678/webhook/delete-case">
+              <button class="btn-connect" onclick="testWebhookInline('set-hook-delete', this, 'POST')">Connect</button>
+            </div>
             <div class="hint">If set, clicking the delete 🗑 button will also call this webhook to remove the case from Supabase. Omit for local-only delete.</div>
           </div>
           <div class="code-eg">LOCAL (test):  http://localhost:5678/webhook-test/intake
@@ -2299,6 +2333,47 @@ function saveProfile(){
   const n=document.getElementById('set-clerk').value.trim();
   if(n)document.getElementById('clerk-name-display').textContent=n;
   const m=document.getElementById('profile-msg');m.style.display='block';setTimeout(()=>m.style.display='none',2500);
+}
+async function testWebhookInline(inputId, button, method = 'POST'){
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const url = input.value.trim();
+  if (!url) {
+    alert('Please enter a webhook URL first.');
+    return;
+  }
+  const originalText = button.textContent;
+  button.textContent = 'Testing...';
+  button.disabled = true;
+  button.classList.remove('success', 'error');
+  try {
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(), 10000);
+    const options = {
+      method: method,
+      headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal
+    };
+    if (method === 'POST') {
+      options.body = JSON.stringify({ case_id: 'TEST-0000', _is_test: true, legal_narrative: 'Connection test' });
+    }
+    const res = await fetch(url, options);
+    if (res.ok || res.status === 200) {
+      button.textContent = '✓ Connected!';
+      button.classList.add('success');
+    } else {
+      button.textContent = '⚠ HTTP ' + res.status;
+      button.classList.add('error');
+    }
+  } catch (e) {
+    button.textContent = e.name === 'AbortError' ? '⏱ Timed Out' : '✗ No Response';
+    button.classList.add('error');
+  }
+  setTimeout(() => {
+    button.textContent = 'Connect';
+    button.disabled = false;
+    button.classList.remove('success', 'error');
+  }, 3000);
 }
 async function testWebhookConnection(){
   if(!webhookUrl){alert('No webhook URL configured.');return;}
