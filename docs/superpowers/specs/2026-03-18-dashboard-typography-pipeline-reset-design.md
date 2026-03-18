@@ -12,6 +12,7 @@
 Improve readability and user experience of the LexFlow dashboard by:
 1. Increasing font sizes and weights for better legibility across all themes
 2. Implementing automatic pipeline state reset to prevent stale UI after case completion
+3. Ensuring all text uses theme-aware colors (no hard-coded white that breaks light mode)
 
 ---
 
@@ -55,6 +56,43 @@ Scale up core typography while maintaining visual hierarchy and design consisten
 - Line-height 1.6 is WCAG-recommended for body text
 - Selective scaling focuses on content areas where users read extensively (forms, tables, analysis)
 - No layout thrashing; changes are incremental
+
+---
+
+## 3. Theme-Aware Color Consistency
+
+### Problem
+
+Several elements use `color: var(--white)` or hard-coded `#ffffff` which forces white text regardless of theme. In light mode, white text on white/light backgrounds is unreadable. All text should use `color: var(--text)` which is already defined to switch between `#f0efe9` (dark) and `#1c1c1e` (light).
+
+### Solution
+
+Search and replace all occurrences of:
+- `color: var(--white)`
+- `color: #ffffff`
+- `color: #fff`
+
+with:
+- `color: var(--text)`
+
+**Affected areas to check:**
+- Topbar title (`.topbar-left h2`)
+- Firm name in sidebar (`.firm-name`)
+- Case table values
+- Profile field values
+- Analysis card headers and text where white is forced
+- Any other element that appears to force white regardless of theme
+
+**Implementation:**
+Use grep to find all instances:
+```bash
+grep -n "color: var(--white)" lexflow_dashboard.html
+grep -n "color: #ffffff" lexflow_dashboard.html
+grep -n "color: #fff" lexflow_dashboard.html
+```
+Then replace each with `color: var(--text)`.
+
+**Note:** Some elements may intentionally use white for contrast (like gold accents on dark). Only replace text elements, not decorative icons or borders.
 
 ---
 
@@ -154,7 +192,14 @@ function resetLivePipeline(){
 - [ ] Section headers at ≥1.15rem
 - [ ] Stat counters at ≥2.2rem
 - [ ] All other small labels increased by ~15%
-- [ ] Dark mode and light mode both render clearly
+- [ ] All text elements use theme-aware `var(--text)` (no hard-coded white)
+- [ ] Dark mode and light mode both render clearly with proper contrast
+
+### Theme Colors
+- [ ] Replaced all `color: var(--white)` with `color: var(--text)`
+- [ ] Replaced all `color: #ffffff` with `color: var(--text)`
+- [ ] Replaced all `color: #fff` with `color: var(--text)`
+- [ ] Verified text is readable in both dark and light modes
 
 ### Pipeline Reset
 - [ ] `resetLivePipeline()` function implemented
@@ -186,7 +231,12 @@ function resetLivePipeline(){
    - Verify pipeline is reset (no remnants of previous completion)
    - Navigate to a completed case profile: live pipeline should remain hidden (no change)
 
-3. **General**
+3. **Theme Colors**
+   - Toggle to light mode: verify NO white text on light backgrounds (all text respects `var(--text)`)
+   - Toggle to dark mode: verify white/light text is visible
+   - Check topbar, sidebar, case table, forms, analysis panels for proper contrast in both themes
+
+4. **General**
    - Verify no layout breaks at any screen width
    - Check that theme toggle still works
    - Ensure localStorage saves (theme preference) unaffected
