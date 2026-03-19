@@ -19,36 +19,6 @@
   --white:#ffffff;
 }
 
-/* Light theme */
-[data-theme="light"] {
-  --bg:#f5f5f7;
-  --surface:#ffffff;
-  --surface2:#f0f0f2;
-  --surface3:#e5e5e7;
-  --border:#d1d1d6;
-  --border2:#c7c7cc;
-  --gold:#b8860b;
-  --gold2:#d4af61;
-  --gold-dim:#3d2e05;
-  --gold-glow:rgba(212,175,97,0.15);
-  --text:#1c1c1e;
-  --muted:#6e6e73;
-  --muted2:#8e8e93;
-  --red:#e74c3c;
-  --red-dim:#fdeaea;
-  --red-bright:#ff3b30;
-  --green:#2ecc71;
-  --green-dim:#eafaf1;
-  --green-bright:#34c759;
-  --blue:#3498db;
-  --blue-dim:#eaf2fb;
-  --purple:#9b59b6;
-  --purple-dim:#f4edf7;
-  --white:#ffffff;
-  --advocate:#b8860b;
-  --devil:#e74c3c;
-  --strategist:#9b59b6;
-}
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:17px;line-height:1.6;font-weight:500;min-height:100vh;display:flex;overflow-x:hidden;}
@@ -406,26 +376,6 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
 .btn-new:hover{background:var(--gold2);}
 
 /* DETAIL MODAL */
-.detail-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(5px);z-index:600;align-items:flex-start;justify-content:center;overflow-y:auto;padding:28px 20px;}
-.detail-bg.open{display:flex;}
-.detail-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:700px;box-shadow:0 24px 64px rgba(0,0,0,0.5);animation:popIn 0.22s cubic-bezier(0.175,0.885,0.32,1.275);margin:auto;}
-.detail-hdr{padding:22px 26px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
-.detail-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--text);}
-.detail-caseid{font-family:'IBM Plex Mono',monospace;font-size:0.74rem;color:var(--muted);margin-top:3px;}
-.detail-close{background:none;border:1px solid var(--border);border-radius:5px;padding:5px 9px;cursor:pointer;font-size:0.8rem;color:var(--muted);transition:all 0.15s;flex-shrink:0;}
-.detail-close:hover{border-color:var(--red);color:var(--red-bright);}
-.detail-body{padding:20px 26px;}
-.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
-.detail-field{display:flex;flex-direction:column;gap:4px;}
-.detail-field.full{grid-column:1/-1;}
-.detail-field label{font-size:0.72rem;font-weight:600;color:var(--muted2);letter-spacing:0.08em;text-transform:uppercase;}
-.detail-field input,.detail-field select,.detail-field textarea{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;font-family:'IBM Plex Sans',sans-serif;font-size:0.78rem;color:var(--text);outline:none;width:100%;transition:border-color 0.15s;}
-.detail-field input:focus,.detail-field select:focus,.detail-field textarea:focus{border-color:var(--gold);}
-.detail-field textarea{resize:vertical;min-height:75px;line-height:1.6;}
-.detail-sec-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--gold);letter-spacing:0.16em;margin-bottom:10px;padding-top:14px;border-top:1px solid var(--border);}
-.detail-docs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px;}
-.detail-doc-tag{font-size:0.7rem;background:var(--gold-dim);color:var(--gold2);border:1px solid rgba(201,168,76,0.25);padding:3px 9px;border-radius:4px;}
-.detail-footer{padding:14px 26px 20px;display:flex;gap:9px;justify-content:flex-end;border-top:1px solid var(--border);}
 .btn-detail-cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:9px 18px;font-family:'IBM Plex Sans',sans-serif;font-size:0.8rem;cursor:pointer;transition:all 0.15s;}
 .btn-detail-cancel:hover{color:var(--text);}
 .btn-detail-save{background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:6px;padding:9px 20px;font-family:'IBM Plex Sans',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.15s;}
@@ -666,43 +616,7 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
     </button>
   </div>
 
-  <div class="nav-section">
-    <div class="nav-section-lbl">// CASE INTAKE</div>
-    <button class="nav-btn" id="nav-labor" onclick="openTemplate('labor',this)">
-      <div class="ni">👷</div><span class="nt">Labor Law</span>
-    </button>
-    <button class="nav-btn" id="nav-criminal" onclick="openTemplate('criminal',this)">
-      <div class="ni">⚔️</div><span class="nt">Criminal Law</span>
-    </button>
-    <button class="nav-btn" id="nav-family" onclick="openTemplate('family',this)">
-      <div class="ni">🏠</div><span class="nt">Family Law</span>
-    </button>
-    <button class="nav-btn" id="nav-civil" onclick="openTemplate('civil',this)">
-      <div class="ni">📜</div><span class="nt">Civil Law</span>
-    </button>
-    <button class="nav-btn" id="nav-property" onclick="openTemplate('property',this)">
-      <div class="ni">🏗️</div><span class="nt">Property Law</span>
-    </button>
-    <button class="nav-btn" id="nav-corporate" onclick="openTemplate('corporate',this)">
-      <div class="ni">🏢</div><span class="nt">Corporate Law</span>
-    </button>
-  </div>
 
-  <div class="nav-section">
-    <div class="nav-section-lbl">// AI LEGAL PIPELINE</div>
-    <button class="nav-btn" id="nav-advocate" onclick="showView('pipeline-advocate',this)">
-      <div class="ni">⚖️</div><span class="nt">The Advocate</span>
-      <div class="pni-dot dot-advocate" style="margin-left:auto"></div>
-    </button>
-    <button class="nav-btn" id="nav-devil" onclick="showView('pipeline-devil',this)">
-      <div class="ni">⚔️</div><span class="nt">Devil's Advocate</span>
-      <div class="pni-dot dot-devil" style="margin-left:auto"></div>
-    </button>
-    <button class="nav-btn" id="nav-strategist" onclick="showView('pipeline-strategist',this)">
-      <div class="ni">♟️</div><span class="nt">The Strategist</span>
-      <div class="pni-dot dot-strategist" style="margin-left:auto"></div>
-    </button>
-  </div>
 
   <div class="nav-section">
     <div class="nav-section-lbl">// SYSTEM</div>
@@ -736,10 +650,6 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
       <p id="topbar-sub">JL Laniog Law Firm — LexFlow Case Management</p>
     </div>
     <div class="topbar-right">
-      <button id="theme-toggle" class="theme-toggle" title="Toggle dark/light mode">
-        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-      </button>
       <div class="t-pill green"><div class="pulse"></div>AI PIPELINE ACTIVE</div>
       <div class="t-pill date" id="datechip"></div>
     </div>
@@ -840,7 +750,6 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
             </div>
           </div>
           <div style="display:flex;gap:8px;flex-shrink:0;">
-            <button class="btn-detail-save" onclick="openEditModal()">✏ Edit</button>
             <button class="btn-print" onclick="printCase(profileIdx)">🖨 Print</button>
             <button class="btn-detail-resubmit" onclick="resubmitFromProfile()">🚀 Resubmit</button>
           </div>
@@ -848,64 +757,6 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
         <div class="ph-pills" id="prof-pills"></div>
       </div>
 
-      <!-- LIVE CASE PIPELINE -->
-      <div class="live-pipeline-wrap" id="live-pipeline-wrap" style="display:none">
-        <div class="lp-header">
-          <span class="lp-title">// AI PIPELINE — LIVE STATUS</span>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <span class="lp-case-id" id="lp-case-id-lbl">—</span>
-            <div class="lp-pulse-row">
-              <div class="lp-pulse" id="lp-pulse-dot"></div>
-              <span class="lp-pulse-lbl" id="lp-pulse-lbl">POLLING</span>
-            </div>
-          </div>
-        </div>
-        <div class="lp-stages">
-          <div class="lp-stage" id="lps-intake">
-            <div class="lp-icon-wrap">
-              <div class="lp-icon">📋</div>
-            </div>
-            <div class="lp-name">INTAKE</div>
-            <div class="lp-status" id="lps-intake-status">—</div>
-          </div>
-          <div class="lp-stage" id="lps-advocate">
-            <div class="lp-icon-wrap">
-              <div class="lp-icon">⚖️</div>
-              <div class="lp-spinner"></div>
-            </div>
-            <div class="lp-name">ADVOCATE</div>
-            <div class="lp-status" id="lps-advocate-status">Waiting…</div>
-          </div>
-          <div class="lp-stage" id="lps-devil">
-            <div class="lp-icon-wrap">
-              <div class="lp-icon">⚔️</div>
-              <div class="lp-spinner"></div>
-            </div>
-            <div class="lp-name">DEVIL'S ADV.</div>
-            <div class="lp-status" id="lps-devil-status">Waiting…</div>
-          </div>
-          <div class="lp-stage" id="lps-strategist">
-            <div class="lp-icon-wrap">
-              <div class="lp-icon">♟️</div>
-              <div class="lp-spinner"></div>
-            </div>
-            <div class="lp-name">STRATEGIST</div>
-            <div class="lp-status" id="lps-strategist-status">Waiting…</div>
-          </div>
-          <div class="lp-stage" id="lps-complete">
-            <div class="lp-icon-wrap">
-              <div class="lp-icon">🏁</div>
-            </div>
-            <div class="lp-name">COMPLETE</div>
-            <div class="lp-status" id="lps-complete-status">—</div>
-          </div>
-        </div>
-        <div class="lp-footer">
-          <span class="lp-elapsed" id="lp-elapsed">Elapsed: 0s</span>
-          <span class="lp-complete-msg" id="lp-complete-msg">✓ ALL ANALYSES COMPLETE</span>
-          <button class="lp-view-btn" onclick="switchTab('advocate')">VIEW ANALYSIS →</button>
-        </div>
-      </div>
 
       <!-- ANALYSIS TABS -->
       <div class="analysis-tabs">
@@ -933,8 +784,6 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
           <div class="detail-grid" id="prof-intake-grid"></div>
           <div class="detail-sec-lbl" style="margin-top:14px">// CLIENT NARRATIVE</div>
           <div class="ac-text" id="prof-narrative" style="margin-top:8px"></div>
-          <div class="detail-sec-lbl" style="margin-top:14px">// DOCUMENTS SUBMITTED</div>
-          <div class="docs-tags" id="prof-docs-submitted" style="margin-top:8px"></div>
           <div class="detail-sec-lbl" style="margin-top:14px">// UPLOADED FILES</div>
           <div id="prof-uploaded-files" style="margin-top:8px"></div>
           <div class="detail-sec-lbl" style="margin-top:14px">// CLERK'S NOTES</div>
@@ -988,19 +837,6 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
       </div>
     </div>
 
-    <!-- ══ PIPELINE VIEWS ══ -->
-    <div class="view" id="view-pipeline-advocate">
-      <div class="sec-hdr"><div><div class="sec-title">⚖️ The Advocate — Analysis Queue</div><div class="sec-sub">Cases with completed Advocate analysis</div></div></div>
-      <div id="pipeline-advocate-wrap"></div>
-    </div>
-    <div class="view" id="view-pipeline-devil">
-      <div class="sec-hdr"><div><div class="sec-title">⚔️ Devil's Advocate — Analysis Queue</div><div class="sec-sub">Cases with completed Devil's Advocate analysis</div></div></div>
-      <div id="pipeline-devil-wrap"></div>
-    </div>
-    <div class="view" id="view-pipeline-strategist">
-      <div class="sec-hdr"><div><div class="sec-title">♟️ The Strategist — Final Recommendations</div><div class="sec-sub">Cases with completed Senior Partner analysis</div></div></div>
-      <div id="pipeline-strategist-wrap"></div>
-    </div>
 
     <!-- ══ FORM VIEW ══ -->
     <div class="view" id="view-form">
@@ -1050,11 +886,6 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
           <div class="fsec">
             <div class="fsec-title">// 03 · CLIENT NARRATIVE</div>
             <div class="frow full"><div class="field"><label>Summary of Legal Issue <span class="req">*</span> <span class="opt">(clerk's summary or client's own words)</span></label><textarea id="f-narrative" rows="6" placeholder="Describe what happened in detail. Include dates, people involved, actions taken, and what the client is seeking..." oninput="updateReqs()"></textarea></div></div>
-          </div>
-          <div class="fsec">
-            <div class="fsec-title">// 04 · DOCUMENTS SUBMITTED</div>
-            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px">Check all documents the client physically submitted today</div>
-            <div class="cb-list" id="docs-list"></div>
           </div>
           <div class="fsec">
             <div class="fsec-title">// 05 · CLERK'S NOTES</div>
@@ -1214,48 +1045,6 @@ LOCAL (live):  http://localhost:5678/webhook/intake</div>
   </div>
 </div>
 
-<!-- EDIT MODAL -->
-<div class="detail-bg" id="detail-modal">
-  <div class="detail-box">
-    <div class="detail-hdr">
-      <div>
-        <div class="detail-title" id="d-title">Edit Case</div>
-        <div class="detail-caseid" id="d-caseid">—</div>
-      </div>
-      <button class="detail-close" onclick="closeDetail()">✕</button>
-    </div>
-    <div class="detail-body">
-      <div class="detail-grid">
-        <div class="detail-field"><label>Full Name</label><input type="text" id="d-name"></div>
-        <div class="detail-field"><label>Contact Number</label><input type="text" id="d-contact"></div>
-        <div class="detail-field"><label>Date of Birth</label><input type="date" id="d-dob"></div>
-        <div class="detail-field"><label>Civil Status</label><select id="d-civil"><option value="">—</option><option>Single</option><option>Married</option><option>Widowed</option><option>Separated</option></select></div>
-        <div class="detail-field full"><label>Address</label><input type="text" id="d-address"></div>
-        <div class="detail-field full"><label>Occupation / Employer</label><input type="text" id="d-occupation"></div>
-      </div>
-      <div class="detail-sec-lbl">// CASE DETAILS</div>
-      <div class="detail-grid">
-        <div class="detail-field"><label>Legal Topic</label><input type="text" id="d-topic" readonly style="color:var(--muted)"></div>
-        <div class="detail-field"><label>Legal Issue</label><input type="text" id="d-issue"></div>
-        <div class="detail-field"><label>Date of Incident</label><input type="date" id="d-incident"></div>
-        <div class="detail-field"><label>Opposing Party</label><input type="text" id="d-opposing"></div>
-        <div class="detail-field"><label>Urgency</label><select id="d-urgency"><option value="LOW">🟢 LOW</option><option value="MEDIUM">🟡 MEDIUM</option><option value="HIGH">🔴 HIGH</option></select></div>
-        <div class="detail-field"><label>Submitted By</label><input type="text" id="d-clerk" readonly style="color:var(--muted)"></div>
-      </div>
-      <div class="detail-sec-lbl">// CLIENT NARRATIVE</div>
-      <div class="detail-grid"><div class="detail-field full"><label>Summary / Narrative</label><textarea id="d-narrative" rows="5"></textarea></div></div>
-      <div class="detail-sec-lbl">// DOCUMENTS SUBMITTED</div>
-      <div class="detail-docs" id="d-docs"></div>
-      <div class="detail-sec-lbl">// CLERK'S NOTES</div>
-      <div class="detail-grid"><div class="detail-field full"><label>Notes</label><textarea id="d-notes" rows="3"></textarea></div></div>
-    </div>
-    <div class="detail-footer">
-      <button class="btn-detail-cancel" onclick="closeDetail()">Cancel</button>
-      <button class="btn-detail-save" onclick="saveDetail()">💾 Save Changes</button>
-      <button class="btn-detail-resubmit" onclick="resubmitDetail()">🚀 Save & Resubmit</button>
-    </div>
-  </div>
-</div>
 
 <!-- SUCCESS MODAL -->
 <div class="success-bg" id="success-modal">
@@ -1493,9 +1282,6 @@ function renderPipelineViews(){
   const devil=caseStore.filter(c=>c.lawyer_b&&c.lawyer_b.case_assessment);
   const strategist=caseStore.filter(c=>c.senior_partner&&c.senior_partner.final_recommendation);
   const complete=caseStore.filter(c=>c.pipeline_status==='COMPLETE');
-  document.getElementById('pipeline-advocate-wrap').innerHTML=advocate.length?buildCasesTable(advocate,null,{showDurations:true}):'<div class="empty-state"><div class="empty-icon">⚖️</div>No Advocate analyses yet. Cases will appear here after The Advocate processes them.</div>';
-  document.getElementById('pipeline-devil-wrap').innerHTML=devil.length?buildCasesTable(devil,null,{showDurations:true}):"<div class='empty-state'><div class='empty-icon'>⚔️</div>No Devil's Advocate analyses yet.</div>";
-  document.getElementById('pipeline-strategist-wrap').innerHTML=strategist.length?buildCasesTable(strategist,null,{showDurations:true}):"<div class='empty-state'><div class='empty-icon'>♟️</div>No Strategist recommendations yet.</div>";
 
   // Update pipeline tracker counters
   const total=caseStore.length;
@@ -1611,8 +1397,6 @@ function openProfile(idx, fromView){
 
   document.getElementById('prof-narrative').textContent=c.legal_narrative||'No narrative recorded.';
 
-  const docsSubmitted=document.getElementById('prof-docs-submitted');
-  docsSubmitted.innerHTML=(c.documents_submitted||[]).length?c.documents_submitted.map(d=>`<span class="doc-tag">${d}</span>`).join(''):'<span style="font-size:0.73rem;color:var(--muted)">None recorded.</span>';
 
   // Uploaded files
   const uploadedEl=document.getElementById('prof-uploaded-files');
@@ -1815,9 +1599,6 @@ function openTemplate(type,btn){
   document.getElementById('r-med').className='ri';
   document.getElementById('r-high').className='ri';
   document.querySelectorAll('input[name="urgency"]').forEach(r=>r.checked=false);
-  const list=document.getElementById('docs-list');
-  list.innerHTML='';
-  t.docs.forEach(doc=>{const lbl=document.createElement('label');lbl.className='cb-item';lbl.innerHTML=`<input type="checkbox" onchange="this.closest('.cb-item').classList.toggle('checked',this.checked)"><div><div class="cb-lbl">${doc.l}</div>${doc.s?`<div class="cb-sub">${doc.s}</div>`:''}</div>`;list.appendChild(lbl);});
   refreshHookUI();updateReqs();
   showView('form',btn||document.getElementById('nav-'+type));
   document.getElementById('topbar-title').textContent=t.label+' — Case Intake';
@@ -1941,16 +1722,6 @@ function startPolling(caseId){
     if(msg)msg.textContent=labels[role];
   });
 
-  // Show & initialize the live pipeline section
-  showLivePipeline(caseId);
-
-  // Elapsed timer
-  pollElapsedTimer=setInterval(()=>{
-    const secs=Math.floor((Date.now()-pollStartTime)/1000);
-    const el=document.getElementById('lp-elapsed');
-    if(el)el.textContent='Elapsed: '+secs+'s';
-  },1000);
-
   pollTimer=setInterval(()=>doPoll(resultsUrl),POLL_MS);
   // Fire immediately once so we don't wait 5s for first check
   doPoll(resultsUrl);
@@ -2063,7 +1834,6 @@ async function doPoll(url){
     // Stop polling once all three are done
     if(pollGot.a && pollGot.b && pollGot.sp){
       stopPolling();
-      completeLivePipeline();
       renderPipelineViews();
       renderRecentCases();
     }
@@ -2193,7 +1963,6 @@ async function submitCase(){
   const resultsUrl=localStorage.getItem('jll_results_url')||'';
   if(!resultsUrl){const go2=confirm('Results Fetch URL not configured.\nWithout it, the dashboard won\'t receive AI analysis.\n\nGo to Settings to set it up?');if(go2)showView('settings',document.getElementById('nav-settings'));return;}
   const docs=[];
-  document.querySelectorAll('#docs-list input[type=checkbox]:checked').forEach(cb=>{docs.push(cb.closest('.cb-item').querySelector('.cb-lbl').textContent);});
   const clerk=document.getElementById('set-clerk')?.value||'Clerk';
   const btn=document.getElementById('btn-submit');
   document.getElementById('btn-label').textContent='Reading files…';
@@ -2540,10 +2309,6 @@ function printCase(idx){
       <div class="pf-narrative">${c.legal_narrative||'No narrative recorded.'}</div>
     </div>
 
-    <div class="pf-section">
-      <div class="pf-section-title">// 04 &nbsp; Documents Submitted by Client</div>
-      <div class="pf-docs-list">${docsHtml}</div>
-    </div>
 
     <div class="pf-section">
       <div class="pf-section-title">// 05 &nbsp; Digital Files Uploaded</div>
