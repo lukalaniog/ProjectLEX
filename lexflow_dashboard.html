@@ -38,6 +38,17 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
 .firm-name{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:700;color:var(--text);line-height:1.2;}
 .firm-tagline{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--gold);letter-spacing:0.2em;margin-top:6px;opacity:0.8;}
 
+/* QUICK ACTIONS */
+.quick-actions{padding:14px 10px 12px;border-bottom:1px solid var(--border);}
+.btn-quick-action{
+  display:flex;align-items:center;gap:10px;width:100%;background:var(--gold);color:#0e0f14;
+  border:none;border-radius:8px;padding:11px 14px;cursor:pointer;transition:all 0.2s;
+  font-family:'IBM Plex Sans',sans-serif;font-size:0.79rem;font-weight:600;
+}
+.btn-quick-action:hover{background:var(--gold2);box-shadow:0 4px 12px rgba(201,168,76,0.25);transform:translateY(-1px);}
+.bqa-icon{font-size:1.1rem;display:flex;align-items:center;justify-content:center;}
+.bqa-text{letter-spacing:0.03em;}
+
 .nav-section{padding:12px 10px 4px;}
 .nav-section-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:var(--muted2);letter-spacing:0.22em;padding:0 8px;margin-bottom:5px;}
 .nav-btn{display:flex;align-items:center;gap:9px;width:100%;padding:8px 10px;border-radius:6px;border:none;background:none;cursor:pointer;text-align:left;transition:all 0.15s;margin-bottom:1px;position:relative;}
@@ -69,6 +80,16 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
 .clerk-select{width:100%;background:var(--surface3);border:1px solid var(--border2);border-radius:5px;color:var(--muted);font-family:'IBM Plex Sans',sans-serif;font-size:0.7rem;padding:5px 8px;outline:none;cursor:pointer;transition:all 0.15s;}
 .clerk-select:hover,.clerk-select:focus{border-color:var(--gold);color:var(--text);}
 .clerk-select option{background:#1c1f2e;}
+
+/* SYSTEM STATUS */
+.sys-status{padding:10px 12px;background:var(--surface2);margin:8px 10px;border-radius:8px;}
+.sys-status-hdr{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;color:var(--muted2);letter-spacing:0.15em;margin-bottom:8px;}
+.sys-status-list{display:flex;flex-direction:column;gap:5px;}
+.sys-status-item{display:flex;align-items:center;justify-content:space-between;font-size:0.7rem;}
+.sys-status-label{color:var(--muted);}
+.sys-status-indicator{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;padding:2px 6px;border-radius:4px;background:var(--surface3);color:var(--muted);}
+.sys-status-indicator.online{color:var(--green-bright);background:var(--green-dim);}
+.sys-status-indicator.offline{color:var(--red-bright);background:var(--red-dim);}
 
 /* ══ MAIN ══ */
 .main{margin-left:252px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
@@ -359,6 +380,17 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
 .btn-modal-save{flex:1;background:var(--gold);color:#0e0f14;border:none;border-radius:6px;padding:9px;font-family:'IBM Plex Sans',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;transition:background 0.15s;}
 .btn-modal-save:hover{background:var(--gold2);}
 
+/* Template modal grid */
+.tpl-modal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.tpl-modal-card{
+  background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:13px;
+  cursor:pointer;transition:all 0.18s;display:flex;flex-direction:column;gap:6px;
+}
+.tpl-modal-card:hover{background:var(--surface3);border-color:var(--gold);transform:translateY(-2px);}
+.tpl-modal-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.tpl-modal-name{font-family:'Playfair Display',serif;font-size:0.92rem;font-weight:700;color:var(--text);}
+.tpl-modal-desc{font-size:0.7rem;color:var(--muted);line-height:1.55;}
+
 /* ══ SUCCESS MODAL ══ */
 .success-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);z-index:600;align-items:center;justify-content:center;}
 .success-bg.open{display:flex;}
@@ -606,6 +638,14 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
     <div class="firm-tagline">// LEXFLOW CASE MANAGEMENT</div>
   </div>
 
+  <!-- QUICK ACTIONS -->
+  <div class="quick-actions">
+    <button class="btn-quick-action" onclick="openAllTemplatesModal()">
+      <div class="bqa-icon">➕</div>
+      <div class="bqa-text">New Case</div>
+    </button>
+  </div>
+
   <div class="nav-section">
     <div class="nav-section-lbl">// MAIN</div>
     <button class="nav-btn active" id="nav-overview" onclick="showView('overview',this)">
@@ -623,6 +663,25 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
     <button class="nav-btn" id="nav-settings" onclick="showView('settings',this)">
       <div class="ni">⚙️</div><span class="nt">Settings</span>
     </button>
+  </div>
+
+  <!-- SYSTEM STATUS -->
+  <div class="sys-status">
+    <div class="sys-status-hdr">System Status</div>
+    <div class="sys-status-list">
+      <div class="sys-status-item">
+        <span class="sys-status-label">n8n</span>
+        <span class="sys-status-indicator" id="status-n8n">Checking…</span>
+      </div>
+      <div class="sys-status-item">
+        <span class="sys-status-label">Supabase</span>
+        <span class="sys-status-indicator" id="status-supabase">Checking…</span>
+      </div>
+      <div class="sys-status-item">
+        <span class="sys-status-label">Groq API</span>
+        <span class="sys-status-indicator" id="status-groq">Checking…</span>
+      </div>
+    </div>
   </div>
 
   <div class="sidebar-footer">
@@ -710,7 +769,7 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
         <div><div class="sec-title">Case Intake Templates</div><div class="sec-sub">Select a template to begin a new case intake</div></div>
         <span class="sec-action">6 TEMPLATES</span>
       </div>
-      <div class="tpl-grid">
+      <div class="tpl-grid" id="tpl-grid">
         <div class="tpl-card" onclick="openTemplate('labor')"><div class="tpl-icon" style="background:rgba(240,165,0,0.12)">👷</div><div class="tpl-name">Labor Law</div><div class="tpl-desc">Illegal dismissal, constructive dismissal, labor standards, NLRC filing.</div><div class="tpl-foot"><span class="tpl-tag" style="background:rgba(240,165,0,0.1);color:#f0a500">LABOR</span><span class="tpl-arr">→</span></div></div>
         <div class="tpl-card" onclick="openTemplate('criminal')"><div class="tpl-icon" style="background:var(--red-dim)">⚔️</div><div class="tpl-name">Criminal Law</div><div class="tpl-desc">Estafa, theft, physical injuries, cybercrime, drug cases, NBI complaints.</div><div class="tpl-foot"><span class="tpl-tag" style="background:var(--red-dim);color:var(--red-bright)">CRIMINAL</span><span class="tpl-arr">→</span></div></div>
         <div class="tpl-card" onclick="openTemplate('family')"><div class="tpl-icon" style="background:var(--blue-dim)">🏠</div><div class="tpl-name">Family Law</div><div class="tpl-desc">Annulment, legal separation, child custody, support, adoption, VAWC.</div><div class="tpl-foot"><span class="tpl-tag" style="background:var(--blue-dim);color:#5dade2">FAMILY</span><span class="tpl-arr">→</span></div></div>
@@ -1044,6 +1103,50 @@ LOCAL (live):  http://localhost:5678/webhook/intake</div>
     </div>
   </div>
 </div>
+
+<!-- TEMPLATE PICKER MODAL -->
+<div class="modal-bg" id="template-modal" onclick="if(event.target===this)closeTemplateModal()">
+  <div class="modal-box" style="max-width:560px">
+    <div class="modal-title">Choose Case Type</div>
+    <div class="modal-sub">Select a legal practice area to begin intake</div>
+    <div class="tpl-modal-grid">
+      <div class="tpl-modal-card" onclick="selectTemplate('labor')">
+        <div class="tpl-modal-icon" style="background:rgba(240,165,0,0.12)">👷</div>
+        <div class="tpl-modal-name">Labor Law</div>
+        <div class="tpl-modal-desc">Illegal dismissal, constructive dismissal, labor standards, NLRC filing.</div>
+      </div>
+      <div class="tpl-modal-card" onclick="selectTemplate('criminal')">
+        <div class="tpl-modal-icon" style="background:var(--red-dim)">⚔️</div>
+        <div class="tpl-modal-name">Criminal Law</div>
+        <div class="tpl-modal-desc">Estafa, theft, physical injuries, cybercrime, drug cases, NBI complaints.</div>
+      </div>
+      <div class="tpl-modal-card" onclick="selectTemplate('family')">
+        <div class="tpl-modal-icon" style="background:var(--blue-dim)">🏠</div>
+        <div class="tpl-modal-name">Family Law</div>
+        <div class="tpl-modal-desc">Annulment, legal separation, child custody, support, adoption, VAWC.</div>
+      </div>
+      <div class="tpl-modal-card" onclick="selectTemplate('civil')">
+        <div class="tpl-modal-icon" style="background:var(--green-dim)">📜</div>
+        <div class="tpl-modal-name">Civil Law</div>
+        <div class="tpl-modal-desc">Contract disputes, breach, damages, collection cases, quasi-delicts.</div>
+      </div>
+      <div class="tpl-modal-card" onclick="selectTemplate('property')">
+        <div class="tpl-modal-icon" style="background:var(--purple-dim)">🏗️</div>
+        <div class="tpl-modal-name">Property Law</div>
+        <div class="tpl-modal-desc">Land disputes, ejectment, unlawful detainer, titling, ownership conflicts.</div>
+      </div>
+      <div class="tpl-modal-card" onclick="selectTemplate('corporate')">
+        <div class="tpl-modal-icon" style="background:var(--gold-dim)">🏢</div>
+        <div class="tpl-modal-name">Corporate Law</div>
+        <div class="tpl-modal-desc">SEC complaints, business disputes, governance, shareholder conflicts.</div>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeTemplateModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+<!-- END TEMPLATE PICKER MODAL -->
 
 
 <!-- SUCCESS MODAL -->
@@ -1576,6 +1679,18 @@ function resubmitFromProfile(){
 }
 
 // TEMPLATE
+// TEMPLATE MODAL
+function openAllTemplatesModal() {
+  document.getElementById('template-modal').classList.add('open');
+}
+function closeTemplateModal() {
+  document.getElementById('template-modal').classList.remove('open');
+}
+function selectTemplate(type,btn) {
+  closeTemplateModal();
+  openTemplate(type, btn || null);
+}
+
 function openTemplate(type,btn){
   curTpl=type;curUrgency='';
   const t=TPLS[type];
@@ -1704,6 +1819,46 @@ const POLL_MS=5000;
 // Track what we've already received so we only trigger renders once
 let pollGot={a:false,b:false,sp:false};
 
+// System health tracking
+let systemHealth = { n8n: 'unknown', supabase: 'unknown', lastUpdate: null };
+function setSystemHealth(status) {
+  systemHealth.n8n = status;
+  systemHealth.supabase = status; // coupled through poll success
+  systemHealth.lastUpdate = Date.now();
+  updateSystemStatusDisplay();
+}
+function updateSystemStatusDisplay() {
+  const n8nEl = document.getElementById('status-n8n');
+  const supabaseEl = document.getElementById('status-supabase');
+  const groqEl = document.getElementById('status-groq');
+  if (!n8nEl || !supabaseEl || !groqEl) return;
+  // Initialize Groq as static dash
+  if (groqEl.textContent === 'Checking…') groqEl.textContent = '—';
+  const now = Date.now();
+  const minutes = (now - (systemHealth.lastUpdate || 0)) / 60000;
+  let n8nStatus = systemHealth.n8n;
+  let supabaseStatus = systemHealth.supabase;
+  // If status unknown or stale > 2 min, show indeterminate (dash)
+  if (systemHealth.lastUpdate && minutes > 2) {
+    n8nStatus = 'stale';
+    supabaseStatus = 'stale';
+  }
+  n8nEl.textContent = n8nStatus === 'online' ? '● online' : n8nStatus === 'offline' ? '● offline' : '—';
+  n8nEl.className = 'sys-status-indicator' + (n8nStatus === 'online' ? ' online' : n8nStatus === 'offline' ? ' offline' : '');
+  supabaseEl.textContent = supabaseStatus === 'online' ? '● online' : supabaseStatus === 'offline' ? '● offline' : '—';
+  supabaseEl.className = 'sys-status-indicator' + (supabaseStatus === 'online' ? ' online' : supabaseStatus === 'offline' ? ' offline' : '');
+}
+
+// Initial health check based on config
+(function(){
+  try {
+    const resultsUrl = localStorage.getItem('jll_results_url') || '';
+    if (!resultsUrl) {
+      setSystemHealth('offline');
+    }
+  } catch(e) {}
+})();
+
 function startPolling(caseId){
   stopPolling();
   const resultsUrl=(()=>{try{return localStorage.getItem('jll_results_url')||'';}catch(e){return '';}})();
@@ -1741,6 +1896,7 @@ async function doPoll(url){
   pollAttempts++;
   if(pollAttempts>POLL_MAX){
     stopPolling();
+    setSystemHealth('offline'); // timed out means pipeline unreachable
     ['advocate','devil','strategist'].forEach(role=>{
       if(!pollGot[role==='advocate'?'a':role==='devil'?'b':'sp'])
         setPollBar(role,'error','⚠ Timed out — check your n8n pipeline');
@@ -1750,7 +1906,11 @@ async function doPoll(url){
   }
   try{
     const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({case_id:pollCaseId})});
-    if(!res.ok)return;
+    if(!res.ok){
+      setSystemHealth('offline');
+      return;
+    }
+    setSystemHealth('online'); // n8n and Supabase responded
     const raw=await res.json();
     const d=Array.isArray(raw)?raw[0]:raw;
     if(!d)return;
@@ -1840,7 +2000,10 @@ async function doPoll(url){
 
     if(changed) renderPipelineViews();
 
-  }catch(e){/* silently retry */}
+  }catch(e){
+    setSystemHealth('offline');
+    // silently retry
+  }
 }
 
 function setPollBar(role,state,msg){
@@ -2372,6 +2535,13 @@ function showToast(msg,bg){
   const t=document.createElement('div');
   t.className='toast';t.style.background=bg||'var(--surface3)';t.style.color='var(--text)';t.style.border='1px solid var(--border2)';
   t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);
+}
+
+// Init system status display (set Groq to static dash)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => updateSystemStatusDisplay());
+} else {
+  updateSystemStatusDisplay();
 }
 </script>
 </body>

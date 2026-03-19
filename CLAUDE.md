@@ -167,6 +167,19 @@ Two credential types are required in n8n:
 
 ---
 
+## Dashboard Updates (2026-03-19)
+
+**File:** `lexflow_dashboard.html`
+
+### Sidebar Enhancements
+- **Quick Actions** — Added "New Case" button (gold CTA) below logo. Opens template picker modal for direct intake access.
+- **System Status Widget** — Real-time health indicators for n8n and Supabase (coupled via poll success). Shows `● online` / `● offline` / `—` (stale/no data). Groq API shown as static `—` (no direct health check from dashboard).
+
+### Bug Fixes
+- Fixed modal nesting bug: Template Picker modal was inside Webhook modal, making it invisible. Un-nested — now both modals are direct children of `<body>` and function correctly.
+
+---
+
 ## Dashboard
 
 **File:** `lexflow_dashboard.html`
