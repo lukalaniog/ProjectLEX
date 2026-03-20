@@ -1,5 +1,5 @@
 # LexFlow — JL Laniog Law Firm · Project Documentation
-_Last updated: 2026-03-19_
+_Last updated: 2026-03-20_
 
 ---
 
@@ -168,6 +168,32 @@ Two credential types are required in n8n:
 ---
 
 ## Dashboard Updates (2026-03-19)
+
+**File:** `lexflow_dashboard.html`
+
+### Sidebar Enhancements
+- **Quick Actions** — Added "New Case" button (gold CTA) below logo. Opens template picker modal for direct intake access.
+- **System Status Widget** — Real-time health indicators for n8n and Supabase (coupled via poll success). Shows `● online` / `● offline` / `—` (stale/no data). Groq API shown as static `—` (no direct health check from dashboard).
+
+### Bug Fixes
+- Fixed modal nesting bug: Template Picker modal was inside Webhook modal, making it invisible. Un-nested — now both modals are direct children of `<body>` and function correctly.
+
+---
+
+## Dashboard Updates (2026-03-20)
+
+**File:** `lexflow_dashboard.html`
+
+### System Status Fix & Enhancement
+- **Fixed health check bug** — System Status now tracks connectivity independently via a standalone heartbeat that polls `/fetch-results` every 30 seconds, even when no case is actively processing. Previously, status only updated during active case polling and would show stale/offline when idle despite services being up.
+- **Added official service logos** — System Status displays authentic brand icons for n8n, Supabase, and Groq API (24px size).
+- **Responsive status display** — Icons sized and styled for clear recognition; uses `currentColor` to match theme.
+
+### Technical Changes
+- New `checkSystemHealth()` function with 30-second interval
+- New `startHealthChecks()` / `stopHealthChecks()` lifecycle functions
+- CSS: `.sys-status-icon` (20×20px container), `.sys-status-left` (flex layout for icon + label)
+- HTML: SVG icons inserted before each service label in System Status widget
 
 **File:** `lexflow_dashboard.html`
 

@@ -86,6 +86,8 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
 .sys-status-hdr{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;color:var(--muted2);letter-spacing:0.15em;margin-bottom:8px;}
 .sys-status-list{display:flex;flex-direction:column;gap:5px;}
 .sys-status-item{display:flex;align-items:center;justify-content:space-between;font-size:0.7rem;}
+.sys-status-left{display:flex;align-items:center;gap:6px;}
+.sys-status-icon{font-size:1.1rem;line-height:1;display:flex;align-items:center;justify-content:center;width:20px;height:20px;}
 .sys-status-label{color:var(--muted);}
 .sys-status-indicator{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;padding:2px 6px;border-radius:4px;background:var(--surface3);color:var(--muted);}
 .sys-status-indicator.online{color:var(--green-bright);background:var(--green-dim);}
@@ -670,15 +672,30 @@ body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-ser
     <div class="sys-status-hdr">System Status</div>
     <div class="sys-status-list">
       <div class="sys-status-item">
-        <span class="sys-status-label">n8n</span>
+        <div class="sys-status-left">
+          <span class="sys-status-icon">
+            <svg viewBox="0 0 120 120" width="24" height="24"><path fill="currentColor" d="M60 4.1c29.2 0 52.9 23.7 52.9 52.9 0 29.2-23.7 52.9-52.9 52.9C30.8 109.9 7 86.2 7 57S30.8 4.1 60 4.1zm0 8.2C44 12.3 20.4 35.9 20.4 57c0 21.1 23.6 44.7 39.6 44.7s39.6-23.6 39.6-44.7C99.6 35.9 76 12.3 60 12.3z"/><path fill="currentColor" d="M46.2 67.3c3.2 1.1 6.8.3 9.1-2.6 2.3-2.9 1.5-7.1-1.8-9.2-3.3-2.1-7.6-.9-10.7 2.1-3.1 3-2.1 7.6 1.1 10.4 1.8 1.6 4 2.5 6.3 2.8.2.2.3.4.4.7l-.5.7c0 .1 0 .1 0 .2 0 .1 0 .1 0 .2-.1.3-.3.5-.4.8-.5 1.1-1.4 1.1-1.9.1-.6-1.2-1.7-3.4-2.1-1.4-.4-3-.5-4.5-.1-1.5.4-2.8 1.6-3.5 3.1-.7 1.5-.7 3.2-.1 4.7.5 1.2 1.4 2.2 2.6 2.8.3.2.6.3.9.3 1.3.1 2.4-.7 2.9-2 .4-1.1.3-2.3-.3-3.3-.6-1-1.8-1.3-3-.9-1.1.4-2 .9-2.8 1.5-.7.6-1.4 1.2-1.8 2-.4.8-.4 1.7 0 2.5.4.8 1.2 1.3 2.2 1.3.5 0 .9-.1 1.3-.3 1.1-.5 1.6-1.7 1-2.8z"/><path fill="currentColor" d="M68.4 67.3c-3.2 1.1-6.8.3-9.1-2.6-2.3-2.9-1.5-7.1 1.8-9.2 3.3-2.1 7.6-.9 10.7 2.1 3.1 3 2.1 7.6-1.1 10.4-1.8 1.6-4 2.5-6.3 2.8-.2.2-.3.4-.4.7l.5.7c0 .1 0 .1 0 .2 0 .1 0 .1 0 .2.1.3.3.5.4.8.5 1.1 1.4 1.1 1.9.1.6 1.2 1.7 3.4 2.1 1.4.4 3 .5 4.5.1 1.5-.4 2.8-1.6 3.5-3.1.7-1.5.7-3.2.1-4.7-.5-1.2-1.4-2.2-2.6-2.8-.3-.2-.6-.3-.9-.3-1.3-.1-2.4.7-2.9 2-.4 1.1-.3 2.3.3 3.3.6 1 1.8 1.3 3 .9 1.1-.4 2-.9 2.8-1.5.7-.6 1.4-1.2 1.8-2 .4-.8.4-1.7 0-2.5-.4-.8-1.2-1.3-2.2-1.3-.5 0-.9.1-1.3.3-1.1.5-1.6 1.7-1 2.8z"/></svg>
+          </span>
+          <span class="sys-status-label">n8n</span>
+        </div>
         <span class="sys-status-indicator" id="status-n8n">Checking…</span>
       </div>
       <div class="sys-status-item">
-        <span class="sys-status-label">Supabase</span>
+        <div class="sys-status-left">
+          <span class="sys-status-icon">
+            <svg viewBox="0 0 200 200" width="24" height="24"><path fill="currentColor" d="M100.7 199.9c-49.5 0-89.7-40.2-89.7-89.7s40.2-89.7 89.7-89.7 89.7 40.2 89.7 89.7-40.2 89.7-89.7 89.7zm0-165c-44.4 0-80.3 35.9-80.3 80.3s35.9 80.3 80.3 80.3 80.3-35.9 80.3-80.3-35.9-80.3-80.3-80.3z"/><path fill="currentColor" d="M75.4 131.7c-1.9 2-5.1 2.7-7.5 1.5-2.2-1.1-3.2-3.9-1.7-6.2 1.4-2.2 4.2-2.9 6.6-1.5 2.4 1.4 3.5 4.9 1.8 7.2-.3.4-.6.5-.9.7-.3-.2-.5-.4-.8-.7l-1.9 1.1c-.1.1-.2.1-.3.1-.3.2-.3.6-.1.9.2.3.6.4.9.2l1.7-1c.4.1.7.3.9.6.3.5.1 1.1-.3 1.5-.4.5-1.1.5-1.6.1-1-.8-2.5-1.1-3.9-.6-1.4.5-2.6 1.3-3.6 2.3-1 1-1.2 2.4-.5 3.6.4.7 1.3 1.1 2.4 1 .7 0 1.3-.3 1.7-.8.6-.8.3-1.9-.5-2.6-1-.8-2.3-.7-3.5-.2-1.2.5-2.2 1.3-3 2.3-.7 1-.7 2.2 0 3.2.7 1 2.1 1.3 3.7.8 1.6-.5 2.9-1.8 3.3-3.3.5-1.7.1-3.5-1.2-5-1.2-1.5-3-2.2-5-1.8-2 .4-3.7 1.6-4.8 3.3-1.1 1.7-1 3.7.2 5.3.9 1.3 2.7 1.9 4.8 1.5 2.2-.4 4-1.8 5-3.7.9-1.9.7-4-.3-5.7-1-1.7-2.8-2.7-5-2.5z"/></svg>
+          </span>
+          <span class="sys-status-label">Supabase</span>
+        </div>
         <span class="sys-status-indicator" id="status-supabase">Checking…</span>
       </div>
       <div class="sys-status-item">
-        <span class="sys-status-label">Groq API</span>
+        <div class="sys-status-left">
+          <span class="sys-status-icon">
+            <svg viewBox="0 0 100 100" width="24" height="24"><path fill="currentColor" d="M50 5C25.1 5 5 25.1 5 50s20.1 45 45 45 45-20.1 45-45S74.9 5 50 5zm0 85C29.4 90 10 70.6 10 50S29.4 10 50 10 90 29.4 90 50 70.6 90 50 90zm0-70c-13.3 0-24 10.7-24 24s10.7 24 24 24 24-10.7 24-24-10.7-24-24-24zm0 38c-8.3 0-15-6.7-15-15s6.7-15 15-15 15 6.7 15 15-6.7 15-15 15z"/><path fill="currentColor" d="M45 65h10v5H45zm5-20h-5v5h5z"/></svg>
+          </span>
+          <span class="sys-status-label">Groq API</span>
+        </div>
         <span class="sys-status-indicator" id="status-groq">Checking…</span>
       </div>
     </div>
@@ -1813,8 +1830,10 @@ let pollCaseId=null;
 let pollAttempts=0;
 let pollStartTime=null;
 let pollElapsedTimer=null;
+let healthCheckTimer=null;
 const POLL_MAX=72; // 72×5s = 6 min max
 const POLL_MS=5000;
+const HEALTH_CHECK_MS=30000; // 30 seconds
 
 // Track what we've already received so we only trigger renders once
 let pollGot={a:false,b:false,sp:false};
@@ -1849,15 +1868,44 @@ function updateSystemStatusDisplay() {
   supabaseEl.className = 'sys-status-indicator' + (supabaseStatus === 'online' ? ' online' : supabaseStatus === 'offline' ? ' offline' : '');
 }
 
-// Initial health check based on config
-(function(){
+// Independent health check (runs even when no case is active)
+async function checkSystemHealth() {
+  const resultsUrl = (() => {
+    try { return localStorage.getItem('jll_results_url') || ''; }
+    catch(e) { return ''; }
+  })();
+  if (!resultsUrl) {
+    setSystemHealth('offline');
+    return;
+  }
   try {
-    const resultsUrl = localStorage.getItem('jll_results_url') || '';
-    if (!resultsUrl) {
+    const res = await fetch(resultsUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ case_id: '__health__' })
+    });
+    if (res.ok) {
+      setSystemHealth('online');
+    } else {
       setSystemHealth('offline');
     }
-  } catch(e) {}
-})();
+  } catch (e) {
+    setSystemHealth('offline');
+  }
+}
+
+function startHealthChecks() {
+  if (healthCheckTimer) clearInterval(healthCheckTimer);
+  checkSystemHealth(); // immediate check
+  healthCheckTimer = setInterval(checkSystemHealth, HEALTH_CHECK_MS);
+}
+
+function stopHealthChecks() {
+  if (healthCheckTimer) {
+    clearInterval(healthCheckTimer);
+    healthCheckTimer = null;
+  }
+}
 
 function startPolling(caseId){
   stopPolling();
@@ -2537,11 +2585,11 @@ function showToast(msg,bg){
   t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);
 }
 
-// Init system status display (set Groq to static dash)
+// Init system health checks (independent of polling)
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => updateSystemStatusDisplay());
+  document.addEventListener('DOMContentLoaded', () => startHealthChecks());
 } else {
-  updateSystemStatusDisplay();
+  startHealthChecks();
 }
 </script>
 </body>
